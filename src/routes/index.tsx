@@ -22,6 +22,7 @@ import { TestimonialCard } from "@/components/TestimonialCard";
 import { BlogCard } from "@/components/BlogCard";
 import { InteractiveSriLankaMap } from "@/components/InteractiveSriLankaMap";
 import { InquiryForm } from "@/components/InquiryForm";
+import { Counter } from "@/components/Counter";
 import {
   Sparkles,
   ArrowRight,
@@ -35,6 +36,9 @@ import {
   Award,
   Compass,
   Plane,
+  Globe2,
+  Users,
+  Building2,
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -357,7 +361,110 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. FEATURED DESTINATIONS (STICKY SCROLL LAYOUT WITH SIDE ANIMATIONS) */}
+      {/* 2. DISCOVER THE WORLD (REFERENCE IMAGE SECTION) */}
+      <section className="py-20 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center relative z-10">
+          {/* Left Images Composite */}
+          <div className="lg:col-span-6 relative">
+            <Reveal variant="slide-right" once={false}>
+              <div className="flex gap-4 sm:gap-6 items-center justify-center lg:justify-start">
+                <div className="w-1/2 max-w-[280px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] -translate-y-6">
+                  <img src={img.train} alt="Traveler cheering" className="w-full h-full object-cover" />
+                </div>
+                <div className="w-1/2 max-w-[280px] aspect-[3/4] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] translate-y-6">
+                  <img src={img.resort} alt="Luggage setup" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Right Content */}
+          <div className="lg:col-span-6 space-y-6 text-left relative pt-10 lg:pt-0">
+            <Reveal variant="slide-left" once={false}>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#22A2BD]">
+                {lang === "ko" ? "스리랑카 럭셔리 여행" : "LANKA LUXE TRAVEL"}
+              </span>
+              
+              <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-display font-medium text-[#081A33] leading-[1.05] mt-4 mb-6">
+                Discover the world <br className="hidden xl:block" />
+                <span className="text-[#22A2BD]">with our guide</span>
+              </h2>
+              
+              <p className="text-sm sm:text-base text-slate-500 font-normal leading-relaxed mb-8 max-w-lg">
+                {lang === "ko" 
+                  ? "편안하고 잊지 못할 경험으로 가득한 여행. 저희와 함께 다음 모험을 준비하세요!" 
+                  : "Discover the world with comfort and unforgettable experiences. Let us guide your next adventure!"}
+              </p>
+
+              {/* 4 Icons Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-6 mb-12">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                    <Globe2 className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-semibold text-[#081A33]">Global Destinations</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-semibold text-[#081A33]">Expert Guidance</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-semibold text-[#081A33]">Safe Travels</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                    <Building2 className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-semibold text-[#081A33]">Luxury Lodging</span>
+                </div>
+              </div>
+
+              {/* Stats & Button Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-10 pt-4">
+                {/* Avatars & Stat */}
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-3 shrink-0">
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-30" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64" alt="" />
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-20" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64" alt="" />
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-10" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64" alt="" />
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#081A33] leading-none flex items-baseline gap-1">
+                      <Counter value={9500} />+
+                    </div>
+                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mt-1.5">Positive Reviews</div>
+                  </div>
+                </div>
+                
+                {/* Button */}
+                <Link
+                  to="/tours"
+                  className="inline-flex items-center justify-between gap-4 pl-7 pr-1.5 py-1.5 rounded-full bg-[#22A2BD] text-white font-bold text-sm hover:bg-[#1c8aa1] transition-all duration-300 shadow-[0_8px_20px_rgba(34,162,189,0.3)] group w-fit"
+                >
+                  <span>Read more</span>
+                  <span className="w-9 h-9 rounded-full bg-white text-[#22A2BD] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              </div>
+            </Reveal>
+
+            {/* Background Watermark */}
+            <div className="absolute -bottom-16 right-0 lg:-right-40 pointer-events-none opacity-[0.03] select-none z-[-1]">
+              <span className="text-[18vw] lg:text-[14vw] font-display font-black leading-none tracking-tighter whitespace-nowrap text-[#081A33]">
+                LANKALUXE
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. FEATURED DESTINATIONS (STICKY SCROLL LAYOUT WITH SIDE ANIMATIONS) */}
       <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-x-clip">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start relative">
           {/* Left Title Area (Sticky, Slide from Left) */}
