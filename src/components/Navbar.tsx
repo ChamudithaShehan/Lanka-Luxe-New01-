@@ -89,44 +89,38 @@ export function Navbar() {
 
           {/* Right Action Bar */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Language Switcher (All Screens) */}
-            <div className="flex relative">
+            {/* Language Toggle (All Screens) */}
+            <div className="flex items-center bg-slate-100/80 rounded-full p-1 border border-slate-200/60 shadow-inner">
               <button
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#C8A45D] px-1 sm:px-3 py-2 cursor-pointer transition-colors"
+                onClick={() => setLang("en")}
+                className={`relative px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 z-10 ${
+                  lang === "en" ? "text-white" : "text-slate-500 hover:text-slate-800"
+                }`}
               >
-                <Globe className="w-4 h-4 text-[#C8A45D]" />
-                {LANGUAGES.find((l) => l.code === lang)?.label || "EN"}
-                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-              </button>
-
-              <AnimatePresence>
-                {langDropdownOpen && (
+                {lang === "en" && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden py-1"
-                  >
-                    {LANGUAGES.map((l) => (
-                      <button
-                        key={l.code}
-                        onClick={() => {
-                          setLang(l.code);
-                          setLangDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
-                          lang === l.code
-                            ? "bg-slate-50 text-[#C8A45D]"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-[#081A33]"
-                        }`}
-                      >
-                        {l.name}
-                      </button>
-                    ))}
-                  </motion.div>
+                    layoutId="lang-active"
+                    className="absolute inset-0 bg-[#C8A45D] rounded-full -z-10 shadow-sm"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
                 )}
-              </AnimatePresence>
+                EN
+              </button>
+              <button
+                onClick={() => setLang("ko")}
+                className={`relative px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 z-10 ${
+                  lang === "ko" ? "text-white" : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                {lang === "ko" && (
+                  <motion.div
+                    layoutId="lang-active"
+                    className="absolute inset-0 bg-[#C8A45D] rounded-full -z-10 shadow-sm"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                한국어
+              </button>
             </div>
 
             {/* Plan Your Journey CTA Button (Desktop) */}
