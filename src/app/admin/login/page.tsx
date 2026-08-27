@@ -8,6 +8,7 @@ import Link from "next/link";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,19 +18,21 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError(false);
 
-    // Accept default master keys: "lankaluxe2026", "admin123", "luxe", or founder licence "C-1734"
-    const validKeys = ["lankaluxe2026", "admin123", "luxe", "c-1734", "admin", "1234"];
-    const input = passcode.trim().toLowerCase();
+    const validUsers = ["admin", "iroshan"];
+    const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
+    
+    const user = username.trim().toLowerCase();
+    const pass = passcode.trim().toLowerCase();
 
     setTimeout(() => {
-      if (validKeys.includes(input) || input.length >= 4) {
+      if (validUsers.includes(user) && validKeys.includes(pass)) {
         localStorage.setItem("llj_admin_auth", "true");
         toast.success("Welcome back, Iroshan! Access granted.");
         router.push("/admin");
       } else {
         setError(true);
         setLoading(false);
-        toast.error("Invalid authentication passcode.");
+        toast.error("Invalid credentials.");
       }
     }, 400);
   };
@@ -55,28 +58,47 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              Admin Access Passcode
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Enter admin passcode (e.g. admin123)"
-                className="w-full px-4 py-3.5 pl-11 rounded-xl bg-[#07111E] border border-[#1B2D4A] focus:border-[#C8A45D] focus:ring-1 focus:ring-[#C8A45D] text-sm text-white placeholder-slate-500 transition-all outline-none"
-                autoFocus
-                required
-              />
-              <KeyRound className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Username
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter admin username"
+                  className="w-full px-4 py-3.5 pl-11 rounded-xl bg-[#07111E] border border-[#1B2D4A] focus:border-[#C8A45D] focus:ring-1 focus:ring-[#C8A45D] text-sm text-white placeholder-slate-500 transition-all outline-none"
+                  autoFocus
+                  required
+                />
+                <ShieldCheck className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
             </div>
-            {error && (
-              <p className="text-xs text-red-400 font-medium">
-                Incorrect passcode. Please try again.
-              </p>
-            )}
+
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  placeholder="Enter password"
+                  className="w-full px-4 py-3.5 pl-11 rounded-xl bg-[#07111E] border border-[#1B2D4A] focus:border-[#C8A45D] focus:ring-1 focus:ring-[#C8A45D] text-sm text-white placeholder-slate-500 transition-all outline-none"
+                  required
+                />
+                <KeyRound className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
+              {error && (
+                <p className="text-xs text-red-400 font-medium pt-1">
+                  Invalid username or password.
+                </p>
+              )}
+            </div>
           </div>
 
           <button
