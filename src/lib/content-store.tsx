@@ -6,26 +6,18 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
-import {
-  tours as defaultTours,
-  golfCourses as defaultGolfCourses,
-  destinations as defaultDestinations,
-  experiences as defaultExperiences,
-  posts as defaultPosts,
-  testimonials as defaultTestimonials,
-  team as defaultTeam,
-  whyUs as defaultWhyUs,
-  contact as defaultContact,
-  type Tour,
-  type GolfCourse,
-  type Destination,
-  type Experience,
-  type Post,
-  type Testimonial,
-  type TeamMember,
-  type Feature,
+import type {
+  Tour,
+  GolfCourse,
+  Destination,
+  Experience,
+  Post,
+  Testimonial,
+  TeamMember,
+  Feature,
 } from "@/data/site";
 
 export interface Inquiry {
@@ -33,6 +25,7 @@ export interface Inquiry {
   createdAt: string;
   name: string;
   email: string;
+  phone?: string;
   country?: string;
   dates?: string;
   travelers?: string;
@@ -88,38 +81,6 @@ const defaultSiteSettings: SiteSettings = {
   },
 };
 
-const initialSampleInquiries: Inquiry[] = [
-  {
-    id: "inq-1",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    name: "Park Min-jun",
-    email: "minjun.park@seoul.kr",
-    country: "South Korea",
-    dates: "Oct 15 - Oct 25, 2026",
-    travelers: "4",
-    interest: "golf",
-    tour: "The Master's Golf Expedition",
-    budget: "$15,000 - $20,000",
-    message: "We are 4 golfers wanting to play Nuwara Eliya and Shangri-La Hambantota with VIP van transport and Korean guide assistance.",
-    status: "new",
-  },
-  {
-    id: "inq-2",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    name: "Eleanor Vance",
-    email: "eleanor.vance@london.co.uk",
-    country: "United Kingdom",
-    dates: "Dec 10 - Dec 22, 2026",
-    travelers: "2",
-    interest: "luxury",
-    tour: "The Grand Ceylon Odyssey",
-    budget: "$10,000+",
-    message: "Looking for a luxury private honeymoon with tea bungalows and private leopard safari in Yala.",
-    status: "in_progress",
-    notes: "Sent initial itinerary draft via email. Awaiting hotel preferences.",
-  },
-];
-
 interface ContentContextType {
   tours: Tour[];
   golfCourses: GolfCourse[];
@@ -129,11 +90,11 @@ interface ContentContextType {
   testimonials: Testimonial[];
   team: TeamMember[];
   whyUs: Feature[];
-  contact: typeof defaultContact;
+  contact: any;
   siteSettings: SiteSettings;
   inquiries: Inquiry[];
-
-  // Mutations
+  isLoaded: boolean;
+  refreshContent: () => Promise<void>;
   saveTour: (tour: Tour) => void;
   deleteTour: (slug: string) => void;
   saveGolfCourse: (index: number, course: GolfCourse) => void;
@@ -146,61 +107,520 @@ interface ContentContextType {
   deleteExperience: (index: number) => void;
   savePost: (post: Post) => void;
   deletePost: (slug: string) => void;
-  saveContact: (contactInfo: typeof defaultContact) => void;
+  saveContact: (contactInfo: any) => void;
   saveSiteSettings: (settings: SiteSettings) => void;
-  addInquiry: (inquiry: Omit<Inquiry, "id" | "createdAt" | "status">) => string;
+  addInquiry: (inquiry: Omit<Inquiry, "id" | "createdAt" | "status">) => Promise<string>;
   updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => void;
   deleteInquiry: (id: string) => void;
   resetToDefaults: () => void;
 }
 
 const STORAGE_KEY = "llj_admin_live_content_v1";
+const SYNC_CHANNEL = "llj_realtime_sync_channel";
 
 const ContentContext = createContext<ContentContextType | null>(null);
 
-export function ContentProvider({ children }: { children: ReactNode }) {
-  const [tours, setTours] = useState<Tour[]>(defaultTours);
-  const [golfCourses, setGolfCourses] = useState<GolfCourse[]>(defaultGolfCourses);
-  const [destinations, setDestinations] = useState<Destination[]>(defaultDestinations);
-  const [experiences, setExperiences] = useState<Experience[]>(defaultExperiences);
-  const [posts, setPosts] = useState<Post[]>(defaultPosts);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
-  const [team, setTeam] = useState<TeamMember[]>(defaultTeam);
-  const [whyUs, setWhyUs] = useState<Feature[]>(defaultWhyUs);
-  const [contact, setContact] = useState(defaultContact);
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
-  const [inquiries, setInquiries] = useState<Inquiry[]>(initialSampleInquiries);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load from LocalStorage
-  useEffect(() => {
+function broadcastRealtimeSync() {
+  if (typeof window !== "undefined" && "BroadcastChannel" in window) {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.tours) setTours(parsed.tours);
-        if (parsed.golfCourses) setGolfCourses(parsed.golfCourses);
-        if (parsed.destinations) setDestinations(parsed.destinations);
-        if (parsed.experiences) setExperiences(parsed.experiences);
-        if (parsed.posts) setPosts(parsed.posts);
-        if (parsed.testimonials) setTestimonials(parsed.testimonials);
-        if (parsed.team) setTeam(parsed.team);
-        if (parsed.whyUs) setWhyUs(parsed.whyUs);
-        if (parsed.contact) setContact(parsed.contact);
-        if (parsed.siteSettings) setSiteSettings(parsed.siteSettings);
-        if (parsed.inquiries) setInquiries(parsed.inquiries);
+      const channel = new BroadcastChannel(SYNC_CHANNEL);
+      channel.postMessage({ type: "SYNC_CONTENT", timestamp: Date.now() });
+      channel.close();
+    } catch {}
+  }
+}
+
+export function ContentProvider({ children }: { children: ReactNode }) {
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [golfCourses, setGolfCourses] = useState<GolfCourse[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [whyUs, setWhyUs] = useState<Feature[]>([]);
+  const [contact, setContact] = useState<any>({});
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const isFetchingRef = useRef(false);
+
+  // 1. Core live fetch function
+  const fetchLiveContent = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    try {
+      const res = await fetch("/api/content", {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache" },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.tours)) setTours(data.tours);
+        if (Array.isArray(data.golfCourses)) setGolfCourses(data.golfCourses);
+        if (Array.isArray(data.destinations)) setDestinations(data.destinations);
+        if (Array.isArray(data.experiences)) setExperiences(data.experiences);
+        if (Array.isArray(data.posts)) setPosts(data.posts);
+        if (data.siteSettings) setSiteSettings(data.siteSettings);
+        if (data.contact && Object.keys(data.contact).length > 0) setContact(data.contact);
+        if (Array.isArray(data.whyUs)) setWhyUs(data.whyUs);
+        if (Array.isArray(data.testimonials)) setTestimonials(data.testimonials);
+        if (Array.isArray(data.team)) setTeam(data.team);
+        if (Array.isArray(data.inquiries)) {
+          setInquiries(
+            data.inquiries.map((inq: any) => ({
+              id: inq.id || inq.reference,
+              createdAt: inq.date || inq.createdAt || new Date().toISOString(),
+              name: inq.name,
+              email: inq.email,
+              phone: inq.phone,
+              country: inq.country,
+              dates: inq.travelDate,
+              travelers: inq.travelers,
+              interest: inq.interest || "luxury",
+              tour: inq.tourSlug,
+              budget: inq.budget,
+              message: inq.message,
+              status: (inq.status?.toLowerCase().replace(" ", "_") as any) || "new",
+              notes: inq.notes,
+            })),
+          );
+        }
+
+        // Cache snapshot
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch {}
       }
-    } catch (e) {
-      console.warn("Failed to load live content from storage", e);
+    } catch (err) {
+      console.warn("Real-time live fetch error:", err);
+    } finally {
+      isFetchingRef.current = false;
+      setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, []);
 
-  // Save to LocalStorage on changes
+  // 0. Instant cached hydration on first mount
   useEffect(() => {
-    if (!isLoaded) return;
     try {
-      const stateToSave = {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.tours?.length) setTours(parsed.tours);
+        if (parsed.golfCourses?.length) setGolfCourses(parsed.golfCourses);
+        if (parsed.destinations?.length) setDestinations(parsed.destinations);
+        if (parsed.experiences?.length) setExperiences(parsed.experiences);
+        if (parsed.posts?.length) setPosts(parsed.posts);
+        if (parsed.testimonials?.length) setTestimonials(parsed.testimonials);
+        if (parsed.team?.length) setTeam(parsed.team);
+        if (parsed.whyUs?.length) setWhyUs(parsed.whyUs);
+        if (parsed.contact && Object.keys(parsed.contact).length) setContact(parsed.contact);
+        if (parsed.siteSettings) setSiteSettings(parsed.siteSettings);
+        if (parsed.inquiries?.length) setInquiries(parsed.inquiries);
+      }
+    } catch (e) {
+      console.warn("Cached storage hydration error:", e);
+    }
+  }, []);
+
+  // 2. Real-time Listeners (Initial Load, Focus, Visibility, Cross-Tab Broadcast, Heartbeat Polling)
+  useEffect(() => {
+    // Initial fetch from live database
+    fetchLiveContent();
+
+    if (typeof window === "undefined") return;
+
+    // Cross-tab broadcast listener
+    let channel: BroadcastChannel | null = null;
+    if ("BroadcastChannel" in window) {
+      channel = new BroadcastChannel(SYNC_CHANNEL);
+      channel.onmessage = (event) => {
+        if (event.data?.type === "SYNC_CONTENT") {
+          fetchLiveContent();
+        }
+      };
+    }
+
+    // Refresh when user returns to tab / window
+    const handleFocus = () => fetchLiveContent();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetchLiveContent();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    // 4-second gentle heartbeat polling to pick up any database changes in real time
+    const interval = setInterval(fetchLiveContent, 4000);
+
+    return () => {
+      if (channel) channel.close();
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      clearInterval(interval);
+    };
+  }, [fetchLiveContent]);
+
+  // Tour mutations
+  const saveTour = useCallback((tour: Tour) => {
+    setTours((prev) => {
+      const idx = prev.findIndex((t) => t.slug === tour.slug);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = tour;
+        return updated;
+      }
+      return [tour, ...prev];
+    });
+
+    fetch("/api/tours", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(tour),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync tour error:", e));
+  }, []);
+
+  const deleteTour = useCallback((slug: string) => {
+    setTours((prev) => prev.filter((t) => t.slug !== slug));
+    fetch(`/api/tours/${slug}`, { method: "DELETE" })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Delete tour error:", e));
+  }, []);
+
+  // Golf Course mutations
+  const saveGolfCourse = useCallback((index: number, course: GolfCourse) => {
+    const slug = course.slug || course.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const updatedCourse = { ...course, slug };
+
+    setGolfCourses((prev) => {
+      const updated = [...prev];
+      updated[index] = updatedCourse;
+      return updated;
+    });
+
+    fetch("/api/golf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedCourse),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync golf error:", e));
+  }, []);
+
+  const addGolfCourse = useCallback((course: GolfCourse) => {
+    const slug = course.slug || course.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const newCourse = { ...course, slug };
+
+    setGolfCourses((prev) => [...prev, newCourse]);
+    fetch("/api/golf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCourse),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync golf error:", e));
+  }, []);
+
+  const deleteGolfCourse = useCallback(
+    (index: number) => {
+      const course = golfCourses[index];
+      const slug = course?.slug || course?.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setGolfCourses((prev) => prev.filter((_, i) => i !== index));
+      if (slug) {
+        fetch(`/api/golf/${slug}`, { method: "DELETE" })
+          .then(() => {
+            broadcastRealtimeSync();
+          })
+          .catch((e) => console.error("Delete golf error:", e));
+      }
+    },
+    [golfCourses],
+  );
+
+  // Destination mutations
+  const saveDestination = useCallback((dest: Destination) => {
+    const slug = dest.slug || dest.name.en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const updatedDest = { ...dest, slug };
+
+    setDestinations((prev) => {
+      const idx = prev.findIndex((d) => d.slug === slug);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = updatedDest;
+        return updated;
+      }
+      return [...prev, updatedDest];
+    });
+
+    fetch("/api/destinations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedDest),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync destination error:", e));
+  }, []);
+
+  const deleteDestination = useCallback((slug: string) => {
+    setDestinations((prev) => prev.filter((d) => d.slug !== slug));
+    fetch(`/api/destinations/${slug}`, { method: "DELETE" })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Delete destination error:", e));
+  }, []);
+
+  // Experience mutations
+  const saveExperience = useCallback((index: number, exp: Experience) => {
+    const slug = exp.slug || exp.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const updatedExp = { ...exp, slug };
+
+    setExperiences((prev) => {
+      const updated = [...prev];
+      updated[index] = updatedExp;
+      return updated;
+    });
+
+    fetch("/api/experiences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedExp),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync experience error:", e));
+  }, []);
+
+  const addExperience = useCallback((exp: Experience) => {
+    const slug = exp.slug || exp.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const newExp = { ...exp, slug };
+
+    setExperiences((prev) => [...prev, newExp]);
+    fetch("/api/experiences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newExp),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync experience error:", e));
+  }, []);
+
+  const deleteExperience = useCallback(
+    (index: number) => {
+      const exp = experiences[index];
+      const slug = exp?.slug || exp?.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setExperiences((prev) => prev.filter((_, i) => i !== index));
+      if (slug) {
+        fetch(`/api/experiences/${slug}`, { method: "DELETE" })
+          .then(() => {
+            broadcastRealtimeSync();
+          })
+          .catch((e) => console.error("Delete experience error:", e));
+      }
+    },
+    [experiences],
+  );
+
+  // Blog Post mutations
+  const savePost = useCallback((post: Post) => {
+    const slug = post.slug || post.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const updatedPost = { ...post, slug };
+
+    setPosts((prev) => {
+      const idx = prev.findIndex((p) => p.slug === slug);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = updatedPost;
+        return updated;
+      }
+      return [updatedPost, ...prev];
+    });
+
+    fetch("/api/blog", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedPost),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync blog error:", e));
+  }, []);
+
+  const deletePost = useCallback((slug: string) => {
+    setPosts((prev) => prev.filter((p) => p.slug !== slug));
+    fetch(`/api/blog/${slug}`, { method: "DELETE" })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Delete blog error:", e));
+  }, []);
+
+  // Contact & Settings mutations
+  const saveContact = useCallback((contactInfo: any) => {
+    setContact(contactInfo);
+    fetch("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contact: contactInfo }),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync contact error:", e));
+  }, []);
+
+  const saveSiteSettings = useCallback((settings: SiteSettings) => {
+    setSiteSettings(settings);
+    fetch("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ siteSettings: settings }),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync site settings error:", e));
+  }, []);
+
+  // Inquiry mutations
+  const addInquiry = useCallback(
+    async (inquiryData: Omit<Inquiry, "id" | "createdAt" | "status">) => {
+      const tempId = `LLJ-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newInquiry: Inquiry = {
+        ...inquiryData,
+        id: tempId,
+        createdAt: new Date().toISOString(),
+        status: "new",
+      };
+
+      setInquiries((prev) => [newInquiry, ...prev]);
+
+      try {
+        const res = await fetch("/api/inquiries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: inquiryData.name,
+            email: inquiryData.email,
+            phone: inquiryData.phone,
+            country: inquiryData.country,
+            tourSlug: inquiryData.tour,
+            travelers: inquiryData.travelers,
+            travelDate: inquiryData.dates,
+            duration: "",
+            budget: inquiryData.budget,
+            message: inquiryData.message,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.reference) {
+            setInquiries((prev) =>
+              prev.map((i) => (i.id === tempId ? { ...i, id: data.reference } : i)),
+            );
+            broadcastRealtimeSync();
+            return data.reference;
+          }
+        }
+      } catch (err) {
+        console.error("Save inquiry to database error:", err);
+      }
+
+      broadcastRealtimeSync();
+      return tempId;
+    },
+    [],
+  );
+
+  const updateInquiryStatus = useCallback(
+    (id: string, status: Inquiry["status"], notes?: string) => {
+      setInquiries((prev) =>
+        prev.map((inq) =>
+          inq.id === id
+            ? {
+                ...inq,
+                status,
+                ...(notes !== undefined ? { notes } : {}),
+              }
+            : inq,
+        ),
+      );
+
+      const dbStatus =
+        status === "new"
+          ? "New"
+          : status === "in_progress"
+            ? "In Progress"
+            : status === "contacted"
+              ? "Contacted"
+              : status === "booked"
+                ? "Booked"
+                : "Archived";
+
+      fetch(`/api/inquiries/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: dbStatus, notes }),
+      })
+        .then(() => {
+          broadcastRealtimeSync();
+        })
+        .catch((e) => console.error("Update inquiry error:", e));
+    },
+    [],
+  );
+
+  const deleteInquiry = useCallback((id: string) => {
+    setInquiries((prev) => prev.filter((inq) => inq.id !== id));
+    fetch(`/api/inquiries/${id}`, { method: "DELETE" })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Delete inquiry error:", e));
+  }, []);
+
+  const resetToDefaults = useCallback(() => {
+    setTours([]);
+    setGolfCourses([]);
+    setDestinations([]);
+    setExperiences([]);
+    setPosts([]);
+    setTestimonials([]);
+    setTeam([]);
+    setWhyUs([]);
+    setContact({});
+    setSiteSettings(defaultSiteSettings);
+    setInquiries([]);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    broadcastRealtimeSync();
+  }, []);
+
+  return (
+    <ContentContext.Provider
+      value={{
         tours,
         golfCourses,
         destinations,
@@ -212,211 +632,37 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         contact,
         siteSettings,
         inquiries,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
-    } catch (e) {
-      console.warn("Failed to save live content", e);
-    }
-  }, [
-    isLoaded,
-    tours,
-    golfCourses,
-    destinations,
-    experiences,
-    posts,
-    testimonials,
-    team,
-    whyUs,
-    contact,
-    siteSettings,
-    inquiries,
-  ]);
-
-  const saveTour = useCallback((tour: Tour) => {
-    setTours((prev) => {
-      const idx = prev.findIndex((t) => t.slug === tour.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = tour;
-        return updated;
-      }
-      return [tour, ...prev];
-    });
-  }, []);
-
-  const deleteTour = useCallback((slug: string) => {
-    setTours((prev) => prev.filter((t) => t.slug !== slug));
-  }, []);
-
-  const saveGolfCourse = useCallback((index: number, course: GolfCourse) => {
-    setGolfCourses((prev) => {
-      const updated = [...prev];
-      if (index >= 0 && index < updated.length) {
-        updated[index] = course;
-      }
-      return updated;
-    });
-  }, []);
-
-  const addGolfCourse = useCallback((course: GolfCourse) => {
-    setGolfCourses((prev) => [...prev, course]);
-  }, []);
-
-  const deleteGolfCourse = useCallback((index: number) => {
-    setGolfCourses((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const saveDestination = useCallback((dest: Destination) => {
-    setDestinations((prev) => {
-      const idx = prev.findIndex((d) => d.slug === dest.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = dest;
-        return updated;
-      }
-      return [dest, ...prev];
-    });
-  }, []);
-
-  const deleteDestination = useCallback((slug: string) => {
-    setDestinations((prev) => prev.filter((d) => d.slug !== slug));
-  }, []);
-
-  const saveExperience = useCallback((index: number, exp: Experience) => {
-    setExperiences((prev) => {
-      const updated = [...prev];
-      if (index >= 0 && index < updated.length) {
-        updated[index] = exp;
-      }
-      return updated;
-    });
-  }, []);
-
-  const addExperience = useCallback((exp: Experience) => {
-    setExperiences((prev) => [...prev, exp]);
-  }, []);
-
-  const deleteExperience = useCallback((index: number) => {
-    setExperiences((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const savePost = useCallback((post: Post) => {
-    setPosts((prev) => {
-      const idx = prev.findIndex((p) => p.slug === post.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = post;
-        return updated;
-      }
-      return [post, ...prev];
-    });
-  }, []);
-
-  const deletePost = useCallback((slug: string) => {
-    setPosts((prev) => prev.filter((p) => p.slug !== slug));
-  }, []);
-
-  const saveContact = useCallback((contactInfo: typeof defaultContact) => {
-    setContact(contactInfo);
-  }, []);
-
-  const saveSiteSettings = useCallback((settings: SiteSettings) => {
-    setSiteSettings(settings);
-  }, []);
-
-  const addInquiry = useCallback(
-    (inq: Omit<Inquiry, "id" | "createdAt" | "status">) => {
-      const newId = `inq-${Date.now()}`;
-      const newEntry: Inquiry = {
-        ...inq,
-        id: newId,
-        createdAt: new Date().toISOString(),
-        status: "new",
-      };
-      setInquiries((prev) => [newEntry, ...prev]);
-      return newId;
-    },
-    [],
-  );
-
-  const updateInquiryStatus = useCallback(
-    (id: string, status: Inquiry["status"], notes?: string) => {
-      setInquiries((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, status, ...(notes !== undefined ? { notes } : {}) }
-            : item,
-        ),
-      );
-    },
-    [],
-  );
-
-  const deleteInquiry = useCallback((id: string) => {
-    setInquiries((prev) => prev.filter((item) => item.id !== id));
-  }, []);
-
-  const resetToDefaults = useCallback(() => {
-    setTours(defaultTours);
-    setGolfCourses(defaultGolfCourses);
-    setDestinations(defaultDestinations);
-    setExperiences(defaultExperiences);
-    setPosts(defaultPosts);
-    setTestimonials(defaultTestimonials);
-    setTeam(defaultTeam);
-    setWhyUs(defaultWhyUs);
-    setContact(defaultContact);
-    setSiteSettings(defaultSiteSettings);
-    setInquiries(initialSampleInquiries);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
-      console.warn(e);
-    }
-  }, []);
-
-  const value = {
-    tours,
-    golfCourses,
-    destinations,
-    experiences,
-    posts,
-    testimonials,
-    team,
-    whyUs,
-    contact,
-    siteSettings,
-    inquiries,
-
-    saveTour,
-    deleteTour,
-    saveGolfCourse,
-    addGolfCourse,
-    deleteGolfCourse,
-    saveDestination,
-    deleteDestination,
-    saveExperience,
-    addExperience,
-    deleteExperience,
-    savePost,
-    deletePost,
-    saveContact,
-    saveSiteSettings,
-    addInquiry,
-    updateInquiryStatus,
-    deleteInquiry,
-    resetToDefaults,
-  };
-
-  return (
-    <ContentContext.Provider value={value}>{children}</ContentContext.Provider>
+        isLoaded,
+        refreshContent: fetchLiveContent,
+        saveTour,
+        deleteTour,
+        saveGolfCourse,
+        addGolfCourse,
+        deleteGolfCourse,
+        saveDestination,
+        deleteDestination,
+        saveExperience,
+        addExperience,
+        deleteExperience,
+        savePost,
+        deletePost,
+        saveContact,
+        saveSiteSettings,
+        addInquiry,
+        updateInquiryStatus,
+        deleteInquiry,
+        resetToDefaults,
+      }}
+    >
+      {children}
+    </ContentContext.Provider>
   );
 }
 
 export function useContentStore() {
-  const ctx = useContext(ContentContext);
-  if (!ctx) {
+  const context = useContext(ContentContext);
+  if (!context) {
     throw new Error("useContentStore must be used within a ContentProvider");
   }
-  return ctx;
+  return context;
 }

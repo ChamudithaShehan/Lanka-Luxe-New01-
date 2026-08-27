@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  name         String   @default("Iroshan Jayawickrame")
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Tour {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  nameEn      String
+  nameKo      String?
+  category    String
+  duration    String
+  nights      Int?
+  price       String
+  image       String   @db.Text
+  badge       String?
+  shortEn     String?  @db.Text
+  shortKo     String?  @db.Text
+  overviewEn  String?  @db.Text
+  overviewKo  String?  @db.Text
+  highlights  String   @db.Text // JSON stringified string[]
+  inclusions  String   @db.Text // JSON stringified string[]
+  exclusions  String   @db.Text // JSON stringified string[]
+  hotels      String   @db.Text // JSON stringified string[]
+  categories  String?  @db.Text // JSON stringified string[]
+  itinerary   String   @db.LongText // JSON stringified ItineraryDay[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GolfCourse {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  location      String
+  holes         Int      @default(18)
+  par           Int      @default(72)
+  duration      String   @default("1 Day")
+  rounds        Int      @default(1)
+  nights        Int      @default(1)
+  image         String   @db.Text
+  textEn        String   @db.Text
+  textKo        String?  @db.Text
+  hotelPairing  String?
+  features      String   @db.Text // JSON stringified string[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Destination {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  nameEn        String
+  nameKo        String?
+  region        String
+  duration      String
+  image         String   @db.Text
+  shortEn       String   @db.Text
+  shortKo       String?  @db.Text
+  descriptionEn String?  @db.Text
+  descriptionKo String?  @db.Text
+  highlights    String   @db.Text // JSON stringified string[]
+  mapX          Float    @default(50)
+  mapY          Float    @default(50)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Experience {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  titleEn       String
+  titleKo       String?
+  category      String
+  duration      String
+  location      String
+  image         String   @db.Text
+  descriptionEn String   @db.Text
+  descriptionKo String?  @db.Text
+  highlights    String   @db.Text // JSON stringified string[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  titleEn     String
+  titleKo     String?
+  category    String
+  author      String   @default("Iroshan Jayawickrame")
+  readTime    String   @default("5 min read")
+  publishedAt String
+  image       String   @db.Text
+  excerptEn   String   @db.Text
+  excerptKo   String?  @db.Text
+  contentEn   String?  @db.LongText
+  contentKo   String?  @db.LongText
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inquiry {
+  id          String   @id @default(cuid())
+  reference   String   @unique
+  name        String
+  email       String
+  phone       String
+  country     String?
+  tourSlug    String?
+  travelers   String?
+  travelDate  String?
+  duration    String?
+  budget      String?
+  message     String?  @db.Text
+  status      String   @default("New")
+  notes       String?  @db.Text
+  source      String   @default("Website Form")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.LongText // JSON stringified value
+  updatedAt DateTime @updatedAt
+}

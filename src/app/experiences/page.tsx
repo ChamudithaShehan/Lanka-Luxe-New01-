@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
@@ -12,11 +13,19 @@ export default function ExperiencesPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const { experiences } = useContentStore();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredExperiences = experiences.filter((exp) => {
+    const titleMatch = tl(exp.title).toLowerCase().includes(searchQuery.toLowerCase());
+    const textMatch = exp.text ? tl(exp.text).toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    const descMatch = exp.description ? tl(exp.description).toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    return searchQuery ? (titleMatch || textMatch || descMatch) : true;
+  });
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
       {/* Header */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link href="/" className="hover:underline">
@@ -35,12 +44,27 @@ export default function ExperiencesPage() {
               ? "프라이빗 야생 사파리부터 고산지대 기차 여행, 차밭 방갈로와 바다 위 아유르베다까지 — 잊지 못할 스리랑카만의 순간들을 만듭니다."
               : "Private naturalists in the leopard reserves, reserved observation carriages through cloud forests, and dinner served alone on candlelit beaches."}
           </p>
+
+          {/* Search Box */}
+          <div className="max-w-md">
+            <input
+              type="text"
+              placeholder={
+                lang === "ko"
+                  ? "경험 또는 테마 검색 (예: 사파리, 열차, 아유르베다)..."
+                  : "Search experiences (e.g. Safari, Train, Catamaran, Tea)..."
+              }
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
+            />
+          </div>
         </Reveal>
       </section>
 
       {/* 6 In-Depth Experience Cards */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 mb-28">
-        {experiences.map((exp, idx) => {
+        {filteredExperiences.map((exp, idx) => {
           const isEven = idx % 2 === 0;
 
           return (

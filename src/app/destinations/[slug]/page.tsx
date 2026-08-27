@@ -16,9 +16,20 @@ export default function DestinationDetailPage() {
   const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
-  const { destinations, tours } = useContentStore();
+  const { destinations, tours, isLoaded } = useContentStore();
 
   const dest = destinations.find((d) => d.slug === slug);
+
+  if (!dest && !isLoaded) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center pt-28 px-4 text-center bg-[#F9FAFB] text-slate-800">
+        <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+          Loading Destination Guide...
+        </p>
+      </div>
+    );
+  }
 
   if (!dest) {
     return (

@@ -16,7 +16,6 @@ import { TourCard } from "@/components/TourCard";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { BlogCard } from "@/components/BlogCard";
-import { InteractiveSriLankaMap } from "@/components/InteractiveSriLankaMap";
 import { InquiryForm } from "@/components/InquiryForm";
 import { Counter } from "@/components/Counter";
 import {

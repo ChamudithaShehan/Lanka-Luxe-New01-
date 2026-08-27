@@ -20,11 +20,14 @@ import Link from "next/link";
 export default function AdminDestinationsPage() {
   const { destinations, saveDestination, deleteDestination } =
     useContentStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("All");
   const [editingDest, setEditingDest] = useState<Destination | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmSlug, setDeleteConfirmSlug] = useState<string | null>(null);
 
   const regions = [
+    "All",
     "Cultural Triangle",
     "Hill Country",
     "South Coast",
@@ -33,6 +36,18 @@ export default function AdminDestinationsPage() {
     "East Coast",
     "Northern Heritage",
   ];
+
+  const filteredDestinations = destinations.filter((dest) => {
+    const matchesSearch =
+      dest.name.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (dest.name.ko || "").includes(searchTerm) ||
+      dest.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      dest.region.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRegion =
+      selectedRegion === "All" ||
+      dest.region.toLowerCase().includes(selectedRegion.toLowerCase());
+    return matchesSearch && matchesRegion;
+  });
 
   const handleCreateNew = () => {
     const newDest: Destination = {
@@ -94,10 +109,10 @@ export default function AdminDestinationsPage() {
         <div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-wide flex items-center gap-3">
             <MapPin className="w-7 h-7 text-[#C8A45D]" />
-            Destinations & Island Map Manager
+            Destinations & Regions Manager
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 font-normal mt-1">
-            Manage Sri Lanka regions, curated destination guides, map pin coordinates, and recommended stays.
+            Manage Sri Lanka regions, curated destination guides, key highlights, and recommended stays.
           </p>
         </div>
 
@@ -110,9 +125,38 @@ export default function AdminDestinationsPage() {
         </button>
       </div>
 
+      {/* Search & Region Filters */}
+      <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full sm:w-80">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search destinations by name, region, slug..."
+            className="w-full px-4 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white placeholder-slate-500 focus:border-[#C8A45D] outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          {regions.map((reg) => (
+            <button
+              key={reg}
+              onClick={() => setSelectedRegion(reg)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                selectedRegion === reg
+                  ? "bg-[#C8A45D] text-[#081426]"
+                  : "bg-[#07111E] text-slate-400 hover:text-white border border-[#1B2D4A]"
+              }`}
+            >
+              {reg}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Destinations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {destinations.map((dest) => (
+        {filteredDestinations.map((dest) => (
           <div
             key={dest.slug}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"

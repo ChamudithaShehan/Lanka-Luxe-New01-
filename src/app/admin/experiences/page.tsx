@@ -22,13 +22,23 @@ export default function AdminExperiencesPage() {
     addExperience,
     deleteExperience,
   } = useContentStore();
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingExp, setEditingExp] = useState<Experience | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
 
+  const filteredExperiences = experiences.filter((exp) => {
+    return (
+      exp.title.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (exp.title.ko || "").includes(searchTerm) ||
+      (exp.text?.en && exp.text.en.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
+
   const handleCreateNew = () => {
     const newExp: Experience = {
+      slug: `experience-${Date.now().toString().slice(-4)}`,
       title: {
         en: "Bespoke Ocean & Island Safari",
         ko: "프라이빗 해양 & 섬 탐험",
@@ -96,9 +106,22 @@ export default function AdminExperiencesPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full sm:w-80">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search experiences by title, narrative..."
+            className="w-full px-4 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white placeholder-slate-500 focus:border-[#C8A45D] outline-none"
+          />
+        </div>
+      </div>
+
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {experiences.map((exp, index) => (
+        {filteredExperiences.map((exp, index) => (
           <div
             key={index}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
@@ -123,10 +146,10 @@ export default function AdminExperiencesPage() {
                   {exp.title.ko}
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed pt-1">
-                  {exp.text.en}
+                  {exp.text?.en || exp.description?.en || ""}
                 </p>
                 <p className="text-xs text-slate-500 italic">
-                  {exp.text.ko}
+                  {exp.text?.ko || exp.description?.ko || ""}
                 </p>
               </div>
             </div>
@@ -247,11 +270,14 @@ export default function AdminExperiencesPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={editingExp.text.en}
+                    value={editingExp.text?.en || ""}
                     onChange={(e) =>
                       setEditingExp({
                         ...editingExp,
-                        text: { ...editingExp.text, en: e.target.value },
+                        text: {
+                          en: e.target.value,
+                          ko: editingExp.text?.ko || "",
+                        },
                       })
                     }
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
@@ -265,11 +291,14 @@ export default function AdminExperiencesPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={editingExp.text.ko}
+                    value={editingExp.text?.ko || ""}
                     onChange={(e) =>
                       setEditingExp({
                         ...editingExp,
-                        text: { ...editingExp.text, ko: e.target.value },
+                        text: {
+                          en: editingExp.text?.en || "",
+                          ko: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"

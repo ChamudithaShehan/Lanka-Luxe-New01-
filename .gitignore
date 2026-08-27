@@ -43,6 +43,12 @@ lerna-debug.log*
 !.env.example
 *.local
 
+# Database
+*.db
+*.db-journal
+dev.db
+prisma/dev.db
+
 # Vercel
 .vercel
 

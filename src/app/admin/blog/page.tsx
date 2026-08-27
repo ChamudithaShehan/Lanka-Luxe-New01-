@@ -19,11 +19,14 @@ import Link from "next/link";
 
 export default function AdminBlogPage() {
   const { posts, savePost, deletePost } = useContentStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmSlug, setDeleteConfirmSlug] = useState<string | null>(null);
 
   const blogCategories = [
+    "All",
     "Golf in Sri Lanka",
     "Luxury Travel",
     "Sri Lankan Culture",
@@ -32,6 +35,17 @@ export default function AdminBlogPage() {
     "Korean Travel Guides",
     "Culinary & Tea",
   ];
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (post.title.ko || "").includes(searchTerm) ||
+      post.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCat =
+      selectedCategory === "All" || post.category === selectedCategory;
+    return matchesSearch && matchesCat;
+  });
 
   const handleCreateNew = () => {
     const today = new Date().toLocaleDateString("en-GB", {
@@ -108,9 +122,38 @@ export default function AdminBlogPage() {
         </button>
       </div>
 
+      {/* Search & Category Filter Bar */}
+      <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full sm:w-80">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search articles by title, category..."
+            className="w-full px-4 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white placeholder-slate-500 focus:border-[#C8A45D] outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          {blogCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                selectedCategory === cat
+                  ? "bg-[#C8A45D] text-[#081426]"
+                  : "bg-[#07111E] text-slate-400 hover:text-white border border-[#1B2D4A]"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <div
             key={post.slug}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"

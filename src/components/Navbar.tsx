@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
+import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "./LuxuryButton";
 import { Menu, X, Phone, MessageSquare } from "lucide-react";
-import { contact, img } from "@/data/site";
+import { img } from "@/data/site";
 import { AnimatePresence, motion } from "motion/react";
 
 export function Navbar() {
@@ -16,6 +17,7 @@ export function Navbar() {
 
   const { lang, setLang, t } = useI18n();
   const { openInquiry } = useInquiry();
+  const { contact } = useContentStore();
   const pathname = usePathname() || "/";
 
   useEffect(() => {

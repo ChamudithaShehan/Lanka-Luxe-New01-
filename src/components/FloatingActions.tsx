@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { MessageSquare, ArrowUp } from "lucide-react";
-import { contact } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
+import { useContentStore } from "@/lib/content-store";
 
 const KakaoIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -14,6 +14,7 @@ const KakaoIcon = ({ className }: { className?: string }) => (
 export function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
   const { lang } = useI18n();
+  const { contact } = useContentStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,32 +42,36 @@ export function FloatingActions() {
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-3">
       {/* KakaoTalk Button */}
-      <a
-        href={`https://pf.kakao.com/${contact.kakao.replace('@', '_')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on KakaoTalk"
-        className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#FEE500] text-[#381E1F] shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#FEE500]/30"
-      >
-        <KakaoIcon className="w-6 h-6" />
-        <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
-          {lang === "ko" ? "카카오톡 실시간 상담" : "Chat on KakaoTalk"}
-        </span>
-      </a>
+      {contact?.kakao && (
+        <a
+          href={`https://pf.kakao.com/${contact.kakao.replace('@', '_')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on KakaoTalk"
+          className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#FEE500] text-[#381E1F] shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#FEE500]/30"
+        >
+          <KakaoIcon className="w-6 h-6" />
+          <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+            {lang === "ko" ? "카카오톡 실시간 상담" : "Chat on KakaoTalk"}
+          </span>
+        </a>
+      )}
 
       {/* WhatsApp Button */}
-      <a
-        href={`https://wa.me/${contact.whatsapp}?text=${whatsappMsg}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#25D366] text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#25D366]/30"
-      >
-        <MessageSquare className="w-5 h-5 fill-white text-white" />
-        <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
-          {lang === "ko" ? "WhatsApp 실시간 상담" : "Chat on WhatsApp"}
-        </span>
-      </a>
+      {contact?.whatsapp && (
+        <a
+          href={`https://wa.me/${contact.whatsapp}?text=${whatsappMsg}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp"
+          className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#25D366] text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#25D366]/30"
+        >
+          <MessageSquare className="w-5 h-5 fill-white text-white" />
+          <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+            {lang === "ko" ? "WhatsApp 실시간 상담" : "Chat on WhatsApp"}
+          </span>
+        </a>
+      )}
 
       {/* Back to Top Button */}
       <button

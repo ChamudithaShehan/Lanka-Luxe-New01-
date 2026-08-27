@@ -5,17 +5,17 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { DestinationCard } from "@/components/DestinationCard";
-import { InteractiveSriLankaMap } from "@/components/InteractiveSriLankaMap";
 import { SectionHeader } from "@/components/SectionHeader";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { useInquiry } from "@/lib/inquiry-context";
 
 export default function DestinationsPage() {
-  const { t, lang } = useI18n();
+  const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const { destinations } = useContentStore();
   const [selectedRegion, setSelectedRegion] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const regions = [
     "All",
@@ -27,12 +27,17 @@ export default function DestinationsPage() {
     "East Coast",
   ];
 
-  const filtered =
-    selectedRegion === "All"
-      ? destinations
-      : destinations.filter((d) =>
-          d.region.toLowerCase().includes(selectedRegion.toLowerCase()),
-        );
+  const filtered = destinations.filter((d) => {
+    const matchesRegion =
+      selectedRegion === "All" ||
+      d.region.toLowerCase().includes(selectedRegion.toLowerCase());
+    const matchesSearch =
+      tl(d.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (d.short && tl(d.short).toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesRegion && matchesSearch;
+  });
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
@@ -59,24 +64,6 @@ export default function DestinationsPage() {
         </Reveal>
       </section>
 
-      {/* Interactive Map Section */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
-        <SectionHeader
-          eyebrow="Interactive Atlas"
-          title={
-            <>
-              Interactive Island <span className="text-[#C8A45D]">Map</span>
-            </>
-          }
-          subtitle={
-            lang === "ko"
-              ? "지도의 각 지역 핀을 선택하여 대표 명소와 추천 체류 기간을 확인하세요."
-              : "Hover and click pins across the island to inspect highlights and travel pairings."
-          }
-        />
-        <InteractiveSriLankaMap />
-      </section>
-
       {/* Destination Grid with Filter */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
         <SectionHeader
@@ -87,6 +74,21 @@ export default function DestinationsPage() {
             </>
           }
         />
+
+        {/* Search & Region Filter */}
+        <div className="max-w-md mx-auto mb-6">
+          <input
+            type="text"
+            placeholder={
+              lang === "ko"
+                ? "여행지 이름 또는 지역 검색 (예: 시기리야, 갈레, 캔디)..."
+                : "Search destinations by name or region (e.g. Sigiriya, Galle)..."
+            }
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
+          />
+        </div>
 
         <div className="flex items-center justify-center flex-wrap gap-2 mb-12">
           {regions.map((reg) => (

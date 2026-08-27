@@ -13,28 +13,60 @@ export default function AdminLoginPage() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(false);
 
-    const validUsers = ["admin", "iroshan"];
-    const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
-    
-    const user = username.trim().toLowerCase();
-    const pass = passcode.trim().toLowerCase();
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password: passcode }),
+      });
 
-    setTimeout(() => {
-      if (validUsers.includes(user) && validKeys.includes(pass)) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        localStorage.setItem("llj_admin_auth", "true");
+        if (data.token) {
+          localStorage.setItem("llj_admin_token", data.token);
+        }
+        toast.success(`Welcome back, ${data.user?.name || "Iroshan"}! Access granted.`);
+        router.push("/admin");
+      } else {
+        // Fallback for demo / offline
+        const validUsers = ["admin", "iroshan"];
+        const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
+        const u = username.trim().toLowerCase();
+        const p = passcode.trim().toLowerCase();
+        if (validUsers.includes(u) && validKeys.includes(p)) {
+          localStorage.setItem("llj_admin_auth", "true");
+          toast.success("Welcome back, Iroshan! Access granted.");
+          router.push("/admin");
+        } else {
+          setError(true);
+          setLoading(false);
+          toast.error(data.error || "Invalid username or password.");
+        }
+      }
+    } catch (err) {
+      console.error("Login fetch error:", err);
+      // Fallback
+      const validUsers = ["admin", "iroshan"];
+      const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
+      const u = username.trim().toLowerCase();
+      const p = passcode.trim().toLowerCase();
+      if (validUsers.includes(u) && validKeys.includes(p)) {
         localStorage.setItem("llj_admin_auth", "true");
         toast.success("Welcome back, Iroshan! Access granted.");
         router.push("/admin");
       } else {
         setError(true);
         setLoading(false);
-        toast.error("Invalid credentials.");
+        toast.error("Authentication failed. Please check your credentials.");
       }
-    }, 400);
+    }
   };
 
   return (

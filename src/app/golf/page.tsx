@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
@@ -22,6 +23,15 @@ export default function GolfPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const { golfCourses, tours } = useContentStore();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredGolfCourses = golfCourses.filter((course) => {
+    const nameMatch = course.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const locMatch = course.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const hotelMatch = course.hotel ? course.hotel.toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    const textMatch = course.text ? tl(course.text).toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    return searchQuery ? (nameMatch || locMatch || hotelMatch || textMatch) : true;
+  });
 
   const golfTour = tours.find((t) => t.slug === "ultimate-sri-lanka-golf-escape");
 
@@ -166,8 +176,23 @@ export default function GolfPage() {
           }
         />
 
+        {/* Search Golf Courses */}
+        <div className="max-w-md mx-auto mb-10">
+          <input
+            type="text"
+            placeholder={
+              lang === "ko"
+                ? "골프장 이름, 위치, 호텔 검색..."
+                : "Search championship courses by name, region, hotel..."
+            }
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {golfCourses.map((course) => (
+          {filteredGolfCourses.map((course) => (
             <Reveal key={course.name} variant="fade-up">
               <GolfCourseCard course={course} />
             </Reveal>

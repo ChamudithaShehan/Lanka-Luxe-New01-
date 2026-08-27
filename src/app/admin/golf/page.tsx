@@ -20,13 +20,23 @@ import Link from "next/link";
 export default function AdminGolfPage() {
   const { golfCourses, saveGolfCourse, addGolfCourse, deleteGolfCourse } =
     useContentStore();
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingCourse, setEditingCourse] = useState<GolfCourse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
 
+  const filteredGolfCourses = golfCourses.filter((course) => {
+    return (
+      course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (course.hotel && course.hotel.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
+
   const handleCreateNew = () => {
     const newCourse: GolfCourse = {
+      slug: `golf-${Date.now().toString().slice(-4)}`,
       name: "New Championship Golf Course",
       location: "Colombo / Central Province",
       image:
@@ -96,9 +106,22 @@ export default function AdminGolfPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full sm:w-80">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search golf courses by name, location, hotel..."
+            className="w-full px-4 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white placeholder-slate-500 focus:border-[#C8A45D] outline-none"
+          />
+        </div>
+      </div>
+
       {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {golfCourses.map((course, index) => (
+        {filteredGolfCourses.map((course, index) => (
           <div
             key={index}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"

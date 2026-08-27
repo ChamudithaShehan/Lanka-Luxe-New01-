@@ -5,7 +5,6 @@ import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "./LuxuryButton";
 import { CheckCircle2, Sparkles, Send } from "lucide-react";
-import { contact } from "@/data/site";
 
 interface InquiryFormProps {
   initialTour?: string | undefined;
@@ -23,7 +22,7 @@ export function InquiryForm({
   variant = "light",
 }: InquiryFormProps) {
   const { t, lang } = useI18n();
-  const { addInquiry } = useContentStore();
+  const { addInquiry, contact } = useContentStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,20 +42,18 @@ export function InquiryForm({
     "idle",
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) return;
 
     setStatus("submitting");
     try {
-      addInquiry(formData);
+      await addInquiry(formData);
     } catch (err) {
       console.warn("Could not save to store", err);
     }
-    setTimeout(() => {
-      setStatus("success");
-      if (onSuccess) onSuccess();
-    }, 800);
+    setStatus("success");
+    if (onSuccess) onSuccess();
   };
 
   const isDark = variant === "dark";
@@ -89,16 +86,18 @@ export function InquiryForm({
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <LuxuryButton
-            variant="pill"
-            href={`https://wa.me/${contact.whatsapp}?text=${whatsappMsg}`}
-            isExternal
-            withArrow
-          >
-            {lang === "ko"
-              ? "WhatsApp으로 즉시 대화하기"
-              : "Chat with Specialist on WhatsApp"}
-          </LuxuryButton>
+          {contact?.whatsapp && (
+            <LuxuryButton
+              variant="pill"
+              href={`https://wa.me/${contact.whatsapp}?text=${whatsappMsg}`}
+              isExternal
+              withArrow
+            >
+              {lang === "ko"
+                ? "WhatsApp으로 즉시 대화하기"
+                : "Chat with Specialist on WhatsApp"}
+            </LuxuryButton>
+          )}
           <button
             onClick={() => setStatus("idle")}
             className={`text-xs uppercase tracking-widest underline ${

@@ -14,11 +14,17 @@ export default function BlogPage() {
   const { t, tl, lang } = useI18n();
   const { posts } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPosts =
-    selectedCategory === "All"
-      ? posts
-      : posts.filter((p) => p.category === selectedCategory);
+  const filteredPosts = posts.filter((p) => {
+    const matchesCat =
+      selectedCategory === "All" || p.category === selectedCategory;
+    const matchesSearch =
+      tl(p.title).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.excerpt && tl(p.excerpt).toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCat && matchesSearch;
+  });
 
   const featured = posts[0];
 
@@ -101,22 +107,36 @@ export default function BlogPage() {
         </section>
       )}
 
-      {/* Category Tabs */}
+      {/* Category Tabs & Search Bar */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="flex items-center justify-start flex-wrap gap-2 pb-2">
-          {blogCategories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                selectedCategory === cat
-                  ? "bg-[#0B1F3A] text-white shadow-sm"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between mb-6">
+          <input
+            type="text"
+            placeholder={
+              lang === "ko"
+                ? "칼럼 제목 또는 주제 검색 (예: 골프, 사파리, 럭셔리)..."
+                : "Search journal articles (e.g. Golf, Tea, Safari, Tips)..."
+            }
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:max-w-xs px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
+          />
+
+          <div className="flex items-center justify-start flex-wrap gap-2 pb-2">
+            {blogCategories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-[#0B1F3A] text-white shadow-sm"
+                    : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
