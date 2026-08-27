@@ -106,34 +106,58 @@ export function Footer() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-            <div className="flex items-center gap-3 order-3 lg:order-1">
-              <img src={img.logo} alt="Lanka Luxe Journeys Logo" className="h-11 w-auto object-contain bg-white/95 rounded-full p-1 shadow-md" />
-              <div className="text-xs text-mist/70">
-                © {new Date().getFullYear()} Lanka Luxe Journeys.<br />All Rights Reserved.
+          {/* Company Description & Trust Badge */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 mb-10 border-b border-white/10 text-left">
+            <div className="md:col-span-4 flex items-center gap-4">
+              <img src={img.logo} alt="Lanka Luxe Journeys Logo" className="h-16 w-auto object-contain bg-white/95 rounded-2xl p-2 shadow-lg" />
+              <div>
+                <h3 className="font-display text-xl font-bold text-white tracking-wide">Lanka Luxe Journeys</h3>
+                <p className="text-xs text-[#C8A45D] font-medium tracking-wider uppercase mt-0.5">
+                  Curated Luxury Experiences in Sri Lanka
+                </p>
+                <div className="text-[11px] text-mist/70 mt-1">
+                  SLTDA Registered Guide Licence: <strong className="text-white">C-1734</strong>
+                </div>
               </div>
             </div>
+
+            <div className="md:col-span-8">
+              <p className="text-xs sm:text-sm text-mist/80 font-normal leading-relaxed">
+                {lang === "ko"
+                  ? "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다. 편안함, 진정한 경험, 세심한 1:1 맞춤 서비스를 바탕으로 문화 탐방부터 야생 사파리, 차밭, 해변, 골프 및 웰니스까지 고객만을 위한 잊지 못할 여정을 설계합니다."
+                  : "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry. We specialize in private, tailor-made journeys for travelers who value comfort, authentic experiences and personal service."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1">
+              © {new Date().getFullYear()} Lanka Luxe Journeys. All Rights Reserved. · Founder: Iroshan Jayawickrame (SLTDA C-1734)
+            </div>
             
-            <nav className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm text-white font-medium uppercase tracking-[0.15em] order-1 lg:order-2">
+            <nav className="flex flex-wrap items-center justify-center gap-5 md:gap-8 text-xs sm:text-sm text-white font-medium uppercase tracking-[0.15em] order-1 lg:order-2">
               <Link to="/" className="hover:text-gold transition-colors">{t("nav.home")}</Link>
+              <Link to="/about" className="hover:text-gold transition-colors">{t("nav.about")}</Link>
               <Link to="/tours" className="hover:text-gold transition-colors">{t("nav.tours")}</Link>
+              <Link to="/golf" className="hover:text-gold transition-colors">{t("nav.golf")}</Link>
               <Link to="/destinations" className="hover:text-gold transition-colors">{t("nav.destinations")}</Link>
+              <Link to="/experiences" className="hover:text-gold transition-colors">{t("nav.experiences")}</Link>
               <Link to="/blog" className="hover:text-gold transition-colors">{t("nav.blog")}</Link>
               <Link to="/contact" className="hover:text-gold transition-colors">{t("nav.contact")}</Link>
             </nav>
 
-            <div className="flex items-center justify-center gap-4 order-2 lg:order-3">
-              <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
-                <Facebook className="w-4 h-4" />
+            <div className="flex items-center justify-center gap-3 order-2 lg:order-3">
+              <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
+                <Facebook className="w-3.5 h-3.5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
-                <Twitter className="w-4 h-4" />
+              <a href="#" aria-label="Twitter" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
+                <Twitter className="w-3.5 h-3.5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
-                <Instagram className="w-4 h-4" />
+              <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
+                <Instagram className="w-3.5 h-3.5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
-                <Linkedin className="w-4 h-4" />
+              <a href="#" aria-label="LinkedIn" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-gold hover:text-navy hover:border-gold transition-all">
+                <Linkedin className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>

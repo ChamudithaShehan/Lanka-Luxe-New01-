@@ -55,50 +55,50 @@ export type Feature = { no: string; title: Localized; text: Localized };
 export const whyUs: Feature[] = [
   {
     no: "01",
-    title: { en: "Tailor-Made Journeys", ko: "맞춤 여행 설계" },
+    title: { en: "Personalized & Tailor-Made Journeys", ko: "맞춤형 프라이빗 여정" },
     text: {
-      en: "No fixed departures. Every itinerary is written from a blank page around your pace, taste and budget.",
-      ko: "정해진 출발일이 없습니다. 고객의 속도와 취향에 맞춰 백지에서 일정을 설계합니다.",
+      en: "Every journey is carefully planned from a blank page to match your interests, pace and travel style.",
+      ko: "정해진 일정 없이 고객의 취향과 속도에 맞추어 처음부터 새롭게 맞춤 설계합니다.",
     },
   },
   {
     no: "02",
-    title: { en: "Luxury Travel Expertise", ko: "럭셔리 여행 전문성" },
+    title: { en: "10+ Years Experience", ko: "10년 이상의 전문성" },
     text: {
-      en: "Eighteen years placing guests in the island's finest villas, tented camps and heritage estates.",
-      ko: "18년간 스리랑카 최고의 빌라와 텐티드 캠프, 헤리티지 호텔을 안내해 왔습니다.",
+      en: "10+ years of experience creating memorable journeys in Sri Lanka.",
+      ko: "10년 이상의 전문 경험으로 스리랑카에서 잊지 못할 특별한 여정을 만듭니다.",
     },
   },
   {
     no: "03",
-    title: { en: "Golf Travel Specialists", ko: "골프 여행 전문" },
+    title: { en: "Golf Tourism Specialists", ko: "골프 여행 전문" },
     text: {
-      en: "Confirmed tee times, caddies, club rental and locker arrangements at all five championship courses.",
-      ko: "5개 챔피언십 코스의 티타임, 캐디, 클럽 렌탈까지 확정해 드립니다.",
+      en: "Specializing in golf holidays for Korean and international guests, including tee time reservations, comfortable stays and luxury transport.",
+      ko: "한국 및 글로벌 고객을 위한 5대 챔피언십 코스 티타임 예약, 편안한 숙소, 전용 밴 차량까지 완벽하게 제공합니다.",
     },
   },
   {
     no: "04",
-    title: { en: "Handpicked Hotels", ko: "엄선된 호텔" },
+    title: { en: "Handpicked Experiences & Hotels", ko: "엄선된 호텔과 특별한 경험" },
     text: {
-      en: "We stay in every property we sell. If a room does not earn its place, it is not in your itinerary.",
-      ko: "저희가 직접 머물러 본 숙소만 제안합니다.",
+      en: "I personally inspect and carefully select the experiences, hotels and services I recommend.",
+      ko: "제가 직접 투숙하고 엄선한 숙소와 서비스만을 신뢰를 담아 추천합니다.",
     },
   },
   {
     no: "05",
-    title: { en: "Private Transportation", ko: "프라이빗 차량" },
+    title: { en: "Comfort, Safety & Trust", ko: "편안함, 안전 및 신뢰" },
     text: {
-      en: "Chauffeur-guides in new Mercedes and Toyota fleets, plus helicopter and seaplane transfers.",
-      ko: "신형 벤츠·토요타 차량의 전담 기사, 헬리콥터 및 수상비행기 이동도 가능합니다.",
+      en: "Registered and licensed tourism service provider (SLTDA Licence: C-1734) with modern luxury chauffeur fleets and 24/7 dedicated support.",
+      ko: "SLTDA 공인 가이드 라이선스(C-1734) 보유 및 최고급 전용 차량 의전으로 안전하고 편안한 여행을 약속합니다.",
     },
   },
   {
     no: "06",
-    title: { en: "Local Sri Lankan Expertise", ko: "현지 전문성" },
+    title: { en: "Personal Service & Local Support", ko: "현지 맞춤 케어 & 소통" },
     text: {
-      en: "A Colombo-based team on call around the clock, in English and Korean, throughout your journey.",
-      ko: "콜롬보 현지 팀이 영어와 한국어로 24시간 응대합니다.",
+      en: "Personal service and local support in Sri Lanka during your journey. I personally communicate in English and Korean to ensure a smooth and comfortable experience.",
+      ko: "여행 중 스리랑카 현지에서 세심한 지원을 제공하며, 영어와 한국어로 원활하고 편안하게 소통합니다.",
     },
   },
 ];
@@ -729,15 +729,18 @@ export type TeamMember = { name: string; role: Localized; bio: Localized; image:
 
 export const team: TeamMember[] = [
   {
-    name: "Rohan Wijesinghe",
-    role: { en: "Founder & Journey Designer", ko: "창립자 & 여행 디자이너" },
-    bio: { en: "Eighteen years in luxury travel, formerly with Aman and Resplendent Ceylon.", ko: "럭셔리 여행 업계 18년 경력." },
-    image: resort,
+    name: "Iroshan Jayawickrame",
+    role: { en: "Founder & Licensed Tourist Guide (SLTDA)", ko: "창립자 & SLTDA 공인 관광 가이드" },
+    bio: {
+      en: "Founder of Lanka Luxe Journeys with 10+ years of experience. SLTDA Guide Licence No: C-1734, Diploma in Archaeology (University of Kelaniya). Specializing in luxury travel, culture, wildlife, golf & wellness.",
+      ko: "10년 이상의 관광 분야 경력. SLTDA 공인 가이드(C-1734) 및 켈라니야 대학교 고고학 디플로마. 럭셔리 여행, 문화, 야생, 골프 & 웰니스 전문.",
+    },
+    image: iroshan,
   },
   {
     name: "Ji-eun Lee",
-    role: { en: "Korean Market Director", ko: "한국 시장 총괄" },
-    bio: { en: "Based between Seoul and Colombo, looking after every Korean group personally.", ko: "서울과 콜롬보를 오가며 한국 고객을 직접 담당합니다." },
+    role: { en: "Korean Market Coordinator", ko: "한국 시장 코디네이터" },
+    bio: { en: "Ensuring flawless communication, itinerary support, and dedicated care for Korean travelers.", ko: "한국인 여행객을 위한 1:1 맞춤 소통과 일정 코디네이션을 지원합니다." },
     image: honeymoon,
   },
   {

@@ -176,10 +176,9 @@ function Index() {
               {/* Main Heading */}
               <Reveal variant="fade-up" delay={0.15}>
                 <h1 className="text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight">
-                  DISCOVER THE <br />
-                  WORLD{" "}
+                  DISCOVER SRI LANKA <br />
                   <span className="text-[#C8A45D] font-normal italic font-sans lowercase">
-                    {lang === "ko" ? "프라이빗 가이드와 함께." : "with our guide."}
+                    {lang === "ko" ? "현지 전문가와 함께." : "with a local expert."}
                   </span>
                 </h1>
               </Reveal>
@@ -188,8 +187,8 @@ function Index() {
               <Reveal variant="fade-up" delay={0.25}>
                 <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-md">
                   {lang === "ko"
-                    ? "숨겨진 명소부터 유네스코 유적, 챔피언십 골프장까지 전문 가이드와 함께 나만의 특별한 스리랑카 여정을 완성하세요."
-                    : "Turn your dream destinations into reality with our expert guidance. From hidden gems to iconic landmarks, we create personalized journeys just for you."}
+                    ? "나만을 위해 섬세하게 설계된 프라이빗 럭셔리 여정, 진정한 스리랑카를 현지 전문가와 함께 경험하세요."
+                    : "Private journeys, authentic experiences and luxury travel, personally crafted around you."}
                 </p>
               </Reveal>
 
@@ -410,14 +409,14 @@ function Index() {
               </span>
               
               <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-display font-medium text-[#081A33] leading-[1.05] mt-4 mb-6">
-                Discover the world <br className="hidden xl:block" />
-                <span className="text-[#C8A45D]">with our guide</span>
+                Discover Sri Lanka <br className="hidden xl:block" />
+                <span className="text-[#C8A45D]">{lang === "ko" ? "현지 전문가와 함께" : "with a local expert"}</span>
               </h2>
               
               <p className="text-sm sm:text-base text-slate-500 font-normal leading-relaxed mb-8 max-w-lg">
                 {lang === "ko" 
-                  ? "편안하고 잊지 못할 경험으로 가득한 여행. 저희와 함께 다음 모험을 준비하세요!" 
-                  : "Discover the world with comfort and unforgettable experiences. Let us guide your next adventure!"}
+                  ? "10년 이상의 전문 경험으로 스리랑카에서 잊지 못할 특별한 여정을 만듭니다. 나만을 위해 정성껏 설계된 프라이빗 럭셔리 여행을 경험하세요." 
+                  : "10+ years of experience creating memorable journeys in Sri Lanka. Private journeys, authentic experiences and luxury travel, personally crafted around you."}
               </p>
 
               {/* 4 Icons Grid */}
@@ -507,13 +506,13 @@ function Index() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-transparent opacity-80" />
                   <div className="absolute bottom-6 left-6 right-6 text-white p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
                     <p className="text-xs font-semibold text-[#C8A45D] uppercase tracking-widest mb-1">
-                      {lang === "ko" ? "스리랑카 스토리텔러" : "Master Storyteller"}
+                      {lang === "ko" ? "창립자 & SLTDA 공인 가이드" : "Founder & Licensed Guide"}
                     </p>
                     <h4 className="text-lg font-bold font-display text-white">
                       Iroshan Jayawickrame
                     </h4>
                     <p className="text-xs text-slate-300">
-                      Explorer · Guide · Sharing Sri Lanka with the World
+                      10+ Years Experience · SLTDA Licence: C-1734 · Archaeology (Univ. of Kelaniya)
                     </p>
                   </div>
                 </motion.div>
@@ -533,8 +532,8 @@ function Index() {
                 </h2>
                 <p className="text-base text-slate-600 leading-relaxed pt-2">
                   {lang === "ko"
-                    ? "정형화된 패키지 여행이 아닌, 한 사람만을 위한 세심한 수제 여행을 제안합니다. 현지 최고의 전문가와 함께 스리랑카의 아름다운 문화, 유산, 골프 코스를 편안하고 품격 있게 경험하세요."
-                    : "At Lanka Luxe Journeys, travel is about creating unforgettable memories with comfort, style, and confidence. Our experienced team designs every detail to match your exact pace and expectations."}
+                    ? "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다. 편안함과 진정한 경험, 세심한 1:1 서비스를 소중히 여기는 여행자를 위한 프라이빗 맞춤 여행을 전문으로 합니다."
+                    : "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry. We specialize in private, tailor-made journeys for travelers who value comfort, authentic experiences and personal service."}
                 </p>
 
                 {/* 6 Key Highlights Grid */}
@@ -853,8 +852,8 @@ function Index() {
           }
           subtitle={
             lang === "ko"
-              ? "스리랑카 현지 아틀리에만의 차별화된 전문성과 품격을 약속드립니다."
-              : "Every element of your trip is overseen by senior specialists based in Colombo and Seoul."
+              ? "여행 중 스리랑카 현지에서 세심한 지원을 제공하며, 영어와 한국어로 원활하고 편안하게 소통합니다."
+              : "Personal service and local support in Sri Lanka during your journey. I personally communicate in English and Korean to ensure a smooth and comfortable experience."
           }
         />
 

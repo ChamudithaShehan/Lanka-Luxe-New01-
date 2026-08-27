@@ -54,8 +54,8 @@ function GolfPage() {
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
             {lang === "ko"
-              ? "1879년 설립된 역사적인 클럽부터 해발 1,900m 고산 코스, 바다를 낀 샹그릴라 코스까지 — 티타임, 캐디, 클럽 렌탈, 프라이빗 의전까지 한국인 골퍼를 위해 완벽하게 준비됩니다."
-              : "Five championship courses spanning colonial heritage fairways, 6,200-foot mountain greens, and an Indian Ocean links layout. End-to-end concierge handling confirmed tee times, caddies, premium club rentals and luxury transfers."}
+              ? "스리랑카는 골프 애호가를 위한 숨겨진 보석입니다. 숨 막히는 자연경관 속 세계적인 수준의 골프 코스에서 플레이하고, 따뜻한 환대와 함께 우리 섬의 아름다움을 발견하세요. 티타임 예약부터 안락한 숙소, 최고급 전용 차량까지 한국인 및 글로벌 고객을 위한 프리미엄 골프 휴양을 전문으로 합니다."
+              : "Sri Lanka is a hidden gem for golf lovers. Play on world-class golf courses surrounded by breathtaking landscapes, enjoy warm hospitality and discover the beauty of our island. We specialize in golf holidays for Korean and international guests, including tee time reservations, comfortable stays and luxury transport."}
           </p>
 
           <div className="flex flex-wrap gap-4">

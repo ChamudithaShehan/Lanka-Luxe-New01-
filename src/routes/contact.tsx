@@ -80,8 +80,8 @@ function ContactPage() {
           : "Is Korean language assistance available?",
       a:
         lang === "ko"
-          ? "네, 랑카 룩스 저니스는 한국 시장을 총괄하는 한국인 이사 및 전담 한국어 컨시어지 팀이 콜롬보와 서울에서 24시간 상시 케어 서비스를 제공합니다. 카카오톡 및 전화로 편안하게 상담받으실 수 있습니다."
-          : "Yes. Lanka Luxe Journeys has a dedicated Korean Market Director and bilingual team based between Seoul and Colombo, ensuring flawless communication in both Korean and English.",
+          ? "네, Lanka Luxe Journeys는 10년 이상의 경험을 갖춘 창립자 이로샨(Iroshan, SLTDA 라이선스 C-1734) 및 전담 코디네이터가 영어와 한국어로 원활하게 소통하며 24시간 실시간 맞춤 케어 서비스를 제공합니다. 카카오톡 및 WhatsApp, 전화로 언제든 편안하게 상담받으실 수 있습니다."
+          : "Yes. Lanka Luxe Journeys founder Iroshan Jayawickrame and our dedicated coordinators personally communicate in both Korean and English, ensuring seamless communication and 24/7 on-the-ground support.",
     },
   ];
 
@@ -122,7 +122,7 @@ function ContactPage() {
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
                   ? "긴급 문의나 빠른 상담은 WhatsApp 또는 카카오톡으로 실시간 연락이 가능합니다."
-                  : "For immediate assistance, reach our Colombo and Seoul teams directly via message or phone."}
+                  : "For immediate assistance, reach our Colombo concierge team directly via WhatsApp, KakaoTalk or phone."}
               </p>
 
               <div className="space-y-4 pt-2 text-xs">
