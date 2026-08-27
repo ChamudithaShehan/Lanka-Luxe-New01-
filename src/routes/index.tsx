@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
@@ -40,7 +40,7 @@ import {
   Users,
   Building2,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -50,6 +50,31 @@ function Index() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Scroll Parallax Hooks for Home Page Photos
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const yHeroCol1 = useTransform(heroProgress, [0, 1], [0, -50]);
+  const yHeroCol2 = useTransform(heroProgress, [0, 1], [0, -100]);
+  const yHeroCol3 = useTransform(heroProgress, [0, 1], [0, -70]);
+
+  const discoverRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: discoverProgress } = useScroll({
+    target: discoverRef,
+    offset: ["start end", "end start"],
+  });
+  const yDiscoverTrain = useTransform(discoverProgress, [0, 1], [30, -50]);
+  const yDiscoverResort = useTransform(discoverProgress, [0, 1], [60, -75]);
+
+  const whyUsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: whyUsProgress } = useScroll({
+    target: whyUsRef,
+    offset: ["start end", "end start"],
+  });
+  const yWhyUsPhoto = useTransform(whyUsProgress, [0, 1], [40, -60]);
 
   const filteredTours =
     selectedCategory === "All"
@@ -65,7 +90,7 @@ function Index() {
   return (
     <div className="relative min-h-screen bg-[#F9FAFB] text-slate-800 selection:bg-[#C8A45D] selection:text-white">
       {/* 1. HERO SECTION (MATCHING REFERENCE DESIGN WITH ARCH/CAPSULE PHOTO MOSAIC & FLIGHT PATHS) */}
-      <section className="relative min-h-[95vh] lg:min-h-screen flex items-center justify-center pt-28 pb-20 px-4 sm:px-6 lg:px-8 bg-[#0B1A30] text-white overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[95vh] lg:min-h-screen flex items-center justify-center pt-28 pb-20 px-4 sm:px-6 lg:px-8 bg-[#0B1A30] text-white overflow-hidden">
         {/* Subtle Ambient Radial Lighting */}
         <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#C8A45D]/10 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-[#C8A45D]/10 rounded-full blur-[160px] pointer-events-none" />
@@ -216,7 +241,7 @@ function Index() {
             <div className="lg:col-span-7 relative hidden md:block">
               <div className="grid grid-cols-3 gap-3 sm:gap-4.5 max-h-[580px] lg:max-h-[640px] items-center">
                 {/* Column 1 (Left) */}
-                <div className="space-y-3 sm:space-y-4">
+                <motion.div style={{ y: yHeroCol1 }} className="space-y-3 sm:space-y-4">
                   {/* Top Capsule Photo */}
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -248,10 +273,10 @@ function Index() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                   </motion.div>
-                </div>
+                </motion.div>
 
                 {/* Column 2 (Center - Offset / Arch Top Shapes) */}
-                <div className="space-y-3 sm:space-y-4 -translate-y-4 sm:-translate-y-6">
+                <motion.div style={{ y: yHeroCol2 }} className="space-y-3 sm:space-y-4 -translate-y-4 sm:-translate-y-6">
                   {/* Top Circle / Arch Photo */}
                   <motion.div
                     initial={{ opacity: 0, y: -25 }}
@@ -297,10 +322,10 @@ function Index() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </motion.div>
-                </div>
+                </motion.div>
 
                 {/* Column 3 (Right) */}
-                <div className="space-y-3 sm:space-y-4">
+                <motion.div style={{ y: yHeroCol3 }} className="space-y-3 sm:space-y-4">
                   {/* Top Safari/Jeep Photo */}
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -347,7 +372,7 @@ function Index() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </motion.div>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -355,18 +380,24 @@ function Index() {
       </section>
 
       {/* 2. DISCOVER THE WORLD (REFERENCE IMAGE SECTION) */}
-      <section className="py-20 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden relative">
+      <section ref={discoverRef} className="py-20 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center relative z-10">
-          {/* Left Images Composite */}
+          {/* Left Images Composite with Scroll-Up Parallax */}
           <div className="lg:col-span-6 relative">
             <Reveal variant="slide-right" once={false}>
               <div className="flex gap-4 sm:gap-6 items-center justify-center lg:justify-start">
-                <div className="w-1/2 max-w-[280px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] -translate-y-6">
-                  <img src={img.train} alt="Traveler cheering" className="w-full h-full object-cover" />
-                </div>
-                <div className="w-1/2 max-w-[280px] aspect-[3/4] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] translate-y-6">
-                  <img src={img.resort} alt="Luggage setup" className="w-full h-full object-cover" />
-                </div>
+                <motion.div
+                  style={{ y: yDiscoverTrain }}
+                  className="w-1/2 max-w-[280px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] group"
+                >
+                  <img src={img.train} alt="Traveler cheering" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                </motion.div>
+                <motion.div
+                  style={{ y: yDiscoverResort }}
+                  className="w-1/2 max-w-[280px] aspect-[3/4] rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] group"
+                >
+                  <img src={img.resort} alt="Luggage setup" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                </motion.div>
               </div>
             </Reveal>
           </div>
@@ -458,13 +489,16 @@ function Index() {
       </section>
 
       {/* WHY CHOOSE US SECTION */}
-      <section className="py-20 lg:py-28 bg-slate-50 border-y border-slate-100 overflow-hidden">
+      <section ref={whyUsRef} className="py-20 lg:py-28 bg-slate-50 border-y border-slate-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Left Side: Photo */}
+            {/* Left Side: Photo with Scroll-Up Parallax */}
             <div className="lg:col-span-5">
               <Reveal variant="slide-left">
-                <div className="relative rounded-[2.5rem] overflow-hidden border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)] group">
+                <motion.div
+                  style={{ y: yWhyUsPhoto }}
+                  className="relative rounded-[2.5rem] overflow-hidden border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)] group"
+                >
                   <img
                     src={img.iroshan}
                     alt="Iroshan Jayawickrame - Explorer & Storyteller"
@@ -482,7 +516,7 @@ function Index() {
                       Explorer · Guide · Sharing Sri Lanka with the World
                     </p>
                   </div>
-                </div>
+                </motion.div>
               </Reveal>
             </div>
 
