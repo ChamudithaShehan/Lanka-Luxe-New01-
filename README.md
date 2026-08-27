@@ -93,4 +93,4 @@ We welcome contributions to enhance the Lanka Luxe Journeys platform. Please ens
 
 ## License
 
-Copyright © 2026 Lanka Luxe Journeys. All Rights Reserved.
+Copyright © 2026 Lanka Luxe Journeys. All Rights Reserved..
