@@ -284,10 +284,7 @@ export function InquiryForm({
               {lang === "ko" ? "전송 중..." : "Sending..."}
             </span>
           ) : (
-            <>
-              <span>{t("form.submit")}</span>
-              <Send className="w-3.5 h-3.5 ml-2 shrink-0" />
-            </>
+            t("form.submit")
           )}
         </LuxuryButton>
       </div>

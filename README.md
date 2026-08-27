@@ -1,5 +1,7 @@
 # Lanka Luxe Journeys
 
+[![Live Preview](https://img.shields.io/badge/Live_Preview-lanka--luxe--new01.vercel.app-22A2BD?style=for-the-badge)](https://lanka-luxe-new01.vercel.app/)
+
 A premium, world-class luxury travel and tourism web application designed to promote bespoke travel experiences in Sri Lanka. The platform focuses on high-end international travelers, specifically catering to Korean golf travelers, luxury holiday visitors, couples, families, and those seeking custom Sri Lankan experiences.
 
 ## Overview
