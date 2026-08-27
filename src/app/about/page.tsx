@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { img, golfCourses } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
+import { img } from "@/data/site";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Reveal } from "@/components/Reveal";
@@ -22,11 +23,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
-
-
 export default function AboutPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { golfCourses, siteSettings } = useContentStore();
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">

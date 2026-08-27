@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
-import { destinations } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
 import { DestinationCard } from "@/components/DestinationCard";
 import { InteractiveSriLankaMap } from "@/components/InteractiveSriLankaMap";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -14,6 +14,7 @@ import { useInquiry } from "@/lib/inquiry-context";
 export default function DestinationsPage() {
   const { t, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { destinations } = useContentStore();
   const [selectedRegion, setSelectedRegion] = useState("All");
 
   const regions = [

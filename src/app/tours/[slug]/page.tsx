@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { tours } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { TourCard } from "@/components/TourCard";
@@ -23,13 +23,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-
-
 export default function TourDetailPage() {
   const rawParams = useParams();
   const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { tours } = useContentStore();
 
   const tour = tours.find((item) => item.slug === slug);
   const [activeImage, setActiveImage] = useState(tour?.image || "");

@@ -4,20 +4,19 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { destinations, tours } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { TourCard } from "@/components/TourCard";
 import { Reveal } from "@/components/Reveal";
 import { MapPin, Clock, Sparkles, CheckCircle2 } from "lucide-react";
 
-
-
 export default function DestinationDetailPage() {
   const rawParams = useParams();
   const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { destinations, tours } = useContentStore();
 
   const dest = destinations.find((d) => d.slug === slug);
 

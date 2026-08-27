@@ -4,19 +4,18 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { posts } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { BlogCard } from "@/components/BlogCard";
 import { Calendar, User, Sparkles } from "lucide-react";
-
-
 
 export default function BlogDetailPage() {
   const rawParams = useParams();
   const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { posts } = useContentStore();
 
   const post = posts.find((p) => p.slug === slug);
 

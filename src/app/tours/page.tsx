@@ -4,17 +4,17 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { tours, tourFilters } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
+import { tourFilters } from "@/data/site";
 import { TourCard } from "@/components/TourCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { Search, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
-
-
 export default function ToursPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { tours } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

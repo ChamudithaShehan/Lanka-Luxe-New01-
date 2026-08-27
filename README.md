@@ -64,12 +64,28 @@ To create a production-ready build:
 npm run build
 ```
 
+## Admin Dashboard & CMS Atelier
+
+Lanka Luxe Journeys includes a dedicated, passcode-protected **Admin Dashboard** allowing real-time editing and live synchronization of all website content:
+
+- **Access URL**: `/admin` (or `/admin/login`)
+- **Default Passcodes**: `admin123`, `lankaluxe2026`, or `C-1734`
+- **Dashboard Modules**:
+  - **Overview**: Executive metrics, recent inquiries list, and quick actions.
+  - **Inquiries CRM**: Comprehensive lead management, status tracking (`New`, `In Progress`, `Contacted`, `Booked`, `Archived`), notes, and direct 1-click WhatsApp/Email triggers.
+  - **Tours & Journeys**: Complete CRUD management with day-by-day itinerary builders, hotels, inclusions/exclusions, pricing, and bilingual copy.
+  - **Golf Packages**: Championship course manager, hole info, tee times, and luxury hotel pairings.
+  - **Destinations & Map**: Region guides, interactive island map coordinates, and recommended stay duration.
+  - **Experiences**: Signature luxury experiences editor.
+  - **Journal & Blog**: Editorial article publisher.
+  - **Site & Founder Settings**: Founder credentials (SLTDA Licence C-1734, Kelaniya archaeology diploma), contact numbers (WhatsApp, KakaoTalk, phone, email), and homepage hero copy.
+
 ## Structure & Architecture
 
-- `src/app/`: Next.js App Router pages and layouts (`layout.tsx`, `page.tsx`, `tours/`, `destinations/`, `golf/`, `blog/`, `about/`, `contact/`).
+- `src/app/`: Next.js App Router pages and layouts (`layout.tsx`, `page.tsx`, `admin/`, `tours/`, `destinations/`, `golf/`, `blog/`, `about/`, `contact/`).
 - `src/components/`: Reusable UI components (Buttons, Cards, Forms, Animations, Navbar, Footer).
-- `src/data/`: Static data and content files (e.g., `site.ts`) powering the application content.
-- `src/lib/`: Utility functions and context providers (e.g., `i18n.tsx`, `inquiry-context.tsx`).
+- `src/data/`: Default curated data (`site.ts`).
+- `src/lib/`: Global Content Store (`content-store.tsx`), internationalization (`i18n.tsx`), and inquiry state (`inquiry-context.tsx`).
 
 ## Contributing
 

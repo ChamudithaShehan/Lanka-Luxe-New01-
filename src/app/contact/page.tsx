@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
-import { contact, img } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
+import { img } from "@/data/site";
 import { InquiryForm } from "@/components/InquiryForm";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Reveal } from "@/components/Reveal";
@@ -16,10 +17,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-
-
 export default function ContactPage() {
   const { t, lang } = useI18n();
+  const { contact } = useContentStore();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const faqs = [

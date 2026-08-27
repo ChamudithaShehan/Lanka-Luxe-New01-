@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "./LuxuryButton";
 import { CheckCircle2, Sparkles, Send } from "lucide-react";
 import { contact } from "@/data/site";
@@ -22,6 +23,7 @@ export function InquiryForm({
   variant = "light",
 }: InquiryFormProps) {
   const { t, lang } = useI18n();
+  const { addInquiry } = useContentStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,10 +48,15 @@ export function InquiryForm({
     if (!formData.name || !formData.email) return;
 
     setStatus("submitting");
+    try {
+      addInquiry(formData);
+    } catch (err) {
+      console.warn("Could not save to store", err);
+    }
     setTimeout(() => {
       setStatus("success");
       if (onSuccess) onSuccess();
-    }, 1000);
+    }, 800);
   };
 
   const isDark = variant === "dark";

@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import "@/styles.css";
 import { I18nProvider } from "@/lib/i18n";
 import { InquiryProvider } from "@/lib/inquiry-context";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { FloatingActions } from "@/components/FloatingActions";
-import { InquiryModal } from "@/components/InquiryModal";
+import { ContentProvider } from "@/lib/content-store";
+import { SiteChrome } from "@/components/SiteChrome";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -53,15 +50,12 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <I18nProvider>
-          <InquiryProvider>
-            <ScrollProgress />
-            <Navbar />
-            <main className="flex-1 w-full overflow-x-clip">{children}</main>
-            <Footer />
-            <FloatingActions />
-            <InquiryModal />
-            <Toaster position="top-center" richColors />
-          </InquiryProvider>
+          <ContentProvider>
+            <InquiryProvider>
+              <SiteChrome>{children}</SiteChrome>
+              <Toaster position="top-center" richColors />
+            </InquiryProvider>
+          </ContentProvider>
         </I18nProvider>
       </body>
     </html>

@@ -3,16 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
-import { posts, blogCategories } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
+import { blogCategories } from "@/data/site";
 import { BlogCard } from "@/components/BlogCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { Calendar, ArrowRight } from "lucide-react";
 
-
-
 export default function BlogPage() {
   const { t, tl, lang } = useI18n();
+  const { posts } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const filteredPosts =

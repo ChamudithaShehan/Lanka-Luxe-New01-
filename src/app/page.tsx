@@ -4,16 +4,10 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
+import { useContentStore } from "@/lib/content-store";
 import {
   img,
-  tours,
   tourFilters,
-  whyUs,
-  experiences,
-  testimonials,
-  posts,
-  golfCourses,
-  contact,
 } from "@/data/site";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -44,11 +38,18 @@ import {
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 
-
-
 export default function HomePage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const {
+    tours,
+    experiences,
+    posts,
+    golfCourses,
+    whyUs,
+    testimonials,
+    siteSettings,
+  } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Scroll Parallax Hooks for Home Page Photos

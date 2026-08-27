@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { img, golfCourses, tours } from "@/data/site";
+import { useContentStore } from "@/lib/content-store";
+import { img } from "@/data/site";
 import { GolfCourseCard } from "@/components/GolfCourseCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -17,11 +18,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-
-
 export default function GolfPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
+  const { golfCourses, tours } = useContentStore();
 
   const golfTour = tours.find((t) => t.slug === "ultimate-sri-lanka-golf-escape");
 
