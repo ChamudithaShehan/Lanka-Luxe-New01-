@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
-import { img, team, golfCourses } from "@/data/site";
+import { img, golfCourses } from "@/data/site";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Reveal } from "@/components/Reveal";
@@ -454,47 +454,7 @@ function AboutPage() {
         </div>
       </section>
 
-      {/* 6. Leadership & Curators Team */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-100 mb-28">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeader
-            eyebrow="The Curators"
-            title={
-              <>
-                Meet Our <span className="text-[#C8A45D]">Specialists</span>
-              </>
-            }
-            subtitle={
-              lang === "ko"
-                ? "스리랑카 현지 전문가들이 고객님의 일정을 직접 전담합니다."
-                : "The journey designers, golf directors, and naturalists overseeing your stay."
-            }
-          />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, i) => (
-              <Reveal key={member.name} variant="fade-up" delay={i * 0.1}>
-                <div className="p-6 rounded-[1.75rem] bg-[#F9FAFB] border border-slate-100 hover:shadow-md transition-all duration-300 flex flex-col h-full group">
-                  <div className="aspect-[4/5] rounded-2xl overflow-hidden mb-5 bg-slate-200">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#081A33] mb-1">{member.name}</h3>
-                  <div className="text-xs text-[#C8A45D] font-semibold uppercase tracking-wider mb-3">
-                    {tl(member.role)}
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed flex-1">
-                    {tl(member.bio)}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 7. Partner Hotels & Estates Network */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
