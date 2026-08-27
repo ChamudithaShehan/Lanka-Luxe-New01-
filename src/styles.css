@@ -1,0 +1,268 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * LANKA LUXE JOURNEYS — luxury editorial design system.
+ * Deep navy canvas, warm gold accents, cream light sections.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  /* brand tokens */
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-3: var(--navy-3);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream: var(--cream);
+  --color-mist: var(--mist);
+  --color-forest: var(--forest);
+
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.25rem;
+
+  /* brand palette */
+  --navy: oklch(0.213 0.055 258.2); /* #081A33 */
+  --navy-2: oklch(0.301 0.06 258.5); /* #102A4C */
+  --navy-3: oklch(0.38 0.05 256);
+  --gold: oklch(0.759 0.079 82.5); /* #C9A86A */
+  --gold-light: oklch(0.845 0.075 87); /* #E5C98B */
+  --cream: oklch(0.968 0.008 84.6); /* #F6F3EE */
+  --mist: oklch(0.746 0.021 258); /* #A7B0BE */
+  --forest: oklch(0.42 0.07 155);
+
+  --background: var(--navy);
+  --foreground: oklch(1 0 0);
+  --card: var(--navy-2);
+  --card-foreground: oklch(1 0 0);
+  --popover: var(--navy-2);
+  --popover-foreground: oklch(1 0 0);
+  --primary: var(--gold);
+  --primary-foreground: var(--navy);
+  --secondary: var(--navy-2);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: var(--navy-2);
+  --muted-foreground: var(--mist);
+  --accent: var(--gold-light);
+  --accent-foreground: var(--navy);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: var(--gold);
+
+  --chart-1: var(--gold);
+  --chart-2: var(--mist);
+  --chart-3: var(--navy-3);
+  --chart-4: var(--gold-light);
+  --chart-5: var(--forest);
+  --sidebar: var(--navy-2);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: var(--navy);
+  --sidebar-accent: var(--navy-3);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: var(--gold);
+
+  --shadow-lux: 0 30px 80px -40px oklch(0 0 0 / 0.75);
+  --gradient-veil: linear-gradient(
+    to top,
+    oklch(0.213 0.055 258.2 / 0.95) 0%,
+    oklch(0.213 0.055 258.2 / 0.35) 45%,
+    transparent 100%
+  );
+}
+
+/* Light editorial surface used inside cream sections */
+.surface-cream {
+  --background: var(--cream);
+  --foreground: var(--navy);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--navy);
+  --muted-foreground: oklch(0.5 0.02 258);
+  --border: oklch(0.213 0.055 258.2 / 0.14);
+  --input: oklch(0.213 0.055 258.2 / 0.18);
+  background-color: var(--cream);
+  color: var(--navy);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+@utility gold-rule {
+  height: 1px;
+  width: 3.5rem;
+  background: linear-gradient(to right, var(--gold), transparent);
+}
+
+@utility glass-panel {
+  background: oklch(1 0 0 / 0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid oklch(1 0 0 / 0.12);
+}
+
+@utility text-gold-gradient {
+  background: linear-gradient(100deg, var(--gold-light), var(--gold) 45%, var(--gold-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility lux-grain {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image: radial-gradient(oklch(1 0 0 / 0.06) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 5s ease-in-out infinite;
+}
+
