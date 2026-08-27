@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { contact } from "@/data/site";
+import { contact, img } from "@/data/site";
 import { InquiryForm } from "@/components/InquiryForm";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Reveal } from "@/components/Reveal";
@@ -260,6 +260,19 @@ function ContactPage() {
             );
           })}
         </div>
+      </section>
+
+      {/* Showcase Visual Banner */}
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-20">
+        <Reveal variant="fade-up">
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-[0_12px_45px_rgba(0,0,0,0.1)] border border-slate-200 group">
+            <img
+              src={img.showcase}
+              alt="Lanka Luxe Journeys - Discover, Experience, Remember"
+              className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-700"
+            />
+          </div>
+        </Reveal>
       </section>
     </div>
   );

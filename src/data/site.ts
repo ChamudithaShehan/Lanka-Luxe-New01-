@@ -16,6 +16,9 @@ import ella from "@/assets/ella.jpg";
 import honeymoon from "@/assets/honeymoon.jpg";
 import wellness from "@/assets/wellness.jpg";
 import aerial from "@/assets/aerial.jpg";
+import iroshan from "@/assets/iroshan.jpg";
+import showcase from "@/assets/showcase.jpg";
+import logo from "@/assets/logo.png";
 
 export const img = {
   sigiriya,
@@ -34,6 +37,9 @@ export const img = {
   honeymoon,
   wellness,
   aerial,
+  iroshan,
+  showcase,
+  logo,
 };
 
 export const contact = {

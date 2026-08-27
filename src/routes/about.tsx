@@ -5,7 +5,7 @@ import { img, team } from "@/data/site";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Reveal } from "@/components/Reveal";
-import { Award, ShieldCheck, HeartHandshake } from "lucide-react";
+import { Award, ShieldCheck, HeartHandshake, Compass, MapPin, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -50,60 +50,176 @@ function AboutPage() {
         </Reveal>
       </section>
 
-      {/* Atelier Story Composite */}
+      {/* Why Choose Us & Storyteller Section */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6 text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left: Iroshan Photo Card */}
+          <div className="lg:col-span-5">
             <Reveal variant="slide-left">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
+              <div className="relative rounded-[2.5rem] overflow-hidden border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)] group">
+                <img
+                  src={img.iroshan}
+                  alt="Iroshan Jayawickrame - Explorer & Storyteller"
+                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/85 via-transparent to-transparent opacity-90" />
+                <div className="absolute bottom-6 left-6 right-6 text-white p-5 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
+                  <p className="text-xs font-semibold text-[#C8A45D] uppercase tracking-widest mb-1">
+                    {lang === "ko" ? "스리랑카 탐험가 & 스토리텔러" : "Explorer & Master Storyteller"}
+                  </p>
+                  <h4 className="text-xl font-bold font-display text-white">
+                    Iroshan Jayawickrame
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    History · Heritage · Hospitality · Storytelling
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Right: Intro & Story */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <Reveal variant="slide-right">
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D] block mb-2">
                 Our Philosophy
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] leading-tight">
-                {lang === "ko"
-                  ? "정형화된 패키지가 아닌, 한 사람만을 위한 여정"
-                  : "We Do Not Sell Fixed Tours. We Write Itineraries."}
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium text-[#081A33] leading-tight">
+                Why Choose Lanka Luxe Journeys?
               </h2>
-
-              <p className="text-base text-slate-600 font-normal leading-relaxed">
-                {lang === "ko"
-                  ? "저희는 뻔한 단체 관광을 진행하지 않습니다. 고객 한 분 한 분의 취향, 속도, 동행자의 특성에 맞춰 출발일과 동선, 숙소, 차량, 가이드를 백지에서부터 설계합니다."
-                  : "Every journey begins with a conversation. We ask about your preferred pace, what you enjoy having for breakfast, whether you'd like your tee times at sunrise or late afternoon, and which wildlife encounters matter most."}
-              </p>
-
-              <p className="text-sm text-slate-500 font-normal leading-relaxed">
-                {lang === "ko"
-                  ? "18년간 쌓아온 스리랑카 전역의 특급 호텔, 개인 빌라, 챔피언십 골프장, 국립공원 내추럴리스트와의 끈끈한 네트워크를 통해 차원이 다른 특별함을 선사합니다."
-                  : "Because our team lives and works here, we have personal relationships with every general manager, golf secretary, and chief naturalist on the island. When our guests arrive, they are welcomed as old friends."}
-              </p>
+              <div className="w-12 h-1 bg-[#C8A45D] rounded-full my-4"></div>
+              <div className="text-base text-slate-600 font-normal leading-relaxed space-y-5">
+                <p>
+                  At Lanka Luxe Journeys, we believe that travel is more than visiting places—it's about creating unforgettable memories, discovering authentic cultures, and experiencing Sri Lanka with comfort, style, and confidence.
+                </p>
+                <p>
+                  Whether you're seeking a luxurious holiday, a romantic honeymoon, a family adventure, a golf getaway, or a tailor-made cultural journey, our experienced team is dedicated to designing every detail to match your interests and expectations.
+                </p>
+              </div>
 
               <div className="pt-4 grid grid-cols-2 gap-4 text-xs text-slate-700">
                 <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
                   <div className="text-[#C8A45D] font-display text-3xl font-bold mb-1">
-                    18 Years
+                    18+ Years
                   </div>
-                  <div className="text-slate-500 font-medium">Luxury Hospitality Legacy</div>
+                  <div className="text-slate-500 font-medium">Hospitality & Heritage Legacy</div>
                 </div>
                 <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
                   <div className="text-[#C8A45D] font-display text-3xl font-bold mb-1">
                     100%
                   </div>
-                  <div className="text-slate-500 font-medium">Private & Bespoke Routes</div>
+                  <div className="text-slate-500 font-medium">Bespoke & Tailor-Made</div>
                 </div>
               </div>
             </Reveal>
           </div>
+        </div>
+      </section>
 
-          <div className="lg:col-span-6">
-            <Reveal variant="slide-right">
-              <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
-                <img
-                  src={img.resort}
-                  alt="Lanka Luxe Atelier Luxury Escape"
-                  className="w-full h-full object-cover"
-                />
+      {/* 6 Pillars Grid */}
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
+        <div className="text-center mb-14">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D] block mb-2">
+            The Lanka Luxe Difference
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-[#081A33]">
+            Crafted With Integrity & Excellence
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Reveal variant="fade-up" delay={0.1}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <Compass className="w-6 h-6" />
               </div>
-            </Reveal>
-          </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Personalized Travel Experiences</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                No two travelers are the same. We carefully craft each itinerary to suit your preferences, travel pace, and budget, ensuring a truly personal experience from the moment you arrive until your departure.
+              </p>
+            </div>
+          </Reveal>
+          
+          <Reveal variant="fade-up" delay={0.2}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <MapPin className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Local Expertise</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                Our in-depth knowledge of Sri Lanka allows us to introduce you to famous landmarks as well as hidden treasures. From ancient heritage sites and lush tea plantations to pristine beaches and breathtaking wildlife, we help you experience the island like a local.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.3}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <Award className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Luxury with Authenticity</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                We combine premium comfort with genuine Sri Lankan hospitality. Stay in carefully selected hotels, enjoy exceptional dining, and discover authentic cultural experiences that make your journey truly unique.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.4}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Professional and Reliable Service</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                From airport transfers to accommodation, guided tours, transportation, and special experiences, we manage every aspect of your trip with professionalism and attention to detail, allowing you to relax and enjoy your holiday.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.5}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Flexible and Tailor-Made Itineraries</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                Whether you have a few days or several weeks, we create customized travel plans that perfectly fit your schedule and interests. Your journey is designed exclusively for you.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.6}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-6">
+                <HeartHandshake className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-[#081A33] mb-3">Passion for Excellence</h3>
+              <p className="text-sm text-slate-500 leading-relaxed flex-1">
+                Our commitment is to provide exceptional service, honest advice, and memorable experiences. We value every guest and strive to exceed expectations through personalized care and attention.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Outro Text Banner */}
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
+        <div className="bg-gradient-to-br from-[#081A33] to-[#0B1F3A] rounded-[2.5rem] p-8 sm:p-14 text-white text-center shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#C8A45D]/10 rounded-full blur-3xl pointer-events-none"></div>
+          <Reveal variant="fade-up">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D] block mb-3">
+              Explore With Confidence
+            </span>
+            <h3 className="text-2xl sm:text-4xl font-display font-medium text-white mb-6 max-w-3xl mx-auto leading-tight">
+              Explore Sri Lanka with <span className="text-[#C8A45D] italic font-serif">Confidence</span>
+            </h3>
+            <p className="text-sm sm:text-base text-slate-300 font-normal max-w-2xl mx-auto leading-relaxed mb-8">
+              With Lanka Luxe Journeys, you can travel knowing that every detail has been thoughtfully planned. Our goal is to turn your dream holiday into an extraordinary experience filled with comfort, discovery, and unforgettable moments.
+            </p>
+            <div className="inline-block px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-medium text-[#C8A45D]">
+              Choose Lanka Luxe Journeys — where luxury meets authentic Sri Lankan experiences.
+            </div>
+          </Reveal>
         </div>
       </section>
 

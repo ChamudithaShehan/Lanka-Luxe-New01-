@@ -6,7 +6,7 @@ import { tours, tourFilters } from "@/data/site";
 import { TourCard } from "@/components/TourCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
-import { Search, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Search, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/tours/")({
   head: () => ({
@@ -27,6 +27,18 @@ function ToursIndexPage() {
   const { openInquiry } = useInquiry();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
+
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   const filteredTours = useMemo(() => {
     return tours.filter((tour) => {
@@ -44,6 +56,13 @@ function ToursIndexPage() {
       return matchesCategory && (searchQuery ? nameMatch : true);
     });
   }, [selectedCategory, searchQuery, tl]);
+
+  const totalPages = Math.ceil(filteredTours.length / ITEMS_PER_PAGE);
+
+  const paginatedTours = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredTours.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredTours, currentPage]);
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
@@ -64,8 +83,8 @@ function ToursIndexPage() {
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-2xl leading-relaxed mb-8">
             {lang === "ko"
-              ? "스리랑카 전역을 잇는 8가지 시그니처 럭셔리 일정입니다. 모든 일정은 고객님의 희망에 따라 자유롭게 변경 가능합니다."
-              : "Eight private routes spanning colonial tea estates, championship links, leopard reserves and coastal ramparts. Fully bespoke and customizable."}
+              ? "스리랑카 전역을 잇는 9가지 시그니처 럭셔리 일정입니다. 모든 일정은 고객님의 희망에 따라 자유롭게 변경 가능합니다."
+              : "Nine private routes spanning colonial tea estates, championship links, leopard reserves and coastal ramparts. Fully bespoke and customizable."}
           </p>
 
           {/* Search & Filter Bar */}
@@ -81,7 +100,7 @@ function ToursIndexPage() {
                     : "Search by journey name or destination (e.g. Sigiriya, Golf, Yala)..."
                 }
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] focus:bg-white outline-none"
               />
             </div>
@@ -92,7 +111,7 @@ function ToursIndexPage() {
               {tourFilters.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => handleCategoryChange(cat)}
                   className={`px-4 py-2 text-xs font-semibold rounded-full whitespace-nowrap transition-all cursor-pointer ${
                     selectedCategory === cat
                       ? "bg-[#0B1F3A] text-white shadow-sm"
@@ -118,7 +137,7 @@ function ToursIndexPage() {
             </p>
             <button
               onClick={() => {
-                setSelectedCategory("All");
+                handleCategoryChange("All");
                 setSearchQuery("");
               }}
               className="text-xs uppercase tracking-widest text-[#C8A45D] underline font-semibold cursor-pointer"
@@ -127,13 +146,52 @@ function ToursIndexPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTours.map((tour) => (
-              <Reveal key={tour.slug} variant="fade-up">
-                <TourCard tour={tour} />
-              </Reveal>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {paginatedTours.map((tour) => (
+                <Reveal key={tour.slug} variant="fade-up">
+                  <TourCard tour={tour} />
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-4">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                  aria-label="Previous Page"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-10 h-10 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      currentPage === pageNum
+                        ? "bg-[#0B1F3A] text-white shadow-md"
+                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                  aria-label="Next Page"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
 

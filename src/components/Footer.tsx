@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
+import { img } from "@/data/site";
 import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp } from "lucide-react";
 
 const galleryImages = [
@@ -106,8 +107,11 @@ export function Footer() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-            <div className="text-sm text-mist/60 order-3 lg:order-1">
-              Copyright 2024 Lanka Luxe All Rights Reserved.
+            <div className="flex items-center gap-3 order-3 lg:order-1">
+              <img src={img.logo} alt="Lanka Luxe Journeys Logo" className="h-11 w-auto object-contain bg-white/95 rounded-full p-1 shadow-md" />
+              <div className="text-xs text-mist/70">
+                © {new Date().getFullYear()} Lanka Luxe Journeys.<br />All Rights Reserved.
+              </div>
             </div>
             
             <nav className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm text-white font-medium uppercase tracking-[0.15em] order-1 lg:order-2">

@@ -457,6 +457,86 @@ function Index() {
         </div>
       </section>
 
+      {/* WHY CHOOSE US SECTION */}
+      <section className="py-20 lg:py-28 bg-slate-50 border-y border-slate-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Left Side: Photo */}
+            <div className="lg:col-span-5">
+              <Reveal variant="slide-left">
+                <div className="relative rounded-[2.5rem] overflow-hidden border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)] group">
+                  <img
+                    src={img.iroshan}
+                    alt="Iroshan Jayawickrame - Explorer & Storyteller"
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-transparent opacity-80" />
+                  <div className="absolute bottom-6 left-6 right-6 text-white p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
+                    <p className="text-xs font-semibold text-[#C8A45D] uppercase tracking-widest mb-1">
+                      {lang === "ko" ? "스리랑카 스토리텔러" : "Master Storyteller"}
+                    </p>
+                    <h4 className="text-lg font-bold font-display text-white">
+                      Iroshan Jayawickrame
+                    </h4>
+                    <p className="text-xs text-slate-300">
+                      Explorer · Guide · Sharing Sri Lanka with the World
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+
+            {/* Right Side: Text & Why Us Points & About CTA */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <Reveal variant="slide-right">
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
+                  WHY CHOOSE LANKA LUXE
+                </span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium text-[#081A33] leading-tight">
+                  {lang === "ko"
+                    ? "스리랑카 최고를 경험하는 차별화된 여정"
+                    : "Crafting Extraordinary Sri Lankan Journeys"}
+                </h2>
+                <p className="text-base text-slate-600 leading-relaxed pt-2">
+                  {lang === "ko"
+                    ? "정형화된 패키지 여행이 아닌, 한 사람만을 위한 세심한 수제 여행을 제안합니다. 현지 최고의 전문가와 함께 스리랑카의 아름다운 문화, 유산, 골프 코스를 편안하고 품격 있게 경험하세요."
+                    : "At Lanka Luxe Journeys, travel is about creating unforgettable memories with comfort, style, and confidence. Our experienced team designs every detail to match your exact pace and expectations."}
+                </p>
+
+                {/* 6 Key Highlights Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                  {whyUs.map((item) => (
+                    <div
+                      key={item.no}
+                      className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-start gap-3"
+                    >
+                      <span className="text-sm font-bold text-[#C8A45D] shrink-0 font-display">
+                        {item.no}
+                      </span>
+                      <div>
+                        <h3 className="text-sm font-bold text-[#081A33] mb-1">
+                          {lang === "ko" ? item.title.ko : item.title.en}
+                        </h3>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                          {lang === "ko" ? item.text.ko : item.text.en}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Go to About Us Button / Section */}
+                <div className="pt-6 flex items-center gap-4">
+                  <LuxuryButton variant="pill" size="lg" href="/about" withArrow>
+                    {lang === "ko" ? "회사 소개 보기" : "Discover Our Story (About Us)"}
+                  </LuxuryButton>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 3. FEATURED DESTINATIONS (STICKY SCROLL LAYOUT WITH SIDE ANIMATIONS) */}
       <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-x-clip">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start relative">
