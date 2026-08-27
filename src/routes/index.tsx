@@ -71,24 +71,17 @@ function Index() {
         <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-[#C8A45D]/10 rounded-full blur-[160px] pointer-events-none" />
 
         {/* Faint World Map Vector Silhouette Background */}
-        <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center overflow-hidden">
-          <svg
-            viewBox="0 0 1000 500"
-            className="w-full h-full object-cover scale-110"
-            fill="currentColor"
-          >
-            {/* Stylized World Continents Background */}
-            <path
-              d="M150,120 Q180,100 220,130 Q250,150 240,200 Q200,240 170,220 Q140,180 150,120 Z 
-                 M200,260 Q240,280 230,360 Q210,420 180,390 Q170,320 200,260 Z
-                 M480,100 Q540,90 580,140 Q550,180 500,160 Q460,130 480,100 Z
-                 M490,200 Q550,210 560,300 Q530,380 480,350 Q450,270 490,200 Z
-                 M620,110 Q750,80 820,140 Q800,240 700,220 Q630,170 620,110 Z
-                 M750,280 Q840,290 820,380 Q760,400 730,340 Q720,300 750,280 Z"
-              className="text-[#38BDF8]"
-            />
-          </svg>
-        </div>
+        {/* Faint World Map Vector Silhouette Background */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: `url('/world-map.svg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'invert(1)'
+          }}
+        />
 
         {/* Flight Path 1: Dashed Arc with Airplane (Left Bottom to Center) */}
         <svg
