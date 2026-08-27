@@ -455,44 +455,6 @@ function AboutPage() {
       </section>
 
 
-
-      {/* 7. Partner Hotels & Estates Network */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
-        <SectionHeader
-          eyebrow="Sanctuaries"
-          title={
-            <>
-              Handpicked <span className="text-[#C8A45D]">Partner Estates</span>
-            </>
-          }
-          subtitle={
-            lang === "ko"
-              ? "제가 직접 투숙하고 검증한 스리랑카 최고의 호텔 및 리조트 컬렉션입니다."
-              : "Where our guests rest — colonial tea planter bungalows, cliffside sanctuaries, and private tented suites."
-          }
-        />
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
-          {[
-            { name: "Ceylon Tea Trails", loc: "Hatton" },
-            { name: "Cape Weligama", loc: "Weligama" },
-            { name: "Wild Coast Tented", loc: "Yala" },
-            { name: "Water Garden", loc: "Sigiriya" },
-            { name: "Shangri-La", loc: "Colombo & Hambantota" },
-            { name: "Amangalla", loc: "Galle Fort" },
-          ].map((hotel, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col justify-center items-center hover:border-slate-300 transition-colors"
-            >
-              <Award className="w-6 h-6 text-[#C8A45D] mb-2" />
-              <div className="text-sm font-bold text-[#081A33] mb-1">{hotel.name}</div>
-              <div className="text-xs text-slate-400 font-normal">{hotel.loc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* 8. Call to Action */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <div className="p-10 sm:p-14 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
