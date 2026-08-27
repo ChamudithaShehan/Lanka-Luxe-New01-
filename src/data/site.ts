@@ -1,24 +1,49 @@
 import type { Localized } from "@/lib/i18n";
 
-import sigiriya from "@/assets/sigiriya.jpg";
-import beach from "@/assets/beach.jpg";
-import golf from "@/assets/golf.jpg";
-import golf2 from "@/assets/golf2.jpg";
-import wildlife from "@/assets/wildlife.jpg";
-import tea from "@/assets/tea.jpg";
-import resort from "@/assets/resort.jpg";
-import train from "@/assets/train.jpg";
-import culture from "@/assets/culture.jpg";
-import colombo from "@/assets/colombo.jpg";
-import kandy from "@/assets/kandy.jpg";
-import galle from "@/assets/galle.jpg";
-import ella from "@/assets/ella.jpg";
-import honeymoon from "@/assets/honeymoon.jpg";
-import wellness from "@/assets/wellness.jpg";
-import aerial from "@/assets/aerial.jpg";
-import iroshan from "@/assets/iroshan.jpg";
-import showcase from "@/assets/showcase.jpg";
-import logo from "@/assets/logo.png";
+import _sigiriya from "@/assets/sigiriya.jpg";
+import _beach from "@/assets/beach.jpg";
+import _golf from "@/assets/golf.jpg";
+import _golf2 from "@/assets/golf2.jpg";
+import _wildlife from "@/assets/wildlife.jpg";
+import _tea from "@/assets/tea.jpg";
+import _resort from "@/assets/resort.jpg";
+import _train from "@/assets/train.jpg";
+import _culture from "@/assets/culture.jpg";
+import _colombo from "@/assets/colombo.jpg";
+import _kandy from "@/assets/kandy.jpg";
+import _galle from "@/assets/galle.jpg";
+import _ella from "@/assets/ella.jpg";
+import _honeymoon from "@/assets/honeymoon.jpg";
+import _wellness from "@/assets/wellness.jpg";
+import _aerial from "@/assets/aerial.jpg";
+import _iroshan from "@/assets/iroshan.jpg";
+import _showcase from "@/assets/showcase.jpg";
+import _logo from "@/assets/logo.png";
+
+const resolveSrc = (image: any): string =>
+  image && typeof image === "object" && "src" in image
+    ? image.src
+    : String(image || "");
+
+const sigiriya = resolveSrc(_sigiriya);
+const beach = resolveSrc(_beach);
+const golf = resolveSrc(_golf);
+const golf2 = resolveSrc(_golf2);
+const wildlife = resolveSrc(_wildlife);
+const tea = resolveSrc(_tea);
+const resort = resolveSrc(_resort);
+const train = resolveSrc(_train);
+const culture = resolveSrc(_culture);
+const colombo = resolveSrc(_colombo);
+const kandy = resolveSrc(_kandy);
+const galle = resolveSrc(_galle);
+const ella = resolveSrc(_ella);
+const honeymoon = resolveSrc(_honeymoon);
+const wellness = resolveSrc(_wellness);
+const aerial = resolveSrc(_aerial);
+const iroshan = resolveSrc(_iroshan);
+const showcase = resolveSrc(_showcase);
+const logo = resolveSrc(_logo);
 
 export const img = {
   sigiriya,

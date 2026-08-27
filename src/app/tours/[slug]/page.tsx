@@ -1,5 +1,8 @@
+"use client";
+
 import { useState } from "react";
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { tours } from "@/data/site";
@@ -20,28 +23,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-export const Route = createFileRoute("/tours/$slug")({
-  head: ({ params }) => {
-    const tour = tours.find((t) => t.slug === params.slug);
-    return {
-      meta: [
-        {
-          title: tour
-            ? `${tour.name.en} | Lanka Luxe Journeys`
-            : "Tour Details | Lanka Luxe Journeys",
-        },
-        {
-          name: "description",
-          content: tour?.short.en || "Luxury bespoke Sri Lanka itinerary details.",
-        },
-      ],
-    };
-  },
-  component: TourDetailPage,
-});
 
-function TourDetailPage() {
-  const { slug } = useParams({ from: "/tours/$slug" });
+
+export default function TourDetailPage() {
+  const rawParams = useParams();
+  const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
 
@@ -72,11 +58,11 @@ function TourDetailPage() {
       {/* Breadcrumb & Top Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
-          <Link to="/" className="hover:underline">
+          <Link href="/" className="hover:underline">
             {t("nav.home")}
           </Link>
           <span>/</span>
-          <Link to="/tours" className="hover:underline">
+          <Link href="/tours" className="hover:underline">
             {t("nav.tours")}
           </Link>
           <span>/</span>

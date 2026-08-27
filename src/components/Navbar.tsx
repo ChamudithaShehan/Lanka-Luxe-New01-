@@ -1,20 +1,22 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
-import { useI18n, LANGUAGES, type Lang } from "@/lib/i18n";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { LuxuryButton } from "./LuxuryButton";
-import { Menu, X, Globe, ChevronDown, Phone, MessageSquare } from "lucide-react";
+import { Menu, X, Phone, MessageSquare } from "lucide-react";
 import { contact, img } from "@/data/site";
 import { AnimatePresence, motion } from "motion/react";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const { lang, setLang, t } = useI18n();
   const { openInquiry } = useInquiry();
-  const location = useLocation();
+  const pathname = usePathname() || "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,8 +34,7 @@ export function Navbar() {
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
-    setLangDropdownOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   const navLinks = [
     { to: "/tours", label: t("nav.tours") },
@@ -52,7 +53,7 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2 sm:gap-3 group text-left">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group text-left">
             <img
               src={img.logo}
               alt="Lanka Luxe Journeys Logo"
@@ -66,12 +67,12 @@ export function Navbar() {
           {/* Desktop Navigation Links */}
           <nav className="hidden xl:flex items-center gap-8">
             {navLinks.map((link) => {
-              const isActive = location.pathname.startsWith(link.to);
+              const isActive = pathname.startsWith(link.to);
 
               return (
                 <Link
                   key={link.to}
-                  to={link.to}
+                  href={link.to}
                   className={`text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-200 relative py-1 ${
                     isActive
                       ? "text-[#C8A45D] font-bold"
@@ -92,6 +93,7 @@ export function Navbar() {
             {/* Language Toggle (All Screens) */}
             <div className="flex items-center bg-slate-100/80 rounded-full p-1 border border-slate-200/60 shadow-inner">
               <button
+                type="button"
                 onClick={() => setLang("en")}
                 className={`relative px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 z-10 ${
                   lang === "en" ? "text-white" : "text-slate-500 hover:text-slate-800"
@@ -107,6 +109,7 @@ export function Navbar() {
                 EN
               </button>
               <button
+                type="button"
                 onClick={() => setLang("ko")}
                 className={`relative px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 z-10 ${
                   lang === "ko" ? "text-white" : "text-slate-500 hover:text-slate-800"
@@ -166,13 +169,13 @@ export function Navbar() {
                 {navLinks.map((link) => {
                   const isActive =
                     link.to === "/"
-                      ? location.pathname === "/"
-                      : location.pathname.startsWith(link.to);
+                      ? pathname === "/"
+                      : pathname.startsWith(link.to);
 
                   return (
                     <Link
                       key={link.to}
-                      to={link.to}
+                      href={link.to}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`text-xl font-bold py-2.5 border-b border-slate-100 flex items-center justify-between ${
                         isActive ? "text-[#C8A45D]" : "text-[#081A33] hover:text-[#C8A45D]"
@@ -227,4 +230,3 @@ export function Navbar() {
     </>
   );
 }
-

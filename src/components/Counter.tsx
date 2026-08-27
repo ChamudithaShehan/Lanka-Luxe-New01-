@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
-import { useInView, useMotionValue, useSpring, motion } from "motion/react";
+import { useInView, useMotionValue, useSpring } from "motion/react";
 
 interface CounterProps {
   value: number;

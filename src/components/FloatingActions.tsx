@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { MessageSquare, ArrowUp } from "lucide-react";
 import { contact } from "@/data/site";

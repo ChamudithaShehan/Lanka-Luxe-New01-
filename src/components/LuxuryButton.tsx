@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 
@@ -79,7 +79,7 @@ export const LuxuryButton = forwardRef<HTMLButtonElement, LuxuryButtonProps>(
       }
       return (
         <Link
-          to={href as any}
+          href={href}
           className={cn(baseStyles, sizeStyles[size], variantStyles[variant], className)}
         >
           {content}

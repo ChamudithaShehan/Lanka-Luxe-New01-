@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { destinations } from "@/data/site";
 import { DestinationCard } from "@/components/DestinationCard";
@@ -9,21 +11,7 @@ import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { useInquiry } from "@/lib/inquiry-context";
 
-export const Route = createFileRoute("/destinations/")({
-  head: () => ({
-    meta: [
-      { title: "Sri Lanka Destinations Guide | Lanka Luxe Journeys" },
-      {
-        name: "description",
-        content:
-          "Explore the regions of Sri Lanka: Colombo, Sigiriya, Kandy, Nuwara Eliya, Ella, Yala, Galle, Bentota and Trincomalee.",
-      },
-    ],
-  }),
-  component: DestinationsIndexPage,
-});
-
-function DestinationsIndexPage() {
+export default function DestinationsPage() {
   const { t, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const [selectedRegion, setSelectedRegion] = useState("All");
@@ -51,7 +39,7 @@ function DestinationsIndexPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
-            <Link to="/" className="hover:underline">
+            <Link href="/" className="hover:underline">
               {t("nav.home")}
             </Link>
             <span>/</span>

@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { type Post } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
 import { Calendar, ArrowRight } from "lucide-react";
@@ -9,7 +11,7 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post, className }: BlogCardProps) {
-  const { tl, t, lang } = useI18n();
+  const { tl, lang } = useI18n();
 
   return (
     <article
@@ -42,7 +44,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
           </div>
 
           <h3 className="text-xl font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors mb-2.5 line-clamp-2 leading-snug">
-            <Link to="/blog/$slug" params={{ slug: post.slug }}>
+            <Link href={`/blog/${post.slug}`}>
               {tl(post.title)}
             </Link>
           </h3>
@@ -54,8 +56,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
 
         <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
           <Link
-            to="/blog/$slug"
-            params={{ slug: post.slug }}
+            href={`/blog/${post.slug}`}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
           >
             <span>{lang === "ko" ? "기사 읽기" : "Read more"}</span>

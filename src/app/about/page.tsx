@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { img, golfCourses } from "@/data/site";
@@ -20,21 +22,9 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Us | Lanka Luxe Journeys" },
-      {
-        name: "description",
-        content:
-          "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame (SLTDA Licence: C-1734). 10+ years experience crafting tailor-made private tours, golf holidays, wildlife, and cultural journeys.",
-      },
-    ],
-  }),
-  component: AboutPage,
-});
 
-function AboutPage() {
+
+export default function AboutPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
 
@@ -44,7 +34,7 @@ function AboutPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
-            <Link to="/" className="hover:underline">
+            <Link href="/" className="hover:underline">
               {t("nav.home")}
             </Link>
             <span>/</span>

@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { img } from "@/data/site";
 import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp } from "lucide-react";
@@ -131,19 +133,19 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1">
+            <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1" suppressHydrationWarning>
               © {new Date().getFullYear()} Lanka Luxe Journeys. All Rights Reserved. · Founder: Iroshan Jayawickrame (SLTDA C-1734)
             </div>
             
             <nav className="flex flex-wrap items-center justify-center gap-5 md:gap-8 text-xs sm:text-sm text-white font-medium uppercase tracking-[0.15em] order-1 lg:order-2">
-              <Link to="/" className="hover:text-gold transition-colors">{t("nav.home")}</Link>
-              <Link to="/about" className="hover:text-gold transition-colors">{t("nav.about")}</Link>
-              <Link to="/tours" className="hover:text-gold transition-colors">{t("nav.tours")}</Link>
-              <Link to="/golf" className="hover:text-gold transition-colors">{t("nav.golf")}</Link>
-              <Link to="/destinations" className="hover:text-gold transition-colors">{t("nav.destinations")}</Link>
-              <Link to="/experiences" className="hover:text-gold transition-colors">{t("nav.experiences")}</Link>
-              <Link to="/blog" className="hover:text-gold transition-colors">{t("nav.blog")}</Link>
-              <Link to="/contact" className="hover:text-gold transition-colors">{t("nav.contact")}</Link>
+              <Link href="/" className="hover:text-gold transition-colors">{t("nav.home")}</Link>
+              <Link href="/about" className="hover:text-gold transition-colors">{t("nav.about")}</Link>
+              <Link href="/tours" className="hover:text-gold transition-colors">{t("nav.tours")}</Link>
+              <Link href="/golf" className="hover:text-gold transition-colors">{t("nav.golf")}</Link>
+              <Link href="/destinations" className="hover:text-gold transition-colors">{t("nav.destinations")}</Link>
+              <Link href="/experiences" className="hover:text-gold transition-colors">{t("nav.experiences")}</Link>
+              <Link href="/blog" className="hover:text-gold transition-colors">{t("nav.blog")}</Link>
+              <Link href="/contact" className="hover:text-gold transition-colors">{t("nav.contact")}</Link>
             </nav>
 
             <div className="flex items-center justify-center gap-3 order-2 lg:order-3">

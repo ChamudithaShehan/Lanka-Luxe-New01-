@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useRef } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import {
@@ -42,11 +44,9 @@ import {
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-});
 
-function Index() {
+
+export default function HomePage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -196,7 +196,7 @@ function Index() {
               <Reveal variant="fade-up" delay={0.35}>
                 <div className="pt-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   <Link
-                    to="/tours"
+                    href="/tours"
                     className="inline-flex items-center justify-between sm:justify-start gap-4 pl-6 pr-2 py-2 rounded-full bg-white text-[#081A33] font-semibold text-sm hover:bg-slate-100 hover:shadow-xl transition-all duration-300 shadow-md group cursor-pointer w-fit"
                   >
                     <span>{lang === "ko" ? "투어 둘러보기" : "View tours"}</span>
@@ -466,7 +466,7 @@ function Index() {
                 
                 {/* Button */}
                 <Link
-                  to="/tours"
+                  href="/tours"
                   className="inline-flex items-center justify-between gap-4 pl-7 pr-1.5 py-1.5 rounded-full bg-[#0B1F3A] text-white font-bold text-sm hover:bg-[#08172b] transition-all duration-300 shadow-[0_8px_20px_rgba(11,31,58,0.3)] group w-fit"
                 >
                   <span>Read more</span>
@@ -800,7 +800,7 @@ function Index() {
                 <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 font-medium">
                   <span>{gc.location}</span>
                   <Link
-                    to="/golf"
+                    href="/golf"
                     className="text-[#C8A45D] hover:underline font-semibold"
                   >
                     {lang === "ko" ? "골프 안내 →" : "Read more →"}
@@ -921,7 +921,7 @@ function Index() {
           }
           action={
             <Link
-              to="/blog"
+              href="/blog"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
             >
               <span>{lang === "ko" ? "저널 전체보기" : "View All"}</span>

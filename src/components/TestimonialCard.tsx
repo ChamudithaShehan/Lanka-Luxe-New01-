@@ -1,3 +1,5 @@
+"use client";
+
 import { type Testimonial } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
 import { Star, Quote } from "lucide-react";

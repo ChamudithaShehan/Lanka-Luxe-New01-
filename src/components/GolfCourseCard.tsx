@@ -1,3 +1,5 @@
+"use client";
+
 import { type GolfCourse } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
 import { Flag, Hotel, MapPin, Moon, Star, ArrowRight } from "lucide-react";

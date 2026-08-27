@@ -1,4 +1,7 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { destinations, tours } from "@/data/site";
@@ -8,28 +11,11 @@ import { TourCard } from "@/components/TourCard";
 import { Reveal } from "@/components/Reveal";
 import { MapPin, Clock, Sparkles, CheckCircle2 } from "lucide-react";
 
-export const Route = createFileRoute("/destinations/$slug")({
-  head: ({ params }) => {
-    const dest = destinations.find((d) => d.slug === params.slug);
-    return {
-      meta: [
-        {
-          title: dest
-            ? `${dest.name.en} Travel Guide | Lanka Luxe Journeys`
-            : "Destination Guide | Lanka Luxe Journeys",
-        },
-        {
-          name: "description",
-          content: dest?.short.en || "Sri Lanka luxury destination travel guide.",
-        },
-      ],
-    };
-  },
-  component: DestinationDetailPage,
-});
 
-function DestinationDetailPage() {
-  const { slug } = useParams({ from: "/destinations/$slug" });
+
+export default function DestinationDetailPage() {
+  const rawParams = useParams();
+  const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
 
@@ -60,11 +46,11 @@ function DestinationDetailPage() {
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
-          <Link to="/" className="hover:underline">
+          <Link href="/" className="hover:underline">
             {t("nav.home")}
           </Link>
           <span>/</span>
-          <Link to="/destinations" className="hover:underline">
+          <Link href="/destinations" className="hover:underline">
             {t("nav.destinations")}
           </Link>
           <span>/</span>

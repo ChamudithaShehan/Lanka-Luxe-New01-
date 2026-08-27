@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useMemo } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { tours, tourFilters } from "@/data/site";
@@ -8,21 +10,9 @@ import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { Search, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
-export const Route = createFileRoute("/tours/")({
-  head: () => ({
-    meta: [
-      { title: "Curated Luxury Tours | Lanka Luxe Journeys" },
-      {
-        name: "description",
-        content:
-          "Explore our private Sri Lanka itineraries: championship golf escapes, tea country rail journeys, wildlife safaris, and romantic honeymoons.",
-      },
-    ],
-  }),
-  component: ToursIndexPage,
-});
 
-function ToursIndexPage() {
+
+export default function ToursPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -70,7 +60,7 @@ function ToursIndexPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
-            <Link to="/" className="hover:underline">
+            <Link href="/" className="hover:underline">
               {t("nav.home")}
             </Link>
             <span>/</span>

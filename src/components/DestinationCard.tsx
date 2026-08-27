@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { type Destination } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
 import { MapPin, ArrowRight, Clock, Star } from "lucide-react";
@@ -49,7 +51,7 @@ export function DestinationCard({ destination, className }: DestinationCardProps
           </div>
 
           <h3 className="text-2xl font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors mb-2 leading-snug">
-            <Link to="/destinations/$slug" params={{ slug: destination.slug }}>
+            <Link href={`/destinations/${destination.slug}`}>
               {tl(destination.name)}
             </Link>
           </h3>
@@ -79,8 +81,7 @@ export function DestinationCard({ destination, className }: DestinationCardProps
           </div>
 
           <Link
-            to="/destinations/$slug"
-            params={{ slug: destination.slug }}
+            href={`/destinations/${destination.slug}`}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
           >
             <span>{lang === "ko" ? "가이드 보기" : "Read more"}</span>

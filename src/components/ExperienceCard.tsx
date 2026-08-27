@@ -1,7 +1,9 @@
+"use client";
+
+import Link from "next/link";
 import { type Experience } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 
 interface ExperienceCardProps {
   experience: Experience;
@@ -53,7 +55,7 @@ export function ExperienceCard({ experience, index, className }: ExperienceCardP
 
         <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
           <Link
-            to="/experiences"
+            href="/experiences"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
           >
             <span>{lang === "ko" ? "체험 자세히 보기" : "Read more"}</span>

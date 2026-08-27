@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { posts, blogCategories } from "@/data/site";
 import { BlogCard } from "@/components/BlogCard";
@@ -7,21 +9,9 @@ import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
 import { Calendar, ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/blog/")({
-  head: () => ({
-    meta: [
-      { title: "The Journal | Lanka Luxe Journeys" },
-      {
-        name: "description",
-        content:
-          "Insider stories, golf guides, wildlife reports and luxury travel advice quietly written by our Colombo team.",
-      },
-    ],
-  }),
-  component: BlogIndexPage,
-});
 
-function BlogIndexPage() {
+
+export default function BlogPage() {
   const { t, tl, lang } = useI18n();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -38,7 +28,7 @@ function BlogIndexPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
-            <Link to="/" className="hover:underline">
+            <Link href="/" className="hover:underline">
               {t("nav.home")}
             </Link>
             <span>/</span>
@@ -85,8 +75,7 @@ function BlogIndexPage() {
 
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#081A33] leading-snug">
                   <Link
-                    to="/blog/$slug"
-                    params={{ slug: featured.slug }}
+                    href={`/blog/${featured.slug}`}
                     className="hover:text-[#C8A45D] transition-colors"
                   >
                     {tl(featured.title)}

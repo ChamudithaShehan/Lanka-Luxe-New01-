@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { img, golfCourses, tours } from "@/data/site";
@@ -15,21 +17,9 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export const Route = createFileRoute("/golf")({
-  head: () => ({
-    meta: [
-      { title: "Championship Golf Holidays Sri Lanka | Lanka Luxe Journeys" },
-      {
-        name: "description",
-        content:
-          "Play five historic and scenic championship golf courses in Sri Lanka. Confirmed tee times, caddies, luxury transfers and Korean-speaking concierge.",
-      },
-    ],
-  }),
-  component: GolfPage,
-});
 
-function GolfPage() {
+
+export default function GolfPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
 
@@ -41,7 +31,7 @@ function GolfPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
-            <Link to="/" className="hover:underline">
+            <Link href="/" className="hover:underline">
               {t("nav.home")}
             </Link>
             <span>/</span>

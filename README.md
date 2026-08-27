@@ -22,9 +22,8 @@ Lanka Luxe Journeys is built with a modern, high-performance tech stack ensuring
 
 ## Tech Stack
 
-- **Framework**: React 18 with Vite
-- **Routing**: TanStack Router (`@tanstack/react-router`)
-- **Styling**: Tailwind CSS with custom theme extensions
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS v4 with custom theme extensions
 - **Animation**: Framer Motion (`motion/react`)
 - **Icons**: Lucide React
 - **Language**: TypeScript
@@ -56,7 +55,7 @@ Start the development server:
 ```bash
 npm run dev
 ```
-The application will be available at `http://localhost:8080` (or your configured port).
+The application will be available at `http://localhost:3000`.
 
 ### Build
 
@@ -67,7 +66,7 @@ npm run build
 
 ## Structure & Architecture
 
-- `src/routes/`: Contains all page routes (e.g., `index.tsx`, `tours.tsx`, `about.tsx`) utilizing TanStack Router.
+- `src/app/`: Next.js App Router pages and layouts (`layout.tsx`, `page.tsx`, `tours/`, `destinations/`, `golf/`, `blog/`, `about/`, `contact/`).
 - `src/components/`: Reusable UI components (Buttons, Cards, Forms, Animations, Navbar, Footer).
 - `src/data/`: Static data and content files (e.g., `site.ts`) powering the application content.
 - `src/lib/`: Utility functions and context providers (e.g., `i18n.tsx`, `inquiry-context.tsx`).

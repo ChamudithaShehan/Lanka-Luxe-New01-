@@ -1,4 +1,7 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { posts } from "@/data/site";
@@ -7,28 +10,11 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { BlogCard } from "@/components/BlogCard";
 import { Calendar, User, Sparkles } from "lucide-react";
 
-export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => {
-    const post = posts.find((p) => p.slug === params.slug);
-    return {
-      meta: [
-        {
-          title: post
-            ? `${post.title.en} | Lanka Luxe Journal`
-            : "Journal Article | Lanka Luxe Journeys",
-        },
-        {
-          name: "description",
-          content: post?.excerpt.en || "Sri Lanka luxury travel journal article.",
-        },
-      ],
-    };
-  },
-  component: BlogDetailPage,
-});
 
-function BlogDetailPage() {
-  const { slug } = useParams({ from: "/blog/$slug" });
+
+export default function BlogDetailPage() {
+  const rawParams = useParams();
+  const slug = typeof rawParams?.slug === "string" ? rawParams.slug : Array.isArray(rawParams?.slug) ? rawParams.slug[0] : "";
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
 
@@ -52,11 +38,11 @@ function BlogDetailPage() {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
-          <Link to="/" className="hover:underline">
+          <Link href="/" className="hover:underline">
             {t("nav.home")}
           </Link>
           <span>/</span>
-          <Link to="/blog" className="hover:underline">
+          <Link href="/blog" className="hover:underline">
             {t("nav.blog")}
           </Link>
           <span>/</span>

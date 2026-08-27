@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { useInquiry } from "@/lib/inquiry-context";
 import { InquiryForm } from "./InquiryForm";
