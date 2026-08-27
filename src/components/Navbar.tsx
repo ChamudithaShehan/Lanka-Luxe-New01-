@@ -83,7 +83,47 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Language Switcher (All Screens) */}
+            <div className="flex relative">
+              <button
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#1E7B9E] px-1 sm:px-3 py-2 cursor-pointer transition-colors"
+              >
+                <Globe className="w-4 h-4 text-[#1E7B9E]" />
+                {LANGUAGES.find((l) => l.code === lang)?.label || "EN"}
+                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+              </button>
+
+              <AnimatePresence>
+                {langDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden py-1"
+                  >
+                    {LANGUAGES.map((l) => (
+                      <button
+                        key={l.code}
+                        onClick={() => {
+                          setLang(l.code);
+                          setLangDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                          lang === l.code
+                            ? "bg-slate-50 text-[#1E7B9E]"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-[#081A33]"
+                        }`}
+                      >
+                        {l.name}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Plan Your Journey CTA Button (Desktop) */}
             <div className="hidden sm:block">
               <LuxuryButton
