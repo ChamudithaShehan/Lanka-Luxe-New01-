@@ -17,11 +17,11 @@ export function InteractiveSriLankaMap() {
       {/* Map Interactive Visual Area (Left/Top) */}
       <div className="lg:col-span-7 relative flex items-center justify-center p-6 sm:p-10 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] overflow-hidden min-h-[460px] sm:min-h-[540px]">
         {/* Subtle decorative background grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#1E7B9E_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#C8A45D_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
 
         {/* Compass indicator */}
         <div className="absolute top-6 left-6 flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 pointer-events-none font-medium">
-          <Compass className="w-4 h-4 text-[#1E7B9E] animate-spin-slow" />
+          <Compass className="w-4 h-4 text-[#C8A45D] animate-spin-slow" />
           <span>The Island of Sri Lanka</span>
         </div>
 
@@ -51,14 +51,14 @@ export function InteractiveSriLankaMap() {
                  C 120 460, 105 410, 100 350 
                  C 95 290, 110 230, 128 170 
                  C 142 120, 170 55, 195 38 Z"
-              className="fill-slate-100 stroke-[#1E7B9E]/30 transition-colors duration-500 hover:fill-slate-50"
+              className="fill-slate-100 stroke-[#C8A45D]/30 transition-colors duration-500 hover:fill-slate-50"
               strokeWidth="1.5"
             />
 
             {/* Interior Topography / Elevation Contour lines */}
             <path
               d="M 175 180 C 220 180, 245 220, 240 280 C 235 340, 210 380, 175 380 C 145 380, 135 320, 140 270 C 145 220, 160 180, 175 180 Z"
-              stroke="#1E7B9E"
+              stroke="#C8A45D"
               strokeOpacity="0.25"
               strokeWidth="1"
               strokeDasharray="3 3"
@@ -66,10 +66,10 @@ export function InteractiveSriLankaMap() {
             />
             <path
               d="M 185 220 C 215 220, 230 250, 225 295 C 220 335, 200 360, 180 360 C 160 360, 150 325, 155 285 C 160 250, 170 220, 185 220 Z"
-              stroke="#1E7B9E"
+              stroke="#C8A45D"
               strokeOpacity="0.35"
               strokeWidth="1"
-              fill="#1E7B9E"
+              fill="#C8A45D"
               fillOpacity="0.05"
             />
           </svg>
@@ -93,8 +93,8 @@ export function InteractiveSriLankaMap() {
                 <div
                   className={`absolute -inset-2 rounded-full transition-all duration-300 ${
                     isSelected
-                      ? "bg-[#1E7B9E]/25 scale-125 animate-ping opacity-75"
-                      : "bg-transparent group-hover:bg-[#1E7B9E]/15"
+                      ? "bg-[#C8A45D]/25 scale-125 animate-ping opacity-75"
+                      : "bg-transparent group-hover:bg-[#C8A45D]/15"
                   }`}
                 />
 
@@ -102,13 +102,13 @@ export function InteractiveSriLankaMap() {
                 <div
                   className={`relative w-4 h-4 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
                     isSelected
-                      ? "bg-[#1E7B9E] border-white scale-125 shadow-md shadow-[#1E7B9E]/40"
-                      : "bg-white border-[#1E7B9E] group-hover:scale-110 shadow-xs"
+                      ? "bg-[#C8A45D] border-white scale-125 shadow-md shadow-[#C8A45D]/40"
+                      : "bg-white border-[#C8A45D] group-hover:scale-110 shadow-xs"
                   }`}
                 >
                   <div
                     className={`w-1.5 h-1.5 rounded-full ${
-                      isSelected ? "bg-white" : "bg-[#1E7B9E]"
+                      isSelected ? "bg-white" : "bg-[#C8A45D]"
                     }`}
                   />
                 </div>
@@ -161,7 +161,7 @@ export function InteractiveSriLankaMap() {
             </div>
 
             {/* Title & Short Story */}
-            <div className="flex items-center gap-1.5 text-xs text-[#1E7B9E] font-medium mb-1">
+            <div className="flex items-center gap-1.5 text-xs text-[#C8A45D] font-medium mb-1">
               <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span>{selected.region}, Sri Lanka</span>
             </div>
@@ -176,7 +176,7 @@ export function InteractiveSriLankaMap() {
 
             {/* Best Experiences Pill List */}
             <div className="mb-6">
-              <div className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] mb-2">
+              <div className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] mb-2">
                 {lang === "ko" ? "대표 체험" : "Best Experiences"}
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -194,14 +194,14 @@ export function InteractiveSriLankaMap() {
             {/* Link to Full Destination Guide */}
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-                <Clock className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                <Clock className="w-3.5 h-3.5 text-[#C8A45D]" />
                 <span>{selected.stay}</span>
               </div>
 
               <Link
                 to="/destinations/$slug"
                 params={{ slug: selected.slug }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1E7B9E] text-white text-xs font-semibold hover:bg-[#156380] transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
               >
                 <span>{lang === "ko" ? "가이드 보기" : "Read more"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />

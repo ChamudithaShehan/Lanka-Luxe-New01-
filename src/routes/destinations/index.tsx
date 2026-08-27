@@ -50,7 +50,7 @@ function DestinationsIndexPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -59,7 +59,7 @@ function DestinationsIndexPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Island of <span className="text-[#1E7B9E]">Serendipity.</span>
+            The Island of <span className="text-[#C8A45D]">Serendipity.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
@@ -76,7 +76,7 @@ function DestinationsIndexPage() {
           eyebrow="Interactive Atlas"
           title={
             <>
-              Interactive Island <span className="text-[#1E7B9E]">Map</span>
+              Interactive Island <span className="text-[#C8A45D]">Map</span>
             </>
           }
           subtitle={
@@ -94,7 +94,7 @@ function DestinationsIndexPage() {
           eyebrow="Directory"
           title={
             <>
-              All Island <span className="text-[#1E7B9E]">Destinations</span>
+              All Island <span className="text-[#C8A45D]">Destinations</span>
             </>
           }
         />
@@ -106,7 +106,7 @@ function DestinationsIndexPage() {
               onClick={() => setSelectedRegion(reg)}
               className={`px-5 py-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 selectedRegion === reg
-                  ? "bg-[#1E7B9E] text-white shadow-sm"
+                  ? "bg-[#0B1F3A] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
               }`}
             >

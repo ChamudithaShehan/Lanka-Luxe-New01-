@@ -37,12 +37,12 @@ export const LuxuryButton = forwardRef<HTMLButtonElement, LuxuryButtonProps>(
     };
 
     const variantStyles = {
-      pill: "bg-[#1E7B9E] text-white hover:bg-[#156380] shadow-sm hover:shadow-md active:translate-y-px font-medium",
-      gold: "bg-gold text-navy hover:bg-gold-light shadow-md hover:shadow-lg hover:shadow-gold/20 active:translate-y-px font-semibold uppercase tracking-wider text-xs",
+      pill: "bg-[#0B1F3A] text-white hover:bg-[#08172b] shadow-sm hover:shadow-md active:translate-y-px font-medium",
+      gold: "bg-[#C8A45D] text-[#0B1F3A] hover:bg-[#b5924d] shadow-md hover:shadow-lg hover:shadow-[#C8A45D]/20 active:translate-y-px font-semibold uppercase tracking-wider text-xs",
       dark: "bg-navy text-white hover:bg-navy-2 shadow-sm hover:shadow-md active:translate-y-px font-medium",
       outline:
         "border border-slate-300 hover:border-navy text-navy hover:bg-slate-50 active:translate-y-px font-medium",
-      ghost: "text-navy hover:text-gold hover:bg-slate-100 active:translate-y-px",
+      ghost: "text-[#0B1F3A] hover:text-[#C8A45D] hover:bg-slate-100 active:translate-y-px",
       secondary:
         "bg-slate-100 text-slate-800 hover:bg-slate-200 active:translate-y-px font-medium",
     };

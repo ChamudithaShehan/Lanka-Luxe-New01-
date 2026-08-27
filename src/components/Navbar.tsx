@@ -53,7 +53,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Brand Logo */}
           <Link to="/" className="flex items-center group text-left">
-            <span className="font-display text-xl sm:text-2xl lg:text-[1.6rem] font-medium tracking-[0.16em] text-[#081A33] group-hover:text-[#1E7B9E] transition-colors duration-300">
+            <span className="font-display text-xl sm:text-2xl lg:text-[1.6rem] font-medium tracking-[0.16em] text-[#081A33] group-hover:text-[#C8A45D] transition-colors duration-300">
               LANKA LUXE
             </span>
           </Link>
@@ -69,13 +69,13 @@ export function Navbar() {
                   to={link.to}
                   className={`text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-200 relative py-1 ${
                     isActive
-                      ? "text-[#1E7B9E] font-bold"
+                      ? "text-[#C8A45D] font-bold"
                       : "text-slate-600 hover:text-[#081A33]"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-[#1E7B9E]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-[#C8A45D]" />
                   )}
                 </Link>
               );
@@ -88,9 +88,9 @@ export function Navbar() {
             <div className="flex relative">
               <button
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#1E7B9E] px-1 sm:px-3 py-2 cursor-pointer transition-colors"
+                className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#C8A45D] px-1 sm:px-3 py-2 cursor-pointer transition-colors"
               >
-                <Globe className="w-4 h-4 text-[#1E7B9E]" />
+                <Globe className="w-4 h-4 text-[#C8A45D]" />
                 {LANGUAGES.find((l) => l.code === lang)?.label || "EN"}
                 <ChevronDown className="w-3.5 h-3.5 opacity-50" />
               </button>
@@ -112,7 +112,7 @@ export function Navbar() {
                         }}
                         className={`w-full text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
                           lang === l.code
-                            ? "bg-slate-50 text-[#1E7B9E]"
+                            ? "bg-slate-50 text-[#C8A45D]"
                             : "text-slate-600 hover:bg-slate-50 hover:text-[#081A33]"
                         }`}
                       >
@@ -159,7 +159,7 @@ export function Navbar() {
             className="fixed inset-0 z-40 pt-24 pb-8 px-6 bg-white text-slate-800 xl:hidden flex flex-col justify-between overflow-y-auto"
           >
             <div className="space-y-4">
-              <div className="text-xs uppercase tracking-[0.25em] text-[#1E7B9E] mb-4 font-semibold">
+              <div className="text-xs uppercase tracking-[0.25em] text-[#C8A45D] mb-4 font-semibold">
                 {lang === "ko" ? "메뉴" : "Navigation"}
               </div>
 
@@ -176,12 +176,12 @@ export function Navbar() {
                       to={link.to}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`text-xl font-bold py-2.5 border-b border-slate-100 flex items-center justify-between ${
-                        isActive ? "text-[#1E7B9E]" : "text-[#081A33] hover:text-[#1E7B9E]"
+                        isActive ? "text-[#C8A45D]" : "text-[#081A33] hover:text-[#C8A45D]"
                       }`}
                     >
                       <span>{link.label}</span>
                       {isActive && (
-                        <span className="w-2 h-2 rounded-full bg-[#1E7B9E]" />
+                        <span className="w-2 h-2 rounded-full bg-[#C8A45D]" />
                       )}
                     </Link>
                   );
@@ -208,7 +208,7 @@ export function Navbar() {
                   href={`tel:${contact.phone}`}
                   className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-[#081A33] font-medium"
                 >
-                  <Phone className="w-4 h-4 text-[#1E7B9E]" />
+                  <Phone className="w-4 h-4 text-[#C8A45D]" />
                   <span className="truncate">{contact.phone}</span>
                 </a>
                 <a

@@ -59,7 +59,7 @@ function DestinationDetailPage() {
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] font-semibold">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
           <Link to="/" className="hover:underline">
             {t("nav.home")}
           </Link>
@@ -94,7 +94,7 @@ function DestinationDetailPage() {
             </div>
 
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-slate-800 text-xs backdrop-blur-md font-medium shadow-sm">
-              <Clock className="w-4 h-4 text-[#1E7B9E]" />
+              <Clock className="w-4 h-4 text-[#C8A45D]" />
               <span>
                 {lang === "ko" ? "권장 체류:" : "Recommended Stay:"}{" "}
                 <strong>{dest.stay}</strong>
@@ -122,7 +122,7 @@ function DestinationDetailPage() {
             {/* Best Experiences in this destination */}
             <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
               <div className="flex items-center gap-2 mb-6">
-                <Sparkles className="w-4 h-4 text-[#1E7B9E]" />
+                <Sparkles className="w-4 h-4 text-[#C8A45D]" />
                 <h3 className="text-xl font-bold text-[#081A33]">
                   {lang === "ko"
                     ? `${tl(dest.name)} 대표 추천 체험`
@@ -136,7 +136,7 @@ function DestinationDetailPage() {
                     key={i}
                     className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-3"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-[#1E7B9E] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A45D] shrink-0 mt-0.5" />
                     <span className="text-sm text-slate-700 font-medium">{exp}</span>
                   </div>
                 ))}
@@ -184,7 +184,7 @@ function DestinationDetailPage() {
             title={
               <>
                 Signature Journeys Visiting{" "}
-                <span className="text-[#1E7B9E]">{tl(dest.name)}</span>
+                <span className="text-[#C8A45D]">{tl(dest.name)}</span>
               </>
             }
           />

@@ -37,7 +37,7 @@ function BlogIndexPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -46,7 +46,7 @@ function BlogIndexPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Lanka Luxe <span className="text-[#1E7B9E]">Journal.</span>
+            The Lanka Luxe <span className="text-[#C8A45D]">Journal.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
@@ -79,7 +79,7 @@ function BlogIndexPage() {
 
               <div className="lg:col-span-5 space-y-4 text-left">
                 <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                  <Calendar className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                  <Calendar className="w-3.5 h-3.5 text-[#C8A45D]" />
                   <span>{featured.date}</span>
                 </div>
 
@@ -87,7 +87,7 @@ function BlogIndexPage() {
                   <Link
                     to="/blog/$slug"
                     params={{ slug: featured.slug }}
-                    className="hover:text-[#1E7B9E] transition-colors"
+                    className="hover:text-[#C8A45D] transition-colors"
                   >
                     {tl(featured.title)}
                   </Link>
@@ -121,7 +121,7 @@ function BlogIndexPage() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-5 py-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? "bg-[#1E7B9E] text-white shadow-sm"
+                  ? "bg-[#0B1F3A] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
               }`}
             >

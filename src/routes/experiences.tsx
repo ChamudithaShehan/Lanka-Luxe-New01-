@@ -29,7 +29,7 @@ function ExperiencesPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -38,7 +38,7 @@ function ExperiencesPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Extraordinary Island <span className="text-[#1E7B9E]">Immersions.</span>
+            Extraordinary Island <span className="text-[#C8A45D]">Immersions.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
@@ -74,7 +74,7 @@ function ExperiencesPage() {
                     />
                     <div className="absolute top-4 left-4">
                       <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-[#1E7B9E]" />
+                        <Sparkles className="w-3 h-3 text-[#C8A45D]" />
                         Experience 0{idx + 1}
                       </span>
                     </div>
@@ -88,7 +88,7 @@ function ExperiencesPage() {
                   }`}
                 >
                   <div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] block mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] block mb-1">
                       {lang === "ko" ? "시그니처 체험" : "Signature Immersion"}
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-bold text-[#081A33] leading-tight">

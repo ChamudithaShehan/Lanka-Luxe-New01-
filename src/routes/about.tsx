@@ -30,7 +30,7 @@ function AboutPage() {
       {/* Hero Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -39,7 +39,7 @@ function AboutPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Private Travel Atelier of <span className="text-[#1E7B9E]">Sri Lanka.</span>
+            The Private Travel Atelier of <span className="text-[#C8A45D]">Sri Lanka.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
@@ -55,7 +55,7 @@ function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-6 text-left">
             <Reveal variant="slide-left">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1E7B9E]">
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
                 Our Philosophy
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] leading-tight">
@@ -78,13 +78,13 @@ function AboutPage() {
 
               <div className="pt-4 grid grid-cols-2 gap-4 text-xs text-slate-700">
                 <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
-                  <div className="text-[#1E7B9E] font-display text-3xl font-bold mb-1">
+                  <div className="text-[#C8A45D] font-display text-3xl font-bold mb-1">
                     18 Years
                   </div>
                   <div className="text-slate-500 font-medium">Luxury Hospitality Legacy</div>
                 </div>
                 <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
-                  <div className="text-[#1E7B9E] font-display text-3xl font-bold mb-1">
+                  <div className="text-[#C8A45D] font-display text-3xl font-bold mb-1">
                     100%
                   </div>
                   <div className="text-slate-500 font-medium">Private & Bespoke Routes</div>
@@ -114,7 +114,7 @@ function AboutPage() {
             eyebrow="The Curators"
             title={
               <>
-                Meet Our <span className="text-[#1E7B9E]">Specialists</span>
+                Meet Our <span className="text-[#C8A45D]">Specialists</span>
               </>
             }
             subtitle={
@@ -136,7 +136,7 @@ function AboutPage() {
                     />
                   </div>
                   <h3 className="text-xl font-bold text-[#081A33] mb-1">{member.name}</h3>
-                  <div className="text-xs text-[#1E7B9E] font-semibold uppercase tracking-wider mb-3">
+                  <div className="text-xs text-[#C8A45D] font-semibold uppercase tracking-wider mb-3">
                     {tl(member.role)}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed flex-1">
@@ -155,7 +155,7 @@ function AboutPage() {
           eyebrow="Sanctuaries"
           title={
             <>
-              Handpicked <span className="text-[#1E7B9E]">Partner Estates</span>
+              Handpicked <span className="text-[#C8A45D]">Partner Estates</span>
             </>
           }
           subtitle={
@@ -178,7 +178,7 @@ function AboutPage() {
               key={idx}
               className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col justify-center items-center hover:border-slate-300 transition-colors"
             >
-              <Award className="w-6 h-6 text-[#1E7B9E] mb-2" />
+              <Award className="w-6 h-6 text-[#C8A45D] mb-2" />
               <div className="text-sm font-bold text-[#081A33] mb-1">{hotel.name}</div>
               <div className="text-xs text-slate-400 font-normal">{hotel.loc}</div>
             </div>
@@ -189,7 +189,7 @@ function AboutPage() {
       {/* Call to Action */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <div className="p-10 sm:p-14 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] block mb-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] block mb-2">
             Begin Your Story
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] mb-4">

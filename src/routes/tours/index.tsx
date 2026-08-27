@@ -50,7 +50,7 @@ function ToursIndexPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -59,7 +59,7 @@ function ToursIndexPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-4">
-            Signature Luxury <span className="text-[#1E7B9E]">Journeys.</span>
+            Signature Luxury <span className="text-[#C8A45D]">Journeys.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-2xl leading-relaxed mb-8">
@@ -82,20 +82,20 @@ function ToursIndexPage() {
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#1E7B9E] focus:bg-white outline-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] focus:bg-white outline-none"
               />
             </div>
 
             {/* Filter Category Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#1E7B9E] shrink-0 mr-1 hidden sm:inline" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#C8A45D] shrink-0 mr-1 hidden sm:inline" />
               {tourFilters.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 text-xs font-semibold rounded-full whitespace-nowrap transition-all cursor-pointer ${
                     selectedCategory === cat
-                      ? "bg-[#1E7B9E] text-white shadow-sm"
+                      ? "bg-[#0B1F3A] text-white shadow-sm"
                       : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                   }`}
                 >
@@ -121,7 +121,7 @@ function ToursIndexPage() {
                 setSelectedCategory("All");
                 setSearchQuery("");
               }}
-              className="text-xs uppercase tracking-widest text-[#1E7B9E] underline font-semibold cursor-pointer"
+              className="text-xs uppercase tracking-widest text-[#C8A45D] underline font-semibold cursor-pointer"
             >
               {lang === "ko" ? "전체 목록 보기" : "Reset Filters"}
             </button>
@@ -142,8 +142,8 @@ function ToursIndexPage() {
         <div className="p-8 sm:p-12 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#1E7B9E]" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E]">
+              <Sparkles className="w-4 h-4 text-[#C8A45D]" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D]">
                 {lang === "ko" ? "100% 맞춤 여행 설계" : "Completely Tailor-Made"}
               </span>
             </div>

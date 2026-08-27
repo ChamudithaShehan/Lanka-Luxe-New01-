@@ -51,7 +51,7 @@ function BlogDetailPage() {
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] font-semibold">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
           <Link to="/" className="hover:underline">
             {t("nav.home")}
           </Link>
@@ -67,7 +67,7 @@ function BlogDetailPage() {
       {/* Article Header */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-10 text-center">
-          <div className="inline-block text-xs font-semibold px-3.5 py-1.5 rounded-full bg-slate-100 text-[#1E7B9E] mb-4">
+          <div className="inline-block text-xs font-semibold px-3.5 py-1.5 rounded-full bg-slate-100 text-[#C8A45D] mb-4">
             {post.category}
           </div>
 
@@ -77,11 +77,11 @@ function BlogDetailPage() {
 
           <div className="flex items-center justify-center gap-6 text-xs text-slate-400 border-y border-slate-200/80 py-3 font-medium">
             <div className="flex items-center gap-2">
-              <Calendar className="w-3.5 h-3.5 text-[#1E7B9E]" />
+              <Calendar className="w-3.5 h-3.5 text-[#C8A45D]" />
               <span>{post.date}</span>
             </div>
             <div className="flex items-center gap-2">
-              <User className="w-3.5 h-3.5 text-[#1E7B9E]" />
+              <User className="w-3.5 h-3.5 text-[#C8A45D]" />
               <span>Lanka Luxe Editorial</span>
             </div>
           </div>
@@ -98,7 +98,7 @@ function BlogDetailPage() {
 
         {/* Editorial Body Content */}
         <div className="max-w-none text-slate-600 font-normal leading-relaxed space-y-6 text-base sm:text-lg mb-16">
-          <p className="text-xl sm:text-2xl text-[#081A33] font-medium leading-relaxed italic border-l-4 border-[#1E7B9E] pl-6 py-2">
+          <p className="text-xl sm:text-2xl text-[#081A33] font-medium leading-relaxed italic border-l-4 border-[#C8A45D] pl-6 py-2">
             "{tl(post.excerpt)}"
           </p>
 
@@ -119,7 +119,7 @@ function BlogDetailPage() {
           </p>
 
           <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs my-8">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] mb-2">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#C8A45D] mb-2">
               <Sparkles className="w-3.5 h-3.5" />
               <span>{lang === "ko" ? "아틀리에 팁" : "Atelier Recommendation"}</span>
             </div>
@@ -140,7 +140,7 @@ function BlogDetailPage() {
         {/* Author Bio & Inquire Box */}
         <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] mb-16 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] block mb-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] block mb-1">
               Written by
             </span>
             <div className="text-xl font-bold text-[#081A33]">
@@ -173,7 +173,7 @@ function BlogDetailPage() {
             eyebrow="More From The Journal"
             title={
               <>
-                Related <span className="text-[#1E7B9E]">Articles</span>
+                Related <span className="text-[#C8A45D]">Articles</span>
               </>
             }
           />

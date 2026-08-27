@@ -71,7 +71,7 @@ function TourDetailPage() {
     <div className="pt-28 pb-24 bg-[#F9FAFB] text-slate-800 min-h-screen">
       {/* Breadcrumb & Top Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] font-semibold">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] font-semibold">
           <Link to="/" className="hover:underline">
             {t("nav.home")}
           </Link>
@@ -110,7 +110,7 @@ function TourDetailPage() {
                   onClick={() => setActiveImage(imgSrc)}
                   className={`relative w-24 h-16 rounded-xl overflow-hidden border shrink-0 transition-all cursor-pointer ${
                     (activeImage || tour.image) === imgSrc
-                      ? "border-[#1E7B9E] scale-105 shadow-md shadow-[#1E7B9E]/20"
+                      ? "border-[#C8A45D] scale-105 shadow-md shadow-[#C8A45D]/20"
                       : "border-slate-200 opacity-70 hover:opacity-100"
                   }`}
                 >
@@ -128,7 +128,7 @@ function TourDetailPage() {
           <div className="lg:col-span-4 flex flex-col justify-between">
             <div className="p-7 sm:p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] space-y-6">
               <div>
-                <div className="flex items-center gap-1.5 text-xs text-[#1E7B9E] font-semibold mb-2">
+                <div className="flex items-center gap-1.5 text-xs text-[#C8A45D] font-semibold mb-2">
                   <MapPin className="w-3.5 h-3.5" />
                   <span>{tour.locations.join(" • ")}</span>
                 </div>
@@ -147,7 +147,7 @@ function TourDetailPage() {
                     {t("tour.duration")}
                   </span>
                   <div className="flex items-center gap-1.5 font-bold text-[#081A33] text-sm">
-                    <Clock className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                    <Clock className="w-3.5 h-3.5 text-[#C8A45D]" />
                     <span>
                       {tour.days} {lang === "ko" ? "일" : "Days"}
                     </span>
@@ -167,15 +167,15 @@ function TourDetailPage() {
               {/* Inclusions summary */}
               <div className="space-y-2 text-xs text-slate-600 font-medium">
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                  <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
                   <span>Private Chauffeur & Luxury Fleet</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                  <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
                   <span>5-Star Boutique & Heritage Stays</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#1E7B9E]" />
+                  <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
                   <span>24/7 Bilingual Concierge (EN / KO)</span>
                 </div>
               </div>
@@ -229,7 +229,7 @@ function TourDetailPage() {
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#081A33]">
                   {t("tour.itinerary")}
                 </h2>
-                <span className="text-xs font-semibold text-[#1E7B9E] uppercase">
+                <span className="text-xs font-semibold text-[#C8A45D] uppercase">
                   {tour.days} Days Total
                 </span>
               </div>
@@ -247,11 +247,11 @@ function TourDetailPage() {
                         className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                       >
                         <div className="flex items-center gap-4">
-                          <span className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-[#1E7B9E] flex items-center justify-center font-bold text-base shrink-0">
+                          <span className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-[#C8A45D] flex items-center justify-center font-bold text-base shrink-0">
                             {item.day}
                           </span>
                           <div>
-                            <span className="text-[0.625rem] font-semibold text-[#1E7B9E] uppercase block">
+                            <span className="text-[0.625rem] font-semibold text-[#C8A45D] uppercase block">
                               Day {item.day}
                             </span>
                             <h3 className="text-base sm:text-lg text-[#081A33] font-bold">
@@ -260,7 +260,7 @@ function TourDetailPage() {
                           </div>
                         </div>
 
-                        <span className="text-[#1E7B9E] text-base font-bold">
+                        <span className="text-[#C8A45D] text-base font-bold">
                           {isOpen ? "−" : "+"}
                         </span>
                       </button>
@@ -281,13 +281,13 @@ function TourDetailPage() {
               {/* Inclusions */}
               <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#081A33] mb-4 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-[#1E7B9E]" />
+                  <Check className="w-4 h-4 text-[#C8A45D]" />
                   <span>{t("tour.included")}</span>
                 </h3>
                 <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
                   {tour.included.map((inc, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-[#1E7B9E] shrink-0 font-bold">✓</span>
+                      <span className="text-[#C8A45D] shrink-0 font-bold">✓</span>
                       <span>{inc}</span>
                     </li>
                   ))}
@@ -315,7 +315,7 @@ function TourDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#081A33] mb-4 flex items-center gap-2">
-                  <Hotel className="w-4 h-4 text-[#1E7B9E]" />
+                  <Hotel className="w-4 h-4 text-[#C8A45D]" />
                   <span>{t("tour.hotels")}</span>
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -332,7 +332,7 @@ function TourDetailPage() {
 
               <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#081A33] mb-4 flex items-center gap-2">
-                  <Car className="w-4 h-4 text-[#1E7B9E]" />
+                  <Car className="w-4 h-4 text-[#C8A45D]" />
                   <span>{t("tour.transport")}</span>
                 </h3>
                 <p className="text-xs text-slate-600 font-normal leading-relaxed">
@@ -345,7 +345,7 @@ function TourDetailPage() {
           {/* Right Sidebar Details */}
           <div className="lg:col-span-4 space-y-6">
             <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] text-center">
-              <ShieldCheck className="w-10 h-10 text-[#1E7B9E] mx-auto mb-3" />
+              <ShieldCheck className="w-10 h-10 text-[#C8A45D] mx-auto mb-3" />
               <h3 className="text-xl font-bold text-[#081A33] mb-2">
                 {lang === "ko" ? "맞춤 일정 상담" : "Tailor This Route"}
               </h3>
@@ -378,7 +378,7 @@ function TourDetailPage() {
           eyebrow="Collection"
           title={
             <>
-              Other Curated <span className="text-[#1E7B9E]">Journeys</span>
+              Other Curated <span className="text-[#C8A45D]">Journeys</span>
             </>
           }
         />

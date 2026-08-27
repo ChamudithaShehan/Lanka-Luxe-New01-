@@ -40,7 +40,7 @@ function GolfPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -49,7 +49,7 @@ function GolfPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Play Asia's Most Scenic <span className="text-[#1E7B9E]">Golf Fairways.</span>
+            Play Asia's Most Scenic <span className="text-[#C8A45D]">Golf Fairways.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
@@ -84,7 +84,7 @@ function GolfPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-4">
                 <Flag className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
@@ -100,7 +100,7 @@ function GolfPage() {
 
           <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-4">
                 <Briefcase className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
@@ -116,7 +116,7 @@ function GolfPage() {
 
           <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-4">
                 <Award className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
@@ -132,7 +132,7 @@ function GolfPage() {
 
           <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-4">
                 <Users className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
@@ -152,7 +152,7 @@ function GolfPage() {
       {golfTour && (
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
           <div className="mb-6">
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1E7B9E]">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
               FEATURED GOLF PACKAGE
             </span>
           </div>
@@ -166,7 +166,7 @@ function GolfPage() {
           eyebrow="Championship Venues"
           title={
             <>
-              Sri Lanka's <span className="text-[#1E7B9E]">5 Championship Courses</span>
+              Sri Lanka's <span className="text-[#C8A45D]">5 Championship Courses</span>
             </>
           }
           subtitle={
@@ -188,7 +188,7 @@ function GolfPage() {
       {/* Golf FAQ & Booking CTA */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <div className="p-10 sm:p-14 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E] block mb-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] block mb-2">
             Custom Golf Groups
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] mb-4">

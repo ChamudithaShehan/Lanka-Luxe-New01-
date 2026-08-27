@@ -18,7 +18,7 @@ export function TestimonialCard({ testimonial, className }: TestimonialCardProps
     >
       <div>
         <div className="flex items-center justify-between mb-4">
-          <Quote className="w-8 h-8 text-[#1E7B9E]/30" />
+          <Quote className="w-8 h-8 text-[#C8A45D]/30" />
           {/* Star Rating */}
           <div className="flex items-center gap-1 text-[#FF9F1C]">
             {[...Array(5)].map((_, i) => (
@@ -47,7 +47,7 @@ export function TestimonialCard({ testimonial, className }: TestimonialCardProps
           <div className="text-xs text-slate-400 flex items-center gap-1.5 font-normal">
             <span>{testimonial.country}</span>
             <span>•</span>
-            <span className="text-[#1E7B9E] font-medium">{testimonial.trip}</span>
+            <span className="text-[#C8A45D] font-medium">{testimonial.trip}</span>
           </div>
         </div>
       </div>

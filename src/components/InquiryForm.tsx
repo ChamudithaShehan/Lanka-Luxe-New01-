@@ -65,7 +65,7 @@ export function InquiryForm({
             : "bg-white border-slate-100 text-[#081A33]"
         } shadow-xl`}
       >
-        <div className="w-16 h-16 rounded-full bg-[#1E7B9E]/10 text-[#1E7B9E] mx-auto flex items-center justify-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] mx-auto flex items-center justify-center mb-6">
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <h3 className="text-2xl md:text-3xl font-bold mb-3">
@@ -108,7 +108,7 @@ export function InquiryForm({
   const inputStyles = `w-full px-4 py-3.5 text-sm rounded-xl transition-all duration-200 outline-none ${
     isDark
       ? "bg-navy/80 border border-white/15 text-white placeholder:text-mist/50 focus:border-gold focus:bg-navy focus:ring-1 focus:ring-gold"
-      : "bg-slate-50 border border-slate-200 text-[#081A33] placeholder:text-slate-400 focus:border-[#1E7B9E] focus:bg-white focus:ring-1 focus:ring-[#1E7B9E]"
+      : "bg-slate-50 border border-slate-200 text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] focus:bg-white focus:ring-1 focus:ring-[#C8A45D]"
   }`;
 
   const labelStyles = `block text-xs font-semibold tracking-wider uppercase mb-2 ${
@@ -125,8 +125,8 @@ export function InquiryForm({
       } ${className || ""}`}
     >
       <div className="flex items-center gap-2 mb-6">
-        <Sparkles className="w-4 h-4 text-[#1E7B9E] shrink-0" />
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#1E7B9E]">
+        <Sparkles className="w-4 h-4 text-[#C8A45D] shrink-0" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D]">
           {lang === "ko" ? "맞춤 여행 상담 예약" : "Bespoke Journey Consultation"}
         </span>
       </div>
@@ -231,7 +231,7 @@ export function InquiryForm({
       </div>
 
       {formData.tour && (
-        <div className="mb-5 p-3 rounded-xl bg-[#1E7B9E]/10 border border-[#1E7B9E]/20 text-xs text-[#1E7B9E] flex items-center justify-between">
+        <div className="mb-5 p-3 rounded-xl bg-[#C8A45D]/10 border border-[#C8A45D]/20 text-xs text-[#C8A45D] flex items-center justify-between">
           <span>
             {lang === "ko" ? "선택한 일정:" : "Selected Journey:"}{" "}
             <strong>{formData.tour}</strong>

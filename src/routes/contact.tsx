@@ -90,7 +90,7 @@ function ContactPage() {
       {/* Header */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-16">
         <Reveal variant="fade-up">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#1E7B9E] mb-3 font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#C8A45D] mb-3 font-semibold">
             <Link to="/" className="hover:underline">
               {t("nav.home")}
             </Link>
@@ -99,7 +99,7 @@ function ContactPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Begin Planning Your <span className="text-[#1E7B9E]">Journey.</span>
+            Begin Planning Your <span className="text-[#C8A45D]">Journey.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
@@ -158,13 +158,13 @@ function ContactPage() {
                 {/* Phone */}
                 <a
                   href={`tel:${contact.phone}`}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#1E7B9E] transition-all group"
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#C8A45D] transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-[#081A33] group-hover:text-[#1E7B9E] transition-colors">
+                    <div className="font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors">
                       Telephone
                     </div>
                     <div className="text-slate-500">{contact.phone}</div>
@@ -174,13 +174,13 @@ function ContactPage() {
                 {/* Email */}
                 <a
                   href={`mailto:${contact.email}`}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#1E7B9E] transition-all group"
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#C8A45D] transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-[#081A33] group-hover:text-[#1E7B9E] transition-colors">
+                    <div className="font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors">
                       Email
                     </div>
                     <div className="text-slate-500">{contact.email}</div>
@@ -189,7 +189,7 @@ function ContactPage() {
 
                 {/* Address */}
                 <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <div className="w-10 h-10 rounded-full bg-[#1E7B9E]/10 text-[#1E7B9E] flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-10 h-10 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center shrink-0 mt-0.5">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -216,7 +216,7 @@ function ContactPage() {
           eyebrow="FAQ"
           title={
             <>
-              Frequently Asked <span className="text-[#1E7B9E]">Questions</span>
+              Frequently Asked <span className="text-[#C8A45D]">Questions</span>
             </>
           }
           subtitle={
@@ -239,13 +239,13 @@ function ContactPage() {
                   className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <HelpCircle className="w-5 h-5 text-[#1E7B9E] shrink-0" />
+                    <HelpCircle className="w-5 h-5 text-[#C8A45D] shrink-0" />
                     <span className="text-base sm:text-lg text-[#081A33] font-bold">
                       {faq.q}
                     </span>
                   </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#1E7B9E] shrink-0 transition-transform duration-300 ${
+                    className={`w-4 h-4 text-[#C8A45D] shrink-0 transition-transform duration-300 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                   />

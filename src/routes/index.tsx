@@ -63,12 +63,12 @@ function Index() {
   const featuredTour = tours[0];
 
   return (
-    <div className="relative min-h-screen bg-[#F9FAFB] text-slate-800 selection:bg-[#22A2BD] selection:text-white">
+    <div className="relative min-h-screen bg-[#F9FAFB] text-slate-800 selection:bg-[#C8A45D] selection:text-white">
       {/* 1. HERO SECTION (MATCHING REFERENCE DESIGN WITH ARCH/CAPSULE PHOTO MOSAIC & FLIGHT PATHS) */}
       <section className="relative min-h-[95vh] lg:min-h-screen flex items-center justify-center pt-28 pb-20 px-4 sm:px-6 lg:px-8 bg-[#0B1A30] text-white overflow-hidden">
         {/* Subtle Ambient Radial Lighting */}
-        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#22A2BD]/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-[#1E7B9E]/10 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#C8A45D]/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-[#C8A45D]/10 rounded-full blur-[160px] pointer-events-none" />
 
         {/* Faint World Map Vector Silhouette Background */}
         <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center overflow-hidden">
@@ -146,7 +146,7 @@ function Index() {
               {/* Eyebrow with Compass Icon */}
               <Reveal variant="fade-up" delay={0.05}>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#22A2BD]">
+                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#C8A45D]">
                     {lang === "ko" ? "스리랑카 럭셔리 여행 아틀리에" : "LANKA LUXE ATELIER"}
                   </span>
                   <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60">
@@ -160,7 +160,7 @@ function Index() {
                 <h1 className="text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight">
                   DISCOVER THE <br />
                   WORLD{" "}
-                  <span className="text-[#22A2BD] font-normal italic font-sans lowercase">
+                  <span className="text-[#C8A45D] font-normal italic font-sans lowercase">
                     {lang === "ko" ? "프라이빗 가이드와 함께." : "with our guide."}
                   </span>
                 </h1>
@@ -183,7 +183,7 @@ function Index() {
                     className="inline-flex items-center justify-between sm:justify-start gap-4 pl-6 pr-2 py-2 rounded-full bg-white text-[#081A33] font-semibold text-sm hover:bg-slate-100 hover:shadow-xl transition-all duration-300 shadow-md group cursor-pointer w-fit"
                   >
                     <span>{lang === "ko" ? "투어 둘러보기" : "View tours"}</span>
-                    <span className="w-10 h-10 rounded-full bg-[#22A2BD] text-white flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
+                    <span className="w-10 h-10 rounded-full bg-[#0B1F3A] text-white flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
                       <ArrowRight className="w-5 h-5" />
                     </span>
                   </Link>
@@ -201,7 +201,7 @@ function Index() {
               {/* Korean Traveler Trust Banner */}
               <Reveal variant="fade-up" delay={0.45}>
                 <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hidden sm:flex items-center gap-3 max-w-md text-xs text-slate-300">
-                  <div className="w-7 h-7 rounded-full bg-[#22A2BD]/20 text-[#22A2BD] flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-[#C8A45D]/20 text-[#C8A45D] flex items-center justify-center font-bold text-xs shrink-0">
                     VIP
                   </div>
                   <div>
@@ -381,13 +381,13 @@ function Index() {
           {/* Right Content */}
           <div className="lg:col-span-6 space-y-6 text-left relative pt-10 lg:pt-0">
             <Reveal variant="slide-left" once={false}>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#22A2BD]">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#C8A45D]">
                 {lang === "ko" ? "스리랑카 럭셔리 여행" : "LANKA LUXE TRAVEL"}
               </span>
               
               <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-display font-medium text-[#081A33] leading-[1.05] mt-4 mb-6">
                 Discover the world <br className="hidden xl:block" />
-                <span className="text-[#22A2BD]">with our guide</span>
+                <span className="text-[#C8A45D]">with our guide</span>
               </h2>
               
               <p className="text-sm sm:text-base text-slate-500 font-normal leading-relaxed mb-8 max-w-lg">
@@ -399,25 +399,25 @@ function Index() {
               {/* 4 Icons Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-6 mb-12">
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Globe2 className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">Global Destinations</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Users className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">Expert Guidance</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">Safe Travels</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-[#22A2BD]/10 flex items-center justify-center text-[#22A2BD] shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Building2 className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">Luxury Lodging</span>
@@ -444,10 +444,10 @@ function Index() {
                 {/* Button */}
                 <Link
                   to="/tours"
-                  className="inline-flex items-center justify-between gap-4 pl-7 pr-1.5 py-1.5 rounded-full bg-[#22A2BD] text-white font-bold text-sm hover:bg-[#1c8aa1] transition-all duration-300 shadow-[0_8px_20px_rgba(34,162,189,0.3)] group w-fit"
+                  className="inline-flex items-center justify-between gap-4 pl-7 pr-1.5 py-1.5 rounded-full bg-[#0B1F3A] text-white font-bold text-sm hover:bg-[#08172b] transition-all duration-300 shadow-[0_8px_20px_rgba(11,31,58,0.3)] group w-fit"
                 >
                   <span>Read more</span>
-                  <span className="w-9 h-9 rounded-full bg-white text-[#22A2BD] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
+                  <span className="w-9 h-9 rounded-full bg-white text-[#C8A45D] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
@@ -470,13 +470,13 @@ function Index() {
           {/* Left Title Area (Sticky, Slide from Left) */}
           <div className="lg:col-span-5 lg:sticky lg:top-32">
             <Reveal variant="slide-left" once={false} className="space-y-5 text-left">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1E7B9E]">
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
                 CHOOSE YOUR PLACE
               </span>
 
               <h2 className="text-4xl sm:text-5xl font-display font-medium text-[#081A33] leading-tight">
                 Discover dream <br />
-                <span className="text-[#1E7B9E]">destinations</span>
+                <span className="text-[#C8A45D]">destinations</span>
               </h2>
 
               <p className="text-sm sm:text-base text-slate-500 font-normal leading-relaxed">
@@ -511,7 +511,7 @@ function Index() {
             {/* Left Story */}
             <div className="lg:col-span-6 space-y-6 text-left">
               <Reveal variant="slide-left" once={false}>
-                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1E7B9E]">
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
                   {t("intro.eyebrow")}
                 </span>
 
@@ -532,7 +532,7 @@ function Index() {
                     {lang === "ko" ? "아틀리에 소개" : "Read more"}
                   </LuxuryButton>
                   <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-                    <MapPin className="w-4 h-4 text-[#1E7B9E]" />
+                    <MapPin className="w-4 h-4 text-[#C8A45D]" />
                     <span>Galle Face Terrace, Colombo 03</span>
                   </div>
                 </div>
@@ -570,7 +570,7 @@ function Index() {
           eyebrow={t("journeys.eyebrow")}
           title={
             <>
-              Curated <span className="text-[#1E7B9E]">Journeys</span>
+              Curated <span className="text-[#C8A45D]">Journeys</span>
             </>
           }
           subtitle={
@@ -587,7 +587,7 @@ function Index() {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-5 py-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${selectedCategory === cat
-                  ? "bg-[#1E7B9E] text-white shadow-sm"
+                  ? "bg-[#0B1F3A] text-white shadow-sm"
                   : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
                 }`}
             >
@@ -618,13 +618,13 @@ function Index() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
             <div className="lg:col-span-7 space-y-6 text-left">
               <Reveal variant="slide-left" once={false}>
-                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1E7B9E]">
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
                   {t("golf.eyebrow")}
                 </span>
 
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#081A33] leading-tight">
                   Play the World's Most Scenic{" "}
-                  <span className="text-[#1E7B9E]">Golf Journey.</span>
+                  <span className="text-[#C8A45D]">Golf Journey.</span>
                 </h2>
 
                 <p className="text-base text-slate-600 leading-relaxed">
@@ -632,7 +632,7 @@ function Index() {
                 </p>
 
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#1E7B9E] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-[#C8A45D] shrink-0" />
                   <span>
                     {lang === "ko"
                       ? "한국 골프 여행객을 위한 테일러메이드/캘러웨이 최신 클럽 렌탈, 티타임 사전 확정, 전용 밴 차량 제공"
@@ -680,7 +680,7 @@ function Index() {
                 className="p-7 rounded-[1.75rem] bg-slate-50 border border-slate-100 hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
-                  <div className="text-xs font-semibold text-[#1E7B9E] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <div className="text-xs font-semibold text-[#C8A45D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <Flag className="w-3.5 h-3.5" />
                     <span>{gc.holes}</span>
                   </div>
@@ -695,7 +695,7 @@ function Index() {
                   <span>{gc.location}</span>
                   <Link
                     to="/golf"
-                    className="text-[#1E7B9E] hover:underline font-semibold"
+                    className="text-[#C8A45D] hover:underline font-semibold"
                   >
                     {lang === "ko" ? "골프 안내 →" : "Read more →"}
                   </Link>
@@ -715,7 +715,7 @@ function Index() {
             eyebrow={t("exp.eyebrow")}
             title={
               <>
-                Signature <span className="text-[#1E7B9E]">Experiences</span>
+                Signature <span className="text-[#C8A45D]">Experiences</span>
               </>
             }
             subtitle={
@@ -741,7 +741,7 @@ function Index() {
           eyebrow={t("why.eyebrow")}
           title={
             <>
-              Why Travel With <span className="text-[#1E7B9E]">Lanka Luxe?</span>
+              Why Travel With <span className="text-[#C8A45D]">Lanka Luxe?</span>
             </>
           }
           subtitle={
@@ -756,7 +756,7 @@ function Index() {
             <Reveal key={pillar.no} variant="fade-up">
               <div className="p-8 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
                 <div>
-                  <span className="font-display text-4xl font-bold text-[#1E7B9E]/30 block mb-4">
+                  <span className="font-display text-4xl font-bold text-[#C8A45D]/30 block mb-4">
                     {pillar.no}
                   </span>
                   <h3 className="text-xl font-bold text-[#081A33] mb-3">
@@ -779,7 +779,7 @@ function Index() {
             eyebrow={t("reviews.eyebrow")}
             title={
               <>
-                Guest <span className="text-[#1E7B9E]">Stories</span>
+                Guest <span className="text-[#C8A45D]">Stories</span>
               </>
             }
             subtitle={
@@ -805,7 +805,7 @@ function Index() {
           eyebrow="Editorial"
           title={
             <>
-              The <span className="text-[#1E7B9E]">Journal</span>
+              The <span className="text-[#C8A45D]">Journal</span>
             </>
           }
           subtitle={
@@ -816,7 +816,7 @@ function Index() {
           action={
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1E7B9E] text-white text-xs font-semibold hover:bg-[#156380] transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
             >
               <span>{lang === "ko" ? "저널 전체보기" : "View All"}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -840,7 +840,7 @@ function Index() {
             eyebrow={t("contact.eyebrow")}
             title={
               <>
-                Let's Plan Your <span className="text-[#1E7B9E]">Journey</span>
+                Let's Plan Your <span className="text-[#C8A45D]">Journey</span>
               </>
             }
             subtitle={t("contact.reassure")}
