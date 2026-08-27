@@ -789,9 +789,9 @@ function Index() {
             }
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex overflow-x-auto snap-x snap-mandatory pb-8 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
             {testimonials.map((test, idx) => (
-              <Reveal key={idx} variant="fade-up" delay={idx * 0.1}>
+              <Reveal key={idx} variant="fade-up" delay={idx * 0.1} className="w-[85vw] sm:w-[60vw] md:w-auto shrink-0 snap-center">
                 <TestimonialCard testimonial={test} className="h-full" />
               </Reveal>
             ))}
