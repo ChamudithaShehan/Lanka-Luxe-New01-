@@ -968,6 +968,148 @@ async function main() {
     create: { key: "global_testimonials", value: JSON.stringify(testimonials) },
   });
 
+  const defaultGalleryItems = [
+    {
+      id: "gal-1",
+      title: { en: "Private Pool Villa Sanctuary", ko: "프라이빗 풀빌라 휴양 리조트" },
+      category: "Luxury Resorts",
+      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop",
+      location: "Bentota & Tangalle",
+      featured: true,
+      order: 1,
+    },
+    {
+      id: "gal-2",
+      title: { en: "Sigiriya Ancient Lion Rock Fortress", ko: "시기리야 고대 사자바위 요새" },
+      category: "Heritage & Culture",
+      image: "https://images.unsplash.com/photo-1588820358172-e16e457e937d?q=80&w=1200&auto=format&fit=crop",
+      location: "Cultural Triangle",
+      featured: true,
+      order: 2,
+    },
+    {
+      id: "gal-3",
+      title: { en: "Emerald Ceylon Tea Country Highlands", ko: "에메랄드빛 실론 고산지대 차밭" },
+      category: "Highlands & Tea",
+      image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop",
+      location: "Nuwara Eliya & Hatton",
+      featured: true,
+      order: 3,
+    },
+    {
+      id: "gal-4",
+      title: { en: "Yala Leopard & Elephant Safari", ko: "얄라 국립공원 표범 & 코끼리 사파리" },
+      category: "Wildlife & Safari",
+      image: "https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop",
+      location: "Yala & Wilpattu",
+      featured: true,
+      order: 4,
+    },
+    {
+      id: "gal-5",
+      title: { en: "Golden Sunset on the Southern Coast", ko: "남부 해안의 황금빛 선셋" },
+      category: "Coastal & Beaches",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
+      location: "Mirissa & Weligama",
+      featured: true,
+      order: 5,
+    },
+    {
+      id: "gal-6",
+      title: { en: "Championship Victoria Golf Course", ko: "빅토리아 챔피언십 골프 링크스" },
+      category: "Scenic Golf",
+      image: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1200&auto=format&fit=crop",
+      location: "Digana, Kandy",
+      featured: true,
+      order: 6,
+    },
+    {
+      id: "gal-7",
+      title: { en: "Historic Dutch Galle Fort Ramparts", ko: "역사적인 골 포트 네덜란드 요새" },
+      category: "Heritage & Culture",
+      image: "https://images.unsplash.com/photo-1589309736404-2e142a2acdf0?q=80&w=1200&auto=format&fit=crop",
+      location: "Galle Southern Province",
+      featured: true,
+      order: 7,
+    },
+    {
+      id: "gal-8",
+      title: { en: "Scenic Train Across Nine Arch Bridge", ko: "나인아치 브릿지 낭만 열차 여정" },
+      category: "Highlands & Tea",
+      image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1200&auto=format&fit=crop",
+      location: "Ella Highlands",
+      featured: true,
+      order: 8,
+    },
+    {
+      id: "gal-9",
+      title: { en: "Authentic Ayurvedic Wellness Retreat", ko: "정통 아유르베다 힐링 웰니스" },
+      category: "Luxury Resorts",
+      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop",
+      location: "Wadduwa & Beruwala",
+      featured: false,
+      order: 9,
+    },
+    {
+      id: "gal-10",
+      title: { en: "Sacred Temple of the Tooth Relic", ko: "캔디 불치사 성스러운 의식" },
+      category: "Heritage & Culture",
+      image: "https://images.unsplash.com/photo-1588820358172-e16e457e937d?q=80&w=1200&auto=format&fit=crop",
+      location: "Kandy",
+      featured: false,
+      order: 10,
+    },
+    {
+      id: "gal-11",
+      title: { en: "Romantic Secluded Coastline Dining", ko: "프라이빗 해변 로맨틱 캔들 디너" },
+      category: "Coastal & Beaches",
+      image: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=1200&auto=format&fit=crop",
+      location: "Tangalle Coast",
+      featured: false,
+      order: 11,
+    },
+    {
+      id: "gal-12",
+      title: { en: "Aerial Island Coastline & Reefs", ko: "스리랑카 에메랄드빛 해안 항공 뷰" },
+      category: "Coastal & Beaches",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
+      location: "Southern Ocean Coast",
+      featured: false,
+      order: 12,
+    },
+  ];
+
+  for (const item of defaultGalleryItems) {
+    await prisma.galleryItem.upsert({
+      where: { id: item.id },
+      update: {
+        titleEn: item.title.en,
+        titleKo: item.title.ko || null,
+        category: item.category,
+        image: item.image,
+        location: item.location || null,
+        featured: item.featured,
+        order: item.order,
+      },
+      create: {
+        id: item.id,
+        titleEn: item.title.en,
+        titleKo: item.title.ko || null,
+        category: item.category,
+        image: item.image,
+        location: item.location || null,
+        featured: item.featured,
+        order: item.order,
+      },
+    });
+  }
+
+  // Delete the old global_gallery record from SiteSetting to keep database clean
+  try {
+    await prisma.siteSetting.delete({ where: { key: "global_gallery" } });
+  } catch {}
+
+  console.log(`✅ ${defaultGalleryItems.length} curated gallery photos seeded to MySQL GalleryItem table.`);
   console.log("✅ Global site settings, contact, and founder credentials seeded.");
   console.log("🎉 Database seed completed successfully!");
 }

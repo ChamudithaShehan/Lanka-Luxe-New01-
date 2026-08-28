@@ -126,10 +126,23 @@ export const blogPostInputSchema = z.object({
   contentKo: z.string().max(50000).optional().nullable(),
 });
 
+export const galleryItemInputSchema = z.object({
+  id: z.string().min(1, "Gallery item ID is required.").max(120),
+  title: z.union([z.string(), z.object({ en: z.string().optional(), ko: z.string().optional() })]).optional(),
+  titleEn: z.string().max(255).optional(),
+  titleKo: z.string().max(255).optional().nullable(),
+  category: z.string().max(100).optional(),
+  image: z.string().min(1, "Image URL is required.").max(2000),
+  location: z.string().max(200).optional().nullable(),
+  featured: z.boolean().optional(),
+  order: z.union([z.number(), z.string()]).optional(),
+});
+
 export const settingsInputSchema = z.object({
   siteSettings: z.record(z.any()).optional(),
   contact: z.record(z.any()).optional(),
   whyUs: z.array(z.any()).optional(),
   testimonials: z.array(z.any()).optional(),
   team: z.array(z.any()).optional(),
+  gallery: z.array(z.any()).optional(),
 });

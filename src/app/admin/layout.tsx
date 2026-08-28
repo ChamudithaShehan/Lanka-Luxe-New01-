@@ -13,6 +13,7 @@ import {
   BookOpen,
   Inbox,
   Settings,
+  Images,
   ExternalLink,
   LogOut,
   Menu,
@@ -30,6 +31,7 @@ const navItems = [
   { href: "/admin/golf", label: "Golf Packages", icon: Flag },
   { href: "/admin/destinations", label: "Destinations", icon: MapPin },
   { href: "/admin/experiences", label: "Experiences", icon: Sparkles },
+  { href: "/admin/gallery", label: "Gallery & Visuals", icon: Images },
   { href: "/admin/blog", label: "Journal & Blog", icon: BookOpen },
   { href: "/admin/settings", label: "Site & Founder Settings", icon: Settings },
 ];

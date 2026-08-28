@@ -5,20 +5,12 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { img } from "@/data/site";
-import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock } from "lucide-react";
-
-const galleryImages = [
-  "https://images.unsplash.com/photo-1546708973-c6b75c55c707?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1589309736404-2e142a2acdf0?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1588820358172-e16e457e937d?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1625736300986-6bd123fb9e92?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1590050752112-9c8c5da0735a?q=80&w=600&auto=format&fit=crop"
-];
+import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock, Camera, Sparkles } from "lucide-react";
+import { defaultGalleryItems } from "@/data/site";
 
 export function Footer() {
   const { t, lang } = useI18n();
-  const { siteSettings, contact } = useContentStore();
+  const { siteSettings, contact, gallery } = useContentStore();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
@@ -34,6 +26,11 @@ export function Footer() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Get featured gallery images for footer showcase
+  const featured = (gallery || []).filter((item) => item.featured);
+  const pool = featured.length >= 6 ? featured : (gallery && gallery.length > 0 ? gallery : defaultGalleryItems);
+  const displayImages = pool.slice(0, 6);
 
   return (
     <footer className="bg-navy border-t border-white/10 text-white relative z-10 overflow-hidden">
@@ -75,20 +72,48 @@ export function Footer() {
         )}
       </div>
 
-      {/* Gallery Section */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 px-4 sm:px-6 lg:px-8 pb-24 max-w-[1920px] mx-auto">
-        {galleryImages.map((src, i) => (
-          <div key={i} className="aspect-square rounded-3xl overflow-hidden relative group cursor-pointer shadow-lg">
-            <img 
-              src={src} 
-              alt="Sri Lanka Gallery" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-            />
-            <div className="absolute inset-0 bg-navy/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-              <Instagram className="w-8 h-8 text-white scale-50 group-hover:scale-100 transition-transform duration-500 delay-100" />
-            </div>
+      {/* Dynamic Gallery Showcase Section */}
+      <div className="px-4 sm:px-6 lg:px-8 pb-24 max-w-[1920px] mx-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 px-2 text-center sm:text-left">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-gold font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{t("gallery.footerLabel")}</span>
           </div>
-        ))}
+          <Link
+            href="/gallery"
+            className="text-xs uppercase tracking-[0.15em] text-white/70 hover:text-gold transition-colors font-medium flex items-center gap-1.5 group"
+          >
+            <span>{t("gallery.viewAll")}</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {displayImages.map((item, i) => (
+            <Link
+              key={item.id || i}
+              href="/gallery"
+              className="aspect-square rounded-3xl overflow-hidden relative group cursor-pointer shadow-lg block bg-[#0B1A30] border border-white/5"
+            >
+              <img 
+                src={item.image} 
+                alt={item.title?.en || "Sri Lanka Gallery"} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-[#081A33]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-3 text-center backdrop-blur-xs">
+                <Camera className="w-6 h-6 text-gold mb-1.5 scale-75 group-hover:scale-100 transition-transform duration-500" />
+                <span className="text-[11px] font-semibold text-white line-clamp-1">
+                  {item.title?.en}
+                </span>
+                {item.location && (
+                  <span className="text-[9px] text-mist/80 uppercase tracking-wider mt-0.5">
+                    {item.location}
+                  </span>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Bottom Section */}
@@ -149,6 +174,7 @@ export function Footer() {
               <Link href="/golf" className="hover:text-gold transition-colors">{t("nav.golf")}</Link>
               <Link href="/destinations" className="hover:text-gold transition-colors">{t("nav.destinations")}</Link>
               <Link href="/experiences" className="hover:text-gold transition-colors">{t("nav.experiences")}</Link>
+              <Link href="/gallery" className="hover:text-gold transition-colors">{t("nav.gallery")}</Link>
               <Link href="/blog" className="hover:text-gold transition-colors">{t("nav.blog")}</Link>
               <Link href="/contact" className="hover:text-gold transition-colors">{t("nav.contact")}</Link>
             </nav>

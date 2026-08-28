@@ -240,3 +240,135 @@ export const blogCategories = [
   "Travel Tips",
   "Korean Travel Guides",
 ];
+
+export type GalleryItem = {
+  id: string;
+  title: Localized;
+  category: string;
+  image: string;
+  location?: string;
+  featured?: boolean;
+  order?: number;
+};
+
+export const galleryCategories = [
+  "All",
+  "Luxury Resorts",
+  "Heritage & Culture",
+  "Wildlife & Safari",
+  "Coastal & Beaches",
+  "Highlands & Tea",
+  "Scenic Golf",
+];
+
+export const defaultGalleryItems: GalleryItem[] = [
+  {
+    id: "gal-1",
+    title: { en: "Private Pool Villa Sanctuary", ko: "프라이빗 풀빌라 휴양 리조트" },
+    category: "Luxury Resorts",
+    image: img.resort,
+    location: "Bentota & Tangalle",
+    featured: true,
+    order: 1,
+  },
+  {
+    id: "gal-2",
+    title: { en: "Sigiriya Ancient Lion Rock Fortress", ko: "시기리야 고대 사자바위 요새" },
+    category: "Heritage & Culture",
+    image: img.sigiriya,
+    location: "Cultural Triangle",
+    featured: true,
+    order: 2,
+  },
+  {
+    id: "gal-3",
+    title: { en: "Emerald Ceylon Tea Country Highlands", ko: "에메랄드빛 실론 고산지대 차밭" },
+    category: "Highlands & Tea",
+    image: img.tea,
+    location: "Nuwara Eliya & Hatton",
+    featured: true,
+    order: 3,
+  },
+  {
+    id: "gal-4",
+    title: { en: "Yala Leopard & Elephant Safari", ko: "얄라 국립공원 표범 & 코끼리 사파리" },
+    category: "Wildlife & Safari",
+    image: img.wildlife,
+    location: "Yala & Wilpattu",
+    featured: true,
+    order: 4,
+  },
+  {
+    id: "gal-5",
+    title: { en: "Golden Sunset on the Southern Coast", ko: "남부 해안의 황금빛 선셋" },
+    category: "Coastal & Beaches",
+    image: img.beach,
+    location: "Mirissa & Weligama",
+    featured: true,
+    order: 5,
+  },
+  {
+    id: "gal-6",
+    title: { en: "Championship Victoria Golf Course", ko: "빅토리아 챔피언십 골프 링크스" },
+    category: "Scenic Golf",
+    image: img.golf,
+    location: "Digana, Kandy",
+    featured: true,
+    order: 6,
+  },
+  {
+    id: "gal-7",
+    title: { en: "Historic Dutch Galle Fort Ramparts", ko: "역사적인 골 포트 네덜란드 요새" },
+    category: "Heritage & Culture",
+    image: img.galle,
+    location: "Galle Southern Province",
+    featured: true,
+    order: 7,
+  },
+  {
+    id: "gal-8",
+    title: { en: "Scenic Train Across Nine Arch Bridge", ko: "나인아치 브릿지 낭만 열차 여정" },
+    category: "Highlands & Tea",
+    image: img.train,
+    location: "Ella Highlands",
+    featured: true,
+    order: 8,
+  },
+  {
+    id: "gal-9",
+    title: { en: "Authentic Ayurvedic Wellness Retreat", ko: "정통 아유르베다 힐링 웰니스" },
+    category: "Luxury Resorts",
+    image: img.wellness,
+    location: "Wadduwa & Beruwala",
+    featured: false,
+    order: 9,
+  },
+  {
+    id: "gal-10",
+    title: { en: "Sacred Temple of the Tooth Relic", ko: "캔디 불치사 성스러운 의식" },
+    category: "Heritage & Culture",
+    image: img.kandy,
+    location: "Kandy",
+    featured: false,
+    order: 10,
+  },
+  {
+    id: "gal-11",
+    title: { en: "Romantic Secluded Coastline Dining", ko: "프라이빗 해변 로맨틱 캔들 디너" },
+    category: "Coastal & Beaches",
+    image: img.honeymoon,
+    location: "Tangalle Coast",
+    featured: false,
+    order: 11,
+  },
+  {
+    id: "gal-12",
+    title: { en: "Aerial Island Coastline & Reefs", ko: "스리랑카 에메랄드빛 해안 항공 뷰" },
+    category: "Coastal & Beaches",
+    image: img.aerial,
+    location: "Southern Ocean Coast",
+    featured: false,
+    order: 12,
+  },
+];
+

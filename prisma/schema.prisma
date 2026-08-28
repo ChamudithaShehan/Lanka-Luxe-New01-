@@ -140,3 +140,16 @@ model SiteSetting {
   value     String   @db.LongText // JSON stringified value
   updatedAt DateTime @updatedAt
 }
+
+model GalleryItem {
+  id        String   @id @default(cuid())
+  titleEn   String
+  titleKo   String?
+  category  String   @default("Luxury Resorts")
+  image     String   @db.Text
+  location  String?
+  featured  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = validation.data;
-    const { siteSettings, contact, whyUs, testimonials, team } = body;
+    const { siteSettings, contact, whyUs, testimonials, team, gallery } = body;
 
     if (siteSettings) {
       await prisma.siteSetting.upsert({
@@ -79,6 +79,14 @@ export async function PUT(req: NextRequest) {
         where: { key: "global_team" },
         update: { value: JSON.stringify(team) },
         create: { key: "global_team", value: JSON.stringify(team) },
+      });
+    }
+
+    if (gallery) {
+      await prisma.siteSetting.upsert({
+        where: { key: "global_gallery" },
+        update: { value: JSON.stringify(gallery) },
+        create: { key: "global_gallery", value: JSON.stringify(gallery) },
       });
     }
 

@@ -43,6 +43,7 @@ export function Navbar() {
     { to: "/golf", label: t("nav.golf") },
     { to: "/destinations", label: t("nav.destinations") },
     { to: "/experiences", label: t("nav.experiences") },
+    { to: "/gallery", label: t("nav.gallery") },
     { to: "/contact", label: t("nav.contact") },
   ];
 

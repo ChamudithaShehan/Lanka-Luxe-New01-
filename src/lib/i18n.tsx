@@ -32,6 +32,7 @@ const en = {
   "nav.destinations": "Destinations",
   "nav.experiences": "Experiences",
   "nav.blog": "Blog",
+  "nav.gallery": "Gallery",
   "nav.contact": "Contact",
   "cta.plan": "Plan Your Journey",
   "cta.explore": "Explore Journeys",
@@ -121,6 +122,18 @@ const en = {
   "blog.title": "The Journal",
   "blog.featured": "Featured",
   "blog.read": "Read Article",
+  "gallery.eyebrow": "Visual Chronicles",
+  "gallery.title": "Ceylon in Focus",
+  "gallery.subtitle": "A curated visual anthology of private pool villas, ancient kingdoms, emerald tea hills, wild safaris and pristine coasts across Sri Lanka.",
+  "gallery.all": "All Moments",
+  "gallery.resorts": "Luxury Resorts",
+  "gallery.heritage": "Heritage & Culture",
+  "gallery.wildlife": "Wildlife & Safari",
+  "gallery.beaches": "Coastal & Beaches",
+  "gallery.highlands": "Highlands & Tea",
+  "gallery.golf": "Scenic Golf",
+  "gallery.footerLabel": "CEYLON IN FOCUS · EXPLORE OUR GALLERY",
+  "gallery.viewAll": "View Full Gallery",
 };
 
 type Dict = typeof en;
@@ -134,6 +147,7 @@ const ko: Partial<Record<Key, string>> = {
   "nav.destinations": "여행지",
   "nav.experiences": "체험",
   "nav.blog": "블로그",
+  "nav.gallery": "갤러리",
   "nav.contact": "문의",
   "cta.plan": "여행 계획하기",
   "cta.explore": "여행 둘러보기",
@@ -222,6 +236,18 @@ const ko: Partial<Record<Key, string>> = {
   "blog.title": "저널",
   "blog.featured": "추천 기사",
   "blog.read": "기사 읽기",
+  "gallery.eyebrow": "사진으로 만나는 실론",
+  "gallery.title": "사진으로 만나는 스리랑카",
+  "gallery.subtitle": "프라이빗 풀빌라, 고대 유적지, 에메랄드빛 차밭, 야생 사파리와 청정 해변까지 — 스리랑카의 찬란한 순간들을 감상하세요.",
+  "gallery.all": "전체 사진",
+  "gallery.resorts": "럭셔리 리조트",
+  "gallery.heritage": "문화 & 유적",
+  "gallery.wildlife": "야생 & 사파리",
+  "gallery.beaches": "해변 & 휴양",
+  "gallery.highlands": "고산지대 & 차밭",
+  "gallery.golf": "시닉 골프",
+  "gallery.footerLabel": "사진으로 만나는 스리랑카 · 갤러리 둘러보기",
+  "gallery.viewAll": "전체 갤러리 보기",
 };
 
 const dictionaries: Record<Lang, Partial<Dict>> = { en, ko };

@@ -18,7 +18,9 @@ import type {
   Testimonial,
   TeamMember,
   Feature,
+  GalleryItem,
 } from "@/data/site";
+import { defaultGalleryItems } from "@/data/site";
 
 export interface Inquiry {
   id: string;
@@ -93,6 +95,7 @@ interface ContentContextType {
   contact: any;
   siteSettings: SiteSettings;
   inquiries: Inquiry[];
+  gallery: GalleryItem[];
   isLoaded: boolean;
   refreshContent: () => Promise<void>;
   saveTour: (tour: Tour) => void;
@@ -109,6 +112,10 @@ interface ContentContextType {
   deletePost: (slug: string) => void;
   saveContact: (contactInfo: any) => void;
   saveSiteSettings: (settings: SiteSettings) => void;
+  saveGalleryItem: (item: GalleryItem) => void;
+  addGalleryItem: (item: GalleryItem) => void;
+  deleteGalleryItem: (id: string) => void;
+  reorderGallery: (items: GalleryItem[]) => void;
   addInquiry: (inquiry: Omit<Inquiry, "id" | "createdAt" | "status">) => Promise<string>;
   updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => void;
   deleteInquiry: (id: string) => void;
@@ -141,6 +148,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [whyUs, setWhyUs] = useState<Feature[]>([]);
   const [contact, setContact] = useState<any>({});
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
+  const [gallery, setGallery] = useState<GalleryItem[]>(defaultGalleryItems);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const isFetchingRef = useRef(false);
@@ -168,6 +176,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         if (Array.isArray(data.whyUs)) setWhyUs(data.whyUs);
         if (Array.isArray(data.testimonials)) setTestimonials(data.testimonials);
         if (Array.isArray(data.team)) setTeam(data.team);
+        if (Array.isArray(data.gallery) && data.gallery.length > 0) setGallery(data.gallery);
 
         // Cache snapshot (without inquiries — those are PII)
         try {
@@ -233,6 +242,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         if (parsed.whyUs?.length) setWhyUs(parsed.whyUs);
         if (parsed.contact && Object.keys(parsed.contact).length) setContact(parsed.contact);
         if (parsed.siteSettings) setSiteSettings(parsed.siteSettings);
+        if (parsed.gallery?.length) setGallery(parsed.gallery);
         if (parsed.inquiries?.length) setInquiries(parsed.inquiries);
       }
     } catch (e) {
@@ -617,6 +627,67 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       .catch((e) => console.error("Delete inquiry error:", e));
   }, []);
 
+  // Gallery mutations
+  const saveGalleryItem = useCallback((item: GalleryItem) => {
+    setGallery((prev) => {
+      const idx = prev.findIndex((g) => g.id === item.id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = item;
+        return updated;
+      }
+      return [item, ...prev];
+    });
+
+    fetch("/api/gallery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync gallery item error:", e));
+  }, []);
+
+  const addGalleryItem = useCallback((item: GalleryItem) => {
+    setGallery((prev) => [item, ...prev]);
+
+    fetch("/api/gallery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Sync gallery item error:", e));
+  }, []);
+
+  const deleteGalleryItem = useCallback((id: string) => {
+    setGallery((prev) => prev.filter((g) => g.id !== id));
+
+    fetch(`/api/gallery/${id}`, { method: "DELETE" })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Delete gallery item error:", e));
+  }, []);
+
+  const reorderGallery = useCallback((items: GalleryItem[]) => {
+    setGallery(items);
+
+    fetch("/api/gallery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(items),
+    })
+      .then(() => {
+        broadcastRealtimeSync();
+      })
+      .catch((e) => console.error("Reorder gallery error:", e));
+  }, []);
+
   const resetToDefaults = useCallback(() => {
     setTours([]);
     setGolfCourses([]);
@@ -628,6 +699,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     setWhyUs([]);
     setContact({});
     setSiteSettings(defaultSiteSettings);
+    setGallery(defaultGalleryItems);
     setInquiries([]);
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -649,6 +721,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         contact,
         siteSettings,
         inquiries,
+        gallery,
         isLoaded,
         refreshContent: fetchLiveContent,
         saveTour,
@@ -665,6 +738,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         deletePost,
         saveContact,
         saveSiteSettings,
+        saveGalleryItem,
+        addGalleryItem,
+        deleteGalleryItem,
+        reorderGallery,
         addInquiry,
         updateInquiryStatus,
         deleteInquiry,

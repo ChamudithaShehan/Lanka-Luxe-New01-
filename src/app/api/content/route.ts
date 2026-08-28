@@ -199,6 +199,19 @@ export async function GET() {
 
     const team = settingsMap["global_team"] || [];
 
+    const dbGallery = await prisma.galleryItem.findMany({
+      orderBy: { order: "asc" },
+    });
+    const gallery = dbGallery.map((item) => ({
+      id: item.id,
+      title: { en: item.titleEn, ko: item.titleKo || item.titleEn },
+      category: item.category,
+      image: item.image,
+      location: item.location || "",
+      featured: item.featured,
+      order: item.order,
+    }));
+
     const response = NextResponse.json({
       tours,
       golfCourses,
@@ -211,6 +224,7 @@ export async function GET() {
       whyUs,
       testimonials,
       team,
+      gallery,
     });
 
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
@@ -228,6 +242,7 @@ export async function GET() {
       whyUs: [],
       testimonials: [],
       team: [],
+      gallery: [],
     });
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     return response;
