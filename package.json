@@ -10,7 +10,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "db:init": "node prisma/init-db.mjs",
-    "db:seed": "node prisma/seed.mjs"
+    "db:seed": "node prisma/seed.mjs",
+    "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

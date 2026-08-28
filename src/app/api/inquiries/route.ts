@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/auth";
 import { requireAuth } from "@/lib/api-auth";
+import { inquiryRateLimiter, getClientIp } from "@/lib/rate-limit";
+import { createInquirySchema } from "@/lib/validations/inquiry";
 
 // GET all inquiries (Admin protected)
 export async function GET(req: NextRequest) {
@@ -19,40 +21,75 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST new lead (Public inquiry submission - no auth required)
+// POST new lead (Public inquiry submission with rate limiting and honeypot spam protection)
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { name, email, phone, country, tourSlug, travelers, travelDate, duration, budget, message } = body;
-
-    if (!name || !email || !phone) {
+    // 1. IP Rate limiting: 5 submissions per 10 minutes
+    const ip = getClientIp(req);
+    const rateLimit = await inquiryRateLimiter.check(`inquiry:${ip}`);
+    if (!rateLimit.success) {
       return NextResponse.json(
-        { error: "Name, email, and phone number are required." },
+        { error: "Too many inquiry submissions. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": rateLimit.retryAfterSeconds.toString(),
+          },
+        },
+      );
+    }
+
+    const rawBody = await req.json();
+
+    // 2. Schema Validation using Zod
+    const validation = createInquirySchema.safeParse(rawBody);
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid inquiry submission data.", details },
         { status: 400 },
       );
     }
 
+    const body = validation.data;
+
+    // 3. Honeypot check: If bot filled the hidden "website" field, return fake success without saving
+    if (body.website && body.website.trim().length > 0) {
+      const fakeUuid = crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
+      return NextResponse.json({
+        success: true,
+        reference: `LLJ-${new Date().getFullYear()}-${fakeUuid}`,
+      });
+    }
+
+    // 4. Collision-safe UUID Reference Code
     const uuid = crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
     const reference = `LLJ-${new Date().getFullYear()}-${uuid}`;
 
     const inquiry = await prisma.inquiry.create({
       data: {
         reference,
-        name: sanitizeInput(name),
-        email: sanitizeInput(email).toLowerCase(),
-        phone: sanitizeInput(phone),
-        country: country ? sanitizeInput(country) : null,
-        tourSlug: tourSlug ? sanitizeInput(tourSlug) : null,
-        travelers: travelers ? sanitizeInput(travelers) : null,
-        travelDate: travelDate ? sanitizeInput(travelDate) : null,
-        duration: duration ? sanitizeInput(duration) : null,
-        budget: budget ? sanitizeInput(budget) : null,
-        message: message ? sanitizeInput(message) : null,
+        name: sanitizeInput(body.name),
+        email: sanitizeInput(body.email).toLowerCase(),
+        phone: body.phone && body.phone.trim().length > 0 ? sanitizeInput(body.phone) : "Not specified",
+        country: body.country ? sanitizeInput(body.country) : null,
+        tourSlug: body.tourSlug ? sanitizeInput(body.tourSlug) : null,
+        travelers: body.travelers ? sanitizeInput(body.travelers) : null,
+        travelDate: body.travelDate ? sanitizeInput(body.travelDate) : null,
+        duration: body.duration ? sanitizeInput(body.duration) : null,
+        budget: body.budget ? sanitizeInput(body.budget) : null,
+        message: body.message ? sanitizeInput(body.message) : null,
         status: "New",
       },
     });
 
-    return NextResponse.json({ success: true, reference: inquiry.reference });
+    return NextResponse.json({
+      success: true,
+      reference: inquiry.reference,
+    });
   } catch (error) {
     console.error("Create inquiry error:", error);
     return NextResponse.json(

@@ -28,8 +28,8 @@ const defaultSettings = {
 
 export async function GET() {
   try {
-    // 1. Query Tours
-    const dbTours = await prisma.tour.findMany({ orderBy: { createdAt: "asc" } });
+    // 1. Query Tours (Newest / recently updated first)
+    const dbTours = await prisma.tour.findMany({ orderBy: { updatedAt: "desc" } });
     const tours = dbTours.map((t) => {
       let itineraryParsed: any[] = [];
       let inclusionsParsed: string[] = [];
@@ -86,7 +86,7 @@ export async function GET() {
     });
 
     // 2. Query Golf Courses
-    const dbGolf = await prisma.golfCourse.findMany({ orderBy: { createdAt: "asc" } });
+    const dbGolf = await prisma.golfCourse.findMany({ orderBy: { updatedAt: "desc" } });
     const golfCourses = dbGolf.map((g) => {
       let featuresParsed: string[] = [];
       try {
@@ -110,7 +110,7 @@ export async function GET() {
     });
 
     // 3. Query Destinations
-    const dbDest = await prisma.destination.findMany({ orderBy: { createdAt: "asc" } });
+    const dbDest = await prisma.destination.findMany({ orderBy: { updatedAt: "desc" } });
     const destinations = dbDest.map((d) => {
       let highlightsParsed: string[] = [];
       try {
@@ -132,7 +132,7 @@ export async function GET() {
     });
 
     // 4. Query Signature Experiences
-    const dbExp = await prisma.experience.findMany({ orderBy: { createdAt: "asc" } });
+    const dbExp = await prisma.experience.findMany({ orderBy: { updatedAt: "desc" } });
     const experiences = dbExp.map((e) => {
       let highlightsParsed: string[] = [];
       try {

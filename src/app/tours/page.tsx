@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { useContentStore } from "@/lib/content-store";
-import { tourFilters } from "@/data/site";
+import { tourFilters, isCategoryMatch } from "@/data/site";
 import { TourCard } from "@/components/TourCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
@@ -30,12 +30,41 @@ export default function ToursPage() {
     setCurrentPage(1);
   };
 
+  const getCategoryLabel = (cat: string) => {
+    if (cat === "All") return lang === "ko" ? "전체 보기" : "All Journeys";
+    if (lang === "ko") {
+      switch (cat) {
+        case "Signature Journeys":
+        case "Luxury":
+          return "시그니처 여정";
+        case "Golf & Leisure":
+        case "Golf":
+          return "골프 & 휴양";
+        case "Wildlife & Nature":
+        case "Wildlife":
+          return "사파리 & 야생";
+        case "Culture & Heritage":
+        case "Culture":
+          return "문화 & 유산";
+        case "Honeymoon & Romance":
+        case "Honeymoon":
+          return "허니문 & 로맨스";
+        case "Wellness & Ayurveda":
+        case "Wellness":
+          return "웰니스 & 아유르베다";
+        case "Family & Group":
+        case "Family":
+          return "가족 & 그룹";
+        default:
+          return cat;
+      }
+    }
+    return cat;
+  };
+
   const filteredTours = useMemo(() => {
     return tours.filter((tour) => {
-      const matchesCategory =
-        selectedCategory === "All" ||
-        tour.category === selectedCategory ||
-        tour.categories?.includes(selectedCategory);
+      const matchesCategory = isCategoryMatch(tour, selectedCategory);
 
       const nameMatch =
         tl(tour.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -109,7 +138,7 @@ export default function ToursPage() {
                       : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                   }`}
                 >
-                  {cat === "All" ? t("tours.filterAll") : cat}
+                  {getCategoryLabel(cat)}
                 </button>
               ))}
             </div>

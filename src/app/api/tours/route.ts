@@ -1,6 +1,7 @@
-﻿import { requireAuth } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { tourInputSchema } from "@/lib/validations/content";
 
 export async function GET() {
   try {
@@ -14,8 +15,23 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const auth = requireAuth(req);
   if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await req.json();
+    const rawBody = await req.json();
+    const validation = tourInputSchema.safeParse(rawBody);
+
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid tour data.", details },
+        { status: 400 },
+      );
+    }
+
+    const body = validation.data;
     const durationStr = body.duration || (body.days ? `${body.days} Days` : "8 Days");
     const inclusionsArr = body.inclusions || body.included || [];
     const exclusionsArr = body.exclusions || body.excluded || [];
@@ -23,18 +39,18 @@ export async function POST(req: NextRequest) {
     const tour = await prisma.tour.upsert({
       where: { slug: body.slug },
       update: {
-        nameEn: body.name?.en || body.nameEn || "Untitled Tour",
-        nameKo: body.name?.ko || body.nameKo || null,
+        nameEn: (typeof body.name === "object" ? body.name?.en : body.name) || body.nameEn || "Untitled Tour",
+        nameKo: (typeof body.name === "object" ? body.name?.ko : null) || body.nameKo || null,
         category: body.category || "Luxury",
         duration: durationStr,
         nights: body.nights ? parseInt(body.nights.toString()) : (body.days ? parseInt(body.days.toString()) - 1 : null),
         price: body.price || "USD 3,500",
         image: body.image || "https://images.unsplash.com/photo-1546708973-c6b75c55c707?q=80&w=1200&auto=format&fit=crop",
         badge: body.badge || null,
-        shortEn: body.short?.en || body.shortEn || null,
-        shortKo: body.short?.ko || body.shortKo || null,
-        overviewEn: body.overview?.en || body.overviewEn || null,
-        overviewKo: body.overview?.ko || body.overviewKo || null,
+        shortEn: (typeof body.short === "object" ? body.short?.en : body.short) || body.shortEn || null,
+        shortKo: (typeof body.short === "object" ? body.short?.ko : null) || body.shortKo || null,
+        overviewEn: (typeof body.overview === "object" ? body.overview?.en : body.overview) || body.overviewEn || null,
+        overviewKo: (typeof body.overview === "object" ? body.overview?.ko : null) || body.overviewKo || null,
         highlights: JSON.stringify(body.highlights || []),
         inclusions: JSON.stringify(inclusionsArr),
         exclusions: JSON.stringify(exclusionsArr),
@@ -44,18 +60,18 @@ export async function POST(req: NextRequest) {
       },
       create: {
         slug: body.slug,
-        nameEn: body.name?.en || body.nameEn || "Untitled Tour",
-        nameKo: body.name?.ko || body.nameKo || null,
+        nameEn: (typeof body.name === "object" ? body.name?.en : body.name) || body.nameEn || "Untitled Tour",
+        nameKo: (typeof body.name === "object" ? body.name?.ko : null) || body.nameKo || null,
         category: body.category || "Luxury",
         duration: durationStr,
         nights: body.nights ? parseInt(body.nights.toString()) : (body.days ? parseInt(body.days.toString()) - 1 : null),
         price: body.price || "USD 3,500",
         image: body.image || "https://images.unsplash.com/photo-1546708973-c6b75c55c707?q=80&w=1200&auto=format&fit=crop",
         badge: body.badge || null,
-        shortEn: body.short?.en || body.shortEn || null,
-        shortKo: body.short?.ko || body.shortKo || null,
-        overviewEn: body.overview?.en || body.overviewEn || null,
-        overviewKo: body.overview?.ko || body.overviewKo || null,
+        shortEn: (typeof body.short === "object" ? body.short?.en : body.short) || body.shortEn || null,
+        shortKo: (typeof body.short === "object" ? body.short?.ko : null) || body.shortKo || null,
+        overviewEn: (typeof body.overview === "object" ? body.overview?.en : body.overview) || body.overviewEn || null,
+        overviewKo: (typeof body.overview === "object" ? body.overview?.ko : null) || body.overviewKo || null,
         highlights: JSON.stringify(body.highlights || []),
         inclusions: JSON.stringify(inclusionsArr),
         exclusions: JSON.stringify(exclusionsArr),

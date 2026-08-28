@@ -1,6 +1,7 @@
-﻿import { requireAuth } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { blogPostInputSchema } from "@/lib/validations/content";
 
 export async function GET() {
   try {
@@ -14,38 +15,53 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const auth = requireAuth(req);
   if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await req.json();
+    const rawBody = await req.json();
+    const validation = blogPostInputSchema.safeParse(rawBody);
+
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid blog post data.", details },
+        { status: 400 },
+      );
+    }
+
+    const body = validation.data;
     const pubDate = body.publishedAt || body.date || new Date().toISOString().split("T")[0];
 
     const post = await prisma.blogPost.upsert({
       where: { slug: body.slug },
       update: {
-        titleEn: body.title?.en || body.titleEn || "Journal Entry",
-        titleKo: body.title?.ko || body.titleKo || null,
+        titleEn: (typeof body.title === "object" ? body.title?.en : body.title) || body.titleEn || "Journal Entry",
+        titleKo: (typeof body.title === "object" ? body.title?.ko : null) || body.titleKo || null,
         category: body.category || "Luxury Travel",
         author: body.author || "Iroshan Jayawickrame",
         readTime: body.readTime || "5 min read",
         publishedAt: pubDate,
         image: body.image || "https://images.unsplash.com/photo-1546708973-c6b75c55c707?q=80&w=1200&auto=format&fit=crop",
-        excerptEn: body.excerpt?.en || body.excerptEn || "",
-        excerptKo: body.excerpt?.ko || body.excerptKo || null,
-        contentEn: body.content?.en || body.contentEn || null,
-        contentKo: body.content?.ko || body.contentKo || null,
+        excerptEn: (typeof body.excerpt === "object" ? body.excerpt?.en : body.excerpt) || body.excerptEn || "",
+        excerptKo: (typeof body.excerpt === "object" ? body.excerpt?.ko : null) || body.excerptKo || null,
+        contentEn: (typeof body.content === "object" ? body.content?.en : body.content) || body.contentEn || null,
+        contentKo: (typeof body.content === "object" ? body.content?.ko : null) || body.contentKo || null,
       },
       create: {
         slug: body.slug,
-        titleEn: body.title?.en || body.titleEn || "Journal Entry",
-        titleKo: body.title?.ko || body.titleKo || null,
+        titleEn: (typeof body.title === "object" ? body.title?.en : body.title) || body.titleEn || "Journal Entry",
+        titleKo: (typeof body.title === "object" ? body.title?.ko : null) || body.titleKo || null,
         category: body.category || "Luxury Travel",
         author: body.author || "Iroshan Jayawickrame",
         readTime: body.readTime || "5 min read",
         publishedAt: pubDate,
         image: body.image || "https://images.unsplash.com/photo-1546708973-c6b75c55c707?q=80&w=1200&auto=format&fit=crop",
-        excerptEn: body.excerpt?.en || body.excerptEn || "",
-        excerptKo: body.excerpt?.ko || body.excerptKo || null,
-        contentEn: body.content?.en || body.contentEn || null,
-        contentKo: body.content?.ko || body.contentKo || null,
+        excerptEn: (typeof body.excerpt === "object" ? body.excerpt?.en : body.excerpt) || body.excerptEn || "",
+        excerptKo: (typeof body.excerpt === "object" ? body.excerpt?.ko : null) || body.excerptKo || null,
+        contentEn: (typeof body.content === "object" ? body.content?.en : body.content) || body.contentEn || null,
+        contentKo: (typeof body.content === "object" ? body.content?.ko : null) || body.contentKo || null,
       },
     });
 

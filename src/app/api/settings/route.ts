@@ -1,6 +1,7 @@
-﻿import { requireAuth } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { settingsInputSchema } from "@/lib/validations/content";
 
 export async function GET() {
   try {
@@ -22,8 +23,23 @@ export async function GET() {
 export async function PUT(req: NextRequest) {
   const auth = requireAuth(req);
   if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await req.json();
+    const rawBody = await req.json();
+    const validation = settingsInputSchema.safeParse(rawBody);
+
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid settings data.", details },
+        { status: 400 },
+      );
+    }
+
+    const body = validation.data;
     const { siteSettings, contact, whyUs, testimonials, team } = body;
 
     if (siteSettings) {

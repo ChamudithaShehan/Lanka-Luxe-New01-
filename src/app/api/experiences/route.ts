@@ -1,6 +1,7 @@
-﻿import { requireAuth } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { experienceInputSchema } from "@/lib/validations/content";
 
 export async function GET() {
   try {
@@ -14,16 +15,35 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const auth = requireAuth(req);
   if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await req.json();
-    const descEn = body.description?.en || body.text?.en || body.descriptionEn || "Signature luxury experience.";
-    const descKo = body.description?.ko || body.text?.ko || body.descriptionKo || null;
+    const rawBody = await req.json();
+    const validation = experienceInputSchema.safeParse(rawBody);
+
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid experience data.", details },
+        { status: 400 },
+      );
+    }
+
+    const body = validation.data;
+    const descEn = (typeof body.description === "object" ? body.description?.en : body.description) ||
+                   (typeof body.text === "object" ? body.text?.en : body.text) ||
+                   body.descriptionEn || "Signature luxury experience.";
+    const descKo = (typeof body.description === "object" ? body.description?.ko : null) ||
+                   (typeof body.text === "object" ? body.text?.ko : null) ||
+                   body.descriptionKo || null;
 
     const experience = await prisma.experience.upsert({
       where: { slug: body.slug },
       update: {
-        titleEn: body.title?.en || body.titleEn || "Signature Experience",
-        titleKo: body.title?.ko || body.titleKo || null,
+        titleEn: (typeof body.title === "object" ? body.title?.en : body.title) || body.titleEn || "Signature Experience",
+        titleKo: (typeof body.title === "object" ? body.title?.ko : null) || body.titleKo || null,
         category: body.category || "Luxury",
         duration: body.duration || "Half Day",
         location: body.location || "Sri Lanka",
@@ -34,8 +54,8 @@ export async function POST(req: NextRequest) {
       },
       create: {
         slug: body.slug,
-        titleEn: body.title?.en || body.titleEn || "Signature Experience",
-        titleKo: body.title?.ko || body.titleKo || null,
+        titleEn: (typeof body.title === "object" ? body.title?.en : body.title) || body.titleEn || "Signature Experience",
+        titleKo: (typeof body.title === "object" ? body.title?.ko : null) || body.titleKo || null,
         category: body.category || "Luxury",
         duration: body.duration || "Half Day",
         location: body.location || "Sri Lanka",

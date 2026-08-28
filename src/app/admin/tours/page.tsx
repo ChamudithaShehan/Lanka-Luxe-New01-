@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useContentStore } from "@/lib/content-store";
-import type { Tour } from "@/data/site";
+import { type Tour, isCategoryMatch } from "@/data/site";
 import {
   Compass,
   Plus,
@@ -31,12 +31,14 @@ export default function AdminToursPage() {
 
   const categories = [
     "All",
-    "Signature Journeys",
-    "Golf & Leisure",
-    "Wildlife & Nature",
-    "Culture & Heritage",
-    "Wellness & Ayurveda",
-    "Honeymoon & Romance",
+    "Luxury",
+    "Golf",
+    "Wildlife",
+    "Culture",
+    "Wellness",
+    "Honeymoon",
+    "Family",
+    "Custom",
   ];
 
   const filteredTours = tours.filter((tour) => {
@@ -44,10 +46,7 @@ export default function AdminToursPage() {
       tour.name.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (tour.name.ko || "").includes(searchTerm) ||
       tour.slug.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCat =
-      selectedCategory === "All" ||
-      tour.category === selectedCategory ||
-      tour.categories?.includes(selectedCategory);
+    const matchesCat = isCategoryMatch(tour, selectedCategory);
     return matchesSearch && matchesCat;
   });
 

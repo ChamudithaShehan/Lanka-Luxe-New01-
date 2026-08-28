@@ -36,6 +36,7 @@ export function InquiryForm({
     message: initialTour
       ? `I am interested in learning more and requesting availability for: ${initialTour}.`
       : "",
+    website: "", // Honeypot field for bot spam detection
   });
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success">(
@@ -139,6 +140,23 @@ export function InquiryForm({
         </span>
       </div>
 
+      {/* Bot Honeypot field - visually hidden, non-focusable for genuine users */}
+      <div
+        className="opacity-0 absolute -left-[9999px] top-0 pointer-events-none -z-50 select-none h-0 w-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <label htmlFor="inq_website_hp">Website (leave empty)</label>
+        <input
+          id="inq_website_hp"
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={formData.website}
+          onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+        />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
         <div>
           <label className={labelStyles}>{t("form.name")} *</label>
@@ -179,13 +197,41 @@ export function InquiryForm({
 
         <div>
           <label className={labelStyles}>{t("form.dates")}</label>
-          <input
-            type="text"
-            placeholder={lang === "ko" ? "2026년 10월 중 (10일)" : "e.g. Oct 2026 / 10 Days"}
-            value={formData.dates}
-            onChange={(e) => setFormData({ ...formData, dates: e.target.value })}
-            className={inputStyles}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="date"
+              value={formData.dates.includes(" / ") ? formData.dates.split(" / ")[0] : (formData.dates.match(/^\d{4}-\d{2}-\d{2}$/) ? formData.dates : "")}
+              onChange={(e) => {
+                const currentDuration = formData.dates.includes(" / ") ? formData.dates.split(" / ")[1] : (formData.dates.match(/^\d{4}-\d{2}-\d{2}$/) ? "" : formData.dates);
+                const newDate = e.target.value;
+                setFormData({
+                  ...formData,
+                  dates: newDate && currentDuration ? `${newDate} / ${currentDuration}` : newDate || currentDuration
+                });
+              }}
+              className={inputStyles}
+            />
+            <select
+              value={formData.dates.includes(" / ") ? formData.dates.split(" / ")[1] : (formData.dates.match(/^\d{4}-\d{2}-\d{2}$/) ? "" : formData.dates)}
+              onChange={(e) => {
+                const currentDate = formData.dates.includes(" / ") ? formData.dates.split(" / ")[0] : (formData.dates.match(/^\d{4}-\d{2}-\d{2}$/) ? formData.dates : "");
+                const newDuration = e.target.value;
+                setFormData({
+                  ...formData,
+                  dates: currentDate && newDuration ? `${currentDate} / ${newDuration}` : currentDate || newDuration
+                });
+              }}
+              className={inputStyles}
+            >
+              <option value="">{lang === "ko" ? "기간 선택..." : "Duration..."}</option>
+              <option value="1-3 Days">1–3 Days</option>
+              <option value="4-7 Days">4–7 Days</option>
+              <option value="8-10 Days">8–10 Days</option>
+              <option value="11-14 Days">11–14 Days</option>
+              <option value="15+ Days">15+ Days</option>
+              <option value="Flexible">Flexible</option>
+            </select>
+          </div>
         </div>
 
         <div>

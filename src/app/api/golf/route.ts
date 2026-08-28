@@ -1,6 +1,7 @@
-﻿import { requireAuth } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { golfCourseInputSchema } from "@/lib/validations/content";
 
 export async function GET() {
   try {
@@ -14,8 +15,23 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const auth = requireAuth(req);
   if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await req.json();
+    const rawBody = await req.json();
+    const validation = golfCourseInputSchema.safeParse(rawBody);
+
+    if (!validation.success) {
+      const details = validation.error.errors.map((e) => ({
+        field: e.path.join("."),
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { error: "Invalid golf course data.", details },
+        { status: 400 },
+      );
+    }
+
+    const body = validation.data;
     const hotelVal = body.hotelPairing || body.hotel || null;
     const course = await prisma.golfCourse.upsert({
       where: { slug: body.slug },
@@ -28,8 +44,8 @@ export async function POST(req: NextRequest) {
         rounds: parseInt(body.rounds?.toString() || "1"),
         nights: parseInt(body.nights?.toString() || "1"),
         image: body.image || "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1200&auto=format&fit=crop",
-        textEn: body.text?.en || body.textEn || "",
-        textKo: body.text?.ko || body.textKo || null,
+        textEn: (typeof body.text === "object" ? body.text?.en : body.text) || body.textEn || "",
+        textKo: (typeof body.text === "object" ? body.text?.ko : null) || body.textKo || null,
         hotelPairing: hotelVal,
         features: JSON.stringify(body.features || []),
       },
@@ -43,8 +59,8 @@ export async function POST(req: NextRequest) {
         rounds: parseInt(body.rounds?.toString() || "1"),
         nights: parseInt(body.nights?.toString() || "1"),
         image: body.image || "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1200&auto=format&fit=crop",
-        textEn: body.text?.en || body.textEn || "",
-        textKo: body.text?.ko || body.textKo || null,
+        textEn: (typeof body.text === "object" ? body.text?.en : body.text) || body.textEn || "",
+        textKo: (typeof body.text === "object" ? body.text?.ko : null) || body.textKo || null,
         hotelPairing: hotelVal,
         features: JSON.stringify(body.features || []),
       },

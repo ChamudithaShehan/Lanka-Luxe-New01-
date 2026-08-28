@@ -102,10 +102,61 @@ export const tourFilters = [
   "Wildlife",
   "Culture",
   "Honeymoon",
-  "Family",
   "Wellness",
+  "Family",
   "Custom",
 ];
+
+/**
+ * Universal flexible category matcher.
+ * Accurately matches exact strings, short aliases, and semantic equivalents
+ * (e.g. 'Honeymoon' <-> 'Honeymoon & Romance', 'Golf' <-> 'Golf & Leisure').
+ */
+export function isCategoryMatch(
+  item: { category?: string; categories?: string[] },
+  selectedFilter: string,
+): boolean {
+  if (!selectedFilter || selectedFilter === "All") return true;
+
+  const normalize = (str?: string) => (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const filterNorm = normalize(selectedFilter);
+  const itemCats = [item.category, ...(item.categories || [])].filter(Boolean) as string[];
+
+  // 1. Direct normalized match
+  if (itemCats.some((c) => normalize(c) === filterNorm)) return true;
+
+  // 2. Keyword & Semantic equivalence mapping
+  const keywordGroups = [
+    { key: "honeymoon", matches: ["honeymoon", "romance", "couple", "honeymoonromance"] },
+    { key: "golf", matches: ["golf", "leisure", "links", "golfleisure", "fairways"] },
+    { key: "wildlife", matches: ["wildlife", "safari", "nature", "wildlifenature", "leopard", "animals"] },
+    { key: "culture", matches: ["culture", "heritage", "history", "cultureheritage", "kingdom", "temple"] },
+    { key: "wellness", matches: ["wellness", "ayurveda", "spa", "yoga", "wellnessayurveda", "retreat"] },
+    { key: "luxury", matches: ["luxury", "signature", "bespoke", "signaturejourneys", "grand", "discovery"] },
+    { key: "family", matches: ["family", "kids", "group", "familygroup"] },
+    { key: "custom", matches: ["custom", "bespoke", "tailor", "custombespoke"] },
+    { key: "highlands", matches: ["highlands", "tea", "mountain", "hill", "mist"] },
+  ];
+
+  for (const group of keywordGroups) {
+    if (group.matches.some((m) => filterNorm.includes(m) || m.includes(filterNorm))) {
+      if (
+        itemCats.some((cat) => {
+          const catNorm = normalize(cat);
+          return group.matches.some((m) => catNorm.includes(m) || m.includes(catNorm));
+        })
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // 3. Fallback partial substring check
+  return itemCats.some((cat) => {
+    const cNorm = normalize(cat);
+    return cNorm.includes(filterNorm) || filterNorm.includes(cNorm);
+  });
+}
 
 export type GolfCourse = {
   slug?: string;

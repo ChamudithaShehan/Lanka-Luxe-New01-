@@ -1,48 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { comparePassword, hashPassword, signToken } from "@/lib/auth";
-
-// Simple in-memory rate limiter: max 5 attempts per 15 minutes per IP
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = loginAttempts.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    loginAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return true; // allowed
-  }
-
-  if (entry.count >= MAX_ATTEMPTS) {
-    return false; // blocked
-  }
-
-  entry.count += 1;
-  return true; // allowed
-}
+import { loginRateLimiter, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit by IP
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-      req.headers.get("x-real-ip") ||
-      "unknown";
+    const ip = getClientIp(req);
+    const rateLimitKey = `login:${ip}`;
 
-    if (!checkRateLimit(ip)) {
+    // 1. Check rate limit
+    const rateLimit = await loginRateLimiter.check(rateLimitKey);
+    if (!rateLimit.success) {
       return NextResponse.json(
-        { error: "Too many login attempts. Please try again in 15 minutes." },
-        { status: 429 },
+        { error: "Too many login attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": rateLimit.retryAfterSeconds.toString(),
+          },
+        },
       );
     }
 
     const body = await req.json();
     const { username, password } = body;
 
-    if (!username || !password) {
+    if (!username || !password || typeof username !== "string" || typeof password !== "string") {
       return NextResponse.json(
         { error: "Username and password are required." },
         { status: 400 },
@@ -56,7 +39,7 @@ export async function POST(req: NextRequest) {
       where: { username: cleanUsername },
     });
 
-    // Auto-create the default admin user on first boot (only if DB is empty)
+    // Auto-create default admin user on first boot if DB is completely empty
     if (!user && (cleanUsername === "admin" || cleanUsername === "iroshan")) {
       const userCount = await prisma.user.count();
       if (userCount === 0) {
@@ -67,7 +50,6 @@ export async function POST(req: NextRequest) {
             { status: 500 },
           );
         }
-        // Only auto-create if the submitted password matches the env var
         if (password !== defaultPass) {
           return NextResponse.json(
             { error: "Invalid username or password." },
@@ -93,7 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Compare bcrypt password hash — no backdoors
+    // Compare bcrypt password hash
     const valid = await comparePassword(password, user.passwordHash);
 
     if (!valid) {
@@ -102,6 +84,9 @@ export async function POST(req: NextRequest) {
         { status: 401 },
       );
     }
+
+    // Reset rate limiter on successful authentication
+    await loginRateLimiter.reset(rateLimitKey);
 
     // Sign JWT token
     const token = signToken({
@@ -139,4 +124,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

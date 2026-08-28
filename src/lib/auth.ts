@@ -1,9 +1,41 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "lanka_luxe_secure_jwt_secret_key_2026_atelier";
+/**
+ * Validates and retrieves the JWT secret.
+ * In production: Throws a fatal server error if missing, empty, or < 32 characters.
+ * In development: Uses environment variable or a development fallback with warning.
+ */
+export function getRequiredJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (!secret || secret.trim().length === 0) {
+    if (isProduction) {
+      throw new Error(
+        "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET environment variable is missing or empty in production.",
+      );
+    }
+    console.warn(
+      "[DEV WARNING] JWT_SECRET is not set in environment. Using development fallback. Set a secure JWT_SECRET in .env.",
+    );
+    return "dev_fallback_jwt_secret_min_32_characters_long_for_local_testing";
+  }
+
+  if (secret.length < 32) {
+    if (isProduction) {
+      throw new Error(
+        "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET must be at least 32 characters long in production.",
+      );
+    }
+    console.warn(
+      "[DEV WARNING] JWT_SECRET is shorter than 32 characters. Use a 256-bit+ secure random secret for production.",
+    );
+  }
+
+  return secret;
+}
 
 export interface TokenPayload {
   userId: string;
@@ -32,7 +64,8 @@ export async function comparePassword(
  * Sign JWT token for admin session (valid for 7 days)
  */
 export function signToken(payload: TokenPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  const secret = getRequiredJwtSecret();
+  return jwt.sign(payload, secret, { expiresIn: "7d" });
 }
 
 /**
@@ -40,7 +73,8 @@ export function signToken(payload: TokenPayload): string {
  */
 export function verifyToken(token: string): TokenPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as TokenPayload;
+    const secret = getRequiredJwtSecret();
+    return jwt.verify(token, secret) as TokenPayload;
   } catch {
     return null;
   }
