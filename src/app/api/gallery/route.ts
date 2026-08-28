@@ -75,7 +75,16 @@ export async function POST(req: NextRequest) {
     if (typeof body.order === "number") {
       parsedOrder = body.order;
     } else if (body.order) {
-      parsedOrder = parseInt(body.order, 10) || 0;
+      parsedOrder = parseInt(String(body.order), 10) || 0;
+    }
+
+    // Safety check: prevent MySQL 32-bit INT overflow (e.g. from Date.now() timestamps)
+    if (parsedOrder > 1000000 || parsedOrder < 0) {
+      const maxItem = await prisma.galleryItem.findFirst({
+        orderBy: { order: "desc" },
+        select: { order: true },
+      });
+      parsedOrder = (maxItem?.order ?? 0) + 1;
     }
 
     const dbItem = await prisma.galleryItem.upsert({

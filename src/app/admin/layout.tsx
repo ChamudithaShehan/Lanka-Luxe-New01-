@@ -18,8 +18,6 @@ import {
   LogOut,
   Menu,
   X,
-  RotateCcw,
-  Check,
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -43,10 +41,9 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { inquiries, resetToDefaults, siteSettings } = useContentStore();
+  const { inquiries, siteSettings } = useContentStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   // If on /admin/login, don't wrap with admin chrome
   const isLoginPage = pathname === "/admin/login";
@@ -91,12 +88,6 @@ export default function AdminLayout({
     router.replace("/admin/login");
   };
 
-  const handleResetConfirm = () => {
-    resetToDefaults();
-    setIsResetConfirmOpen(false);
-    toast.success("Site content reset to original factory defaults!");
-  };
-
   return (
     <div className="min-h-screen bg-[#07111E] text-slate-100 flex font-sans selection:bg-[#C8A45D] selection:text-[#0B1A30]">
       {/* Mobile Sidebar Overlay */}
@@ -109,38 +100,43 @@ export default function AdminLayout({
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#0B1A30] border-r border-[#1B2D4A] z-50 flex flex-col transition-transform duration-300 ${
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-72 bg-[#0B1A30] border-r border-[#1B2D4A] flex flex-col justify-between transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
         {/* Brand Header */}
         <div className="p-6 border-b border-[#1B2D4A] flex items-center justify-between">
-          <Link
-            href="/admin"
-            className="flex flex-col"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <span className="font-serif text-lg tracking-wider font-semibold text-white">
-              LANKA <span className="text-[#C8A45D]">LUXE</span>
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[#C8A45D]/80 font-medium">
-              Management Atelier
-            </span>
+          <Link href="/admin" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C8A45D] to-[#8C6D2D] p-0.5 shadow-[0_0_20px_rgba(200,164,93,0.3)]">
+              <div className="w-full h-full bg-[#081426] rounded-[10px] flex items-center justify-center text-[#C8A45D] font-serif font-bold text-lg">
+                LL
+              </div>
+            </div>
+            <div>
+              <span className="font-serif text-sm font-bold tracking-wider text-white block uppercase group-hover:text-[#C8A45D] transition-colors">
+                Lanka Luxe
+              </span>
+              <span className="text-[10px] tracking-[0.2em] text-[#C8A45D] block uppercase font-medium">
+                Admin Console
+              </span>
+            </div>
           </Link>
+
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white p-1"
+            className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-[#12233D]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+        {/* Nav Links */}
+        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = item.exact
               ? pathname === item.href
               : pathname.startsWith(item.href);
+
             const Icon = item.icon;
 
             return (
@@ -148,16 +144,18 @@ export default function AdminLayout({
                 key={item.href}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group ${
                   isActive
-                    ? "bg-[#C8A45D] text-[#081426] shadow-[0_4px_16px_rgba(200,164,93,0.3)] font-semibold"
-                    : "text-slate-300 hover:text-white hover:bg-[#12233D]"
+                    ? "bg-[#C8A45D] text-[#081426] font-bold shadow-[0_4px_16px_rgba(200,164,93,0.35)]"
+                    : "text-slate-300 hover:bg-[#12233D] hover:text-white"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon
                     className={`w-4 h-4 ${
-                      isActive ? "text-[#081426]" : "text-[#C8A45D]"
+                      isActive
+                        ? "text-[#081426]"
+                        : "text-[#C8A45D] group-hover:scale-110 transition-transform"
                     }`}
                   />
                   <span>{item.label}</span>
@@ -165,13 +163,13 @@ export default function AdminLayout({
 
                 {item.hasBadge && unreadInquiriesCount > 0 && (
                   <span
-                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                       isActive
                         ? "bg-[#081426] text-[#C8A45D]"
                         : "bg-[#C8A45D] text-[#081426]"
                     }`}
                   >
-                    {unreadInquiriesCount} new
+                    {unreadInquiriesCount}
                   </span>
                 )}
               </Link>
@@ -196,16 +194,7 @@ export default function AdminLayout({
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#1B2D4A]/50 flex items-center justify-between text-xs text-slate-400">
-            <button
-              onClick={() => setIsResetConfirmOpen(true)}
-              className="hover:text-[#C8A45D] flex items-center gap-1.5 transition-colors p-1"
-              title="Reset content to default"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Data</span>
-            </button>
-
+          <div className="pt-2 border-t border-[#1B2D4A]/50 flex items-center justify-end text-xs text-slate-400">
             <button
               onClick={handleLogout}
               className="hover:text-red-400 flex items-center gap-1.5 transition-colors p-1"
@@ -251,36 +240,6 @@ export default function AdminLayout({
           {children}
         </main>
       </div>
-
-      {/* Reset Confirmation Modal */}
-      {isResetConfirmOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0B1A30] border border-[#C8A45D]/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-slate-200">
-            <h3 className="font-serif text-xl font-bold text-white flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-[#C8A45D]" />
-              Reset All Content to Factory Defaults?
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed font-normal">
-              This will overwrite all custom edits made in the admin panel and restore the original curated tours, golf courses, destinations, and settings.
-            </p>
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setIsResetConfirmOpen(false)}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleResetConfirm}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-md"
-              >
-                <Check className="w-3.5 h-3.5" />
-                Yes, Reset All Data
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

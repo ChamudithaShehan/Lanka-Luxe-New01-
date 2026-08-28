@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminDestinationsPage() {
   const { destinations, saveDestination, deleteDestination } =
@@ -25,6 +27,13 @@ export default function AdminDestinationsPage() {
   const [editingDest, setEditingDest] = useState<Destination | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmSlug, setDeleteConfirmSlug] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedRegion]);
 
   const regions = [
     "All",
@@ -48,6 +57,12 @@ export default function AdminDestinationsPage() {
       dest.region.toLowerCase().includes(selectedRegion.toLowerCase());
     return matchesSearch && matchesRegion;
   });
+
+  const totalPages = Math.ceil(filteredDestinations.length / pageSize);
+  const paginatedDestinations = filteredDestinations.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleCreateNew = () => {
     const newDest: Destination = {
@@ -155,8 +170,9 @@ export default function AdminDestinationsPage() {
       </div>
 
       {/* Destinations Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredDestinations.map((dest) => (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedDestinations.map((dest) => (
           <div
             key={dest.slug}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
@@ -248,6 +264,19 @@ export default function AdminDestinationsPage() {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      <AdminPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredDestinations.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+        pageSizeOptions={[8, 16, 24]}
+        itemLabel="destinations"
+      />
+    </div>
 
       {/* EDIT / CREATE DESTINATION MODAL */}
       {isModalOpen && editingDest && (
@@ -364,20 +393,16 @@ export default function AdminDestinationsPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingDest.image}
-                  onChange={(e) =>
-                    setEditingDest({ ...editingDest, image: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                  required
-                />
-              </div>
+              <ImageUpload
+                value={editingDest.image}
+                onChange={(url) =>
+                  setEditingDest({ ...editingDest, image: url })
+                }
+                label="Destination Cover Image"
+                required
+                aspectRatio="video"
+                helpText="Upload a scenic destination image directly to ImageBB or provide an image URL."
+              />
 
               {/* Highlights */}
               <div className="space-y-1.5">

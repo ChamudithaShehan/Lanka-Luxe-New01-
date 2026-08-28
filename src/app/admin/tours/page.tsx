@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminToursPage() {
   const { tours, saveTour, deleteTour } = useContentStore();
@@ -28,6 +30,13 @@ export default function AdminToursPage() {
   const [editingTour, setEditingTour] = useState<Tour | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmSlug, setDeleteConfirmSlug] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   const categories = [
     "All",
@@ -49,6 +58,12 @@ export default function AdminToursPage() {
     const matchesCat = isCategoryMatch(tour, selectedCategory);
     return matchesSearch && matchesCat;
   });
+
+  const totalPages = Math.ceil(filteredTours.length / pageSize);
+  const paginatedTours = filteredTours.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleCreateNew = () => {
     const newTour: Tour = {
@@ -174,11 +189,10 @@ export default function AdminToursPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
-                selectedCategory === cat
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === cat
                   ? "bg-[#C8A45D] text-[#081426]"
                   : "bg-[#07111E] text-slate-400 hover:text-white border border-[#1B2D4A]"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -187,8 +201,9 @@ export default function AdminToursPage() {
       </div>
 
       {/* Tours Grid / Table */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTours.map((tour) => (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedTours.map((tour) => (
           <div
             key={tour.slug}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
@@ -287,6 +302,19 @@ export default function AdminToursPage() {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      <AdminPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredTours.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+        pageSizeOptions={[6, 12, 24]}
+        itemLabel="tours"
+      />
+    </div>
 
       {/* EDIT / CREATE TOUR MODAL */}
       {isModalOpen && editingTour && (
@@ -428,22 +456,18 @@ export default function AdminToursPage() {
                 </div>
               </div>
 
-              {/* Row 3: Image URL & Locations */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300">
-                    Cover Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={editingTour.image}
-                    onChange={(e) =>
-                      setEditingTour({ ...editingTour, image: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                    required
-                  />
-                </div>
+              {/* Row 3: Cover Image Upload & Locations */}
+              <div className="space-y-4">
+                <ImageUpload
+                  value={editingTour.image}
+                  onChange={(url) =>
+                    setEditingTour({ ...editingTour, image: url })
+                  }
+                  label="Tour Cover Image"
+                  required
+                  aspectRatio="video"
+                  helpText="Upload a high-quality tour cover image directly to ImageBB or provide an image URL."
+                />
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-300">

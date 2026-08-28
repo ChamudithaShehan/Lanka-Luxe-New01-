@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = validation.data;
-    const { siteSettings, contact, whyUs, testimonials, team, gallery } = body;
+    const { siteSettings, contact, whyUs, testimonials, team, gallery, imgbbApiKey } = body;
 
     if (siteSettings) {
       await prisma.siteSetting.upsert({
@@ -87,6 +87,14 @@ export async function PUT(req: NextRequest) {
         where: { key: "global_gallery" },
         update: { value: JSON.stringify(gallery) },
         create: { key: "global_gallery", value: JSON.stringify(gallery) },
+      });
+    }
+
+    if (imgbbApiKey !== undefined) {
+      await prisma.siteSetting.upsert({
+        where: { key: "imgbb_api_key" },
+        update: { value: imgbbApiKey || "" },
+        create: { key: "imgbb_api_key", value: imgbbApiKey || "" },
       });
     }
 

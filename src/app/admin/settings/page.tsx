@@ -11,7 +11,6 @@ import {
   MapPin,
   Sparkles,
   Check,
-  RotateCcw,
   User,
   Award,
 } from "lucide-react";
@@ -23,7 +22,6 @@ export default function AdminSettingsPage() {
     contact,
     saveSiteSettings,
     saveContact,
-    resetToDefaults,
   } = useContentStore();
 
   const [settingsForm, setSettingsForm] = useState(
@@ -32,19 +30,12 @@ export default function AdminSettingsPage() {
   const [contactForm, setContactForm] = useState(
     JSON.parse(JSON.stringify(contact)),
   );
-  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     saveSiteSettings(settingsForm);
     saveContact(contactForm);
     toast.success("Site settings and contact details updated globally!");
-  };
-
-  const handleResetConfirm = () => {
-    resetToDefaults();
-    setIsResetConfirmOpen(false);
-    toast.success("All data reset to factory defaults!");
   };
 
   return (
@@ -60,14 +51,6 @@ export default function AdminSettingsPage() {
             Configure founder credentials (SLTDA Licence C-1734), contact channels, and homepage headlines.
           </p>
         </div>
-
-        <button
-          onClick={() => setIsResetConfirmOpen(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold border border-red-500/30 transition-colors cursor-pointer w-fit"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Factory Defaults</span>
-        </button>
       </div>
 
       <form onSubmit={handleSave} className="space-y-8">
@@ -477,36 +460,6 @@ export default function AdminSettingsPage() {
           </button>
         </div>
       </form>
-
-      {/* Reset Confirmation Modal */}
-      {isResetConfirmOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0B1A30] border border-red-500/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-slate-200">
-            <h3 className="font-serif text-xl font-bold text-white flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-red-400" />
-              Reset All Content to Defaults?
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed font-normal">
-              This will restore all original curated content, tours, golf packages, destinations, experiences, blog posts, and site settings.
-            </p>
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setIsResetConfirmOpen(false)}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#12233D] text-slate-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleResetConfirm}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5"
-              >
-                <Check className="w-3.5 h-3.5" />
-                Yes, Reset All Data
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

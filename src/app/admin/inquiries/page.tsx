@@ -21,6 +21,7 @@ import {
   Filter,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminInquiriesPage() {
   const { inquiries, addInquiry, updateInquiryStatus, deleteInquiry, contact } =
@@ -30,6 +31,13 @@ export default function AdminInquiriesPage() {
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Reset to page 1 on filter changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
 
   // New Inquiry form state
   const [newForm, setNewForm] = useState({
@@ -56,6 +64,12 @@ export default function AdminInquiriesPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredInquiries.length / pageSize);
+  const paginatedInquiries = filteredInquiries.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const getStatusBadge = (status: Inquiry["status"]) => {
     switch (status) {
@@ -263,7 +277,7 @@ export default function AdminInquiriesPage() {
             No inquiries match your current filters.
           </div>
         ) : (
-          filteredInquiries.map((inq) => (
+          paginatedInquiries.map((inq) => (
             <div
               key={inq.id}
               onClick={() => setSelectedInquiry(inq)}
@@ -401,6 +415,18 @@ export default function AdminInquiriesPage() {
             </div>
           ))
         )}
+
+        {/* Pagination */}
+        <AdminPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredInquiries.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+          pageSizeOptions={[10, 25, 50]}
+          itemLabel="inquiries"
+        />
       </div>
 
       {/* DETAIL INQUIRY MODAL */}

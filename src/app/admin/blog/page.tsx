@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminBlogPage() {
   const { posts, savePost, deletePost } = useContentStore();
@@ -24,6 +26,13 @@ export default function AdminBlogPage() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmSlug, setDeleteConfirmSlug] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   const blogCategories = [
     "All",
@@ -46,6 +55,12 @@ export default function AdminBlogPage() {
       selectedCategory === "All" || post.category === selectedCategory;
     return matchesSearch && matchesCat;
   });
+
+  const totalPages = Math.ceil(filteredPosts.length / pageSize);
+  const paginatedPosts = filteredPosts.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleCreateNew = () => {
     const today = new Date().toLocaleDateString("en-GB", {
@@ -152,8 +167,9 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredPosts.map((post) => (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedPosts.map((post) => (
           <div
             key={post.slug}
             className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
@@ -225,6 +241,19 @@ export default function AdminBlogPage() {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      <AdminPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredPosts.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+        pageSizeOptions={[8, 16, 32]}
+        itemLabel="articles"
+      />
+    </div>
 
       {/* EDIT / CREATE ARTICLE MODAL */}
       {isModalOpen && editingPost && (
@@ -338,20 +367,16 @@ export default function AdminBlogPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Cover Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingPost.image}
-                  onChange={(e) =>
-                    setEditingPost({ ...editingPost, image: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                  required
-                />
-              </div>
+              <ImageUpload
+                value={editingPost.image}
+                onChange={(url) =>
+                  setEditingPost({ ...editingPost, image: url })
+                }
+                label="Article Cover Image"
+                required
+                aspectRatio="wide"
+                helpText="Upload a featured blog article image directly to ImageBB or provide an image URL."
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">

@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminGalleryPage() {
   const { gallery, saveGalleryItem, addGalleryItem, deleteGalleryItem } =
@@ -31,6 +33,13 @@ export default function AdminGalleryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   const filteredItems = gallery.filter((item) => {
     const titleEn = item.title.en.toLowerCase();
@@ -47,6 +56,12 @@ export default function AdminGalleryPage() {
     return matchesSearch && matchesCat;
   });
 
+  const totalPages = Math.ceil(filteredItems.length / pageSize);
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
   const featuredCount = gallery.filter((item) => item.featured).length;
 
   const handleCreateNew = () => {
@@ -61,7 +76,7 @@ export default function AdminGalleryPage() {
         "https://images.unsplash.com/photo-1546708973-c6b75c55c707?auto=format&fit=crop&w=1200&q=80",
       location: "Southern Coast, Sri Lanka",
       featured: true,
-      order: Date.now(),
+      order: gallery.length > 0 ? Math.max(...gallery.map((g) => g.order || 0)) + 1 : 1,
     };
 
     setEditingItem(newItem);
@@ -197,11 +212,10 @@ export default function AdminGalleryPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                selectedCategory === cat
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedCategory === cat
                   ? "bg-[#C8A45D] text-[#081A33] font-bold shadow-sm"
                   : "bg-[#0B1A30] text-slate-300 hover:bg-[#132542] border border-[#1B2D4A]"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -219,8 +233,9 @@ export default function AdminGalleryPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredItems.map((item) => (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {paginatedItems.map((item) => (
             <div
               key={item.id}
               className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl overflow-hidden group hover:border-[#C8A45D]/60 transition-all flex flex-col justify-between"
@@ -244,11 +259,10 @@ export default function AdminGalleryPage() {
                     <button
                       onClick={() => handleToggleFeatured(item)}
                       title={item.featured ? "Featured in Footer" : "Not in Footer"}
-                      className={`p-1.5 rounded-md backdrop-blur-md transition-all ${
-                        item.featured
+                      className={`p-1.5 rounded-md backdrop-blur-md transition-all ${item.featured
                           ? "bg-amber-400 text-navy font-bold shadow-md"
                           : "bg-black/60 text-slate-400 hover:text-white border border-white/10"
-                      }`}
+                        }`}
                     >
                       <Star className={`w-3.5 h-3.5 ${item.featured ? "fill-current" : ""}`} />
                     </button>
@@ -315,9 +329,22 @@ export default function AdminGalleryPage() {
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredItems.length}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+            pageSizeOptions={[12, 24, 48]}
+            itemLabel="photos"
+          />
         </div>
       )}
 
@@ -341,36 +368,15 @@ export default function AdminGalleryPage() {
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-4">
-              {/* Image URL & Live Preview */}
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Image URL / Asset Path *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="https://images.unsplash.com/... or asset path"
-                  value={editingItem.image}
-                  onChange={(e) =>
-                    setEditingItem({ ...editingItem, image: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                />
-
-                {/* Preview Frame */}
-                {editingItem.image && (
-                  <div className="mt-2 relative aspect-[16/9] rounded-xl overflow-hidden bg-black/40 border border-[#1B2D4A]">
-                    <img
-                      src={editingItem.image}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
+              {/* ImageBB Image Upload & Live Preview */}
+              <ImageUpload
+                value={editingItem.image}
+                onChange={(url) => setEditingItem({ ...editingItem, image: url })}
+                label="Gallery Photo"
+                required
+                aspectRatio="video"
+                helpText="Upload a high-resolution photo directly to ImageBB CDN or provide an image URL."
+              />
 
               {/* Titles EN / KO */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

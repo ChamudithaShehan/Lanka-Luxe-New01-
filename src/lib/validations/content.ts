@@ -145,4 +145,5 @@ export const settingsInputSchema = z.object({
   testimonials: z.array(z.any()).optional(),
   team: z.array(z.any()).optional(),
   gallery: z.array(z.any()).optional(),
+  imgbbApiKey: z.string().max(255).optional().nullable(),
 });

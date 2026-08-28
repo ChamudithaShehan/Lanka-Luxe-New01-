@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminGolfPage() {
   const { golfCourses, saveGolfCourse, addGolfCourse, deleteGolfCourse } =
@@ -25,6 +27,13 @@ export default function AdminGolfPage() {
   const [editingCourse, setEditingCourse] = useState<GolfCourse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const filteredGolfCourses = golfCourses.filter((course) => {
     return (
@@ -33,6 +42,12 @@ export default function AdminGolfPage() {
       (course.hotel && course.hotel.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
+
+  const totalPages = Math.ceil(filteredGolfCourses.length / pageSize);
+  const paginatedGolfCourses = filteredGolfCourses.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleCreateNew = () => {
     const newCourse: GolfCourse = {
@@ -120,12 +135,15 @@ export default function AdminGolfPage() {
       </div>
 
       {/* Courses Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredGolfCourses.map((course, index) => (
-          <div
-            key={index}
-            className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
-          >
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedGolfCourses.map((course, idx) => {
+            const actualIndex = (currentPage - 1) * pageSize + idx;
+            return (
+            <div
+              key={course.slug || actualIndex}
+              className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
+            >
             <div>
               {/* Cover Image */}
               <div className="relative h-48 w-full bg-slate-800 overflow-hidden">
@@ -190,7 +208,7 @@ export default function AdminGolfPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleEdit(index)}
+                  onClick={() => handleEdit(actualIndex)}
                   className="px-3 py-1.5 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 hover:text-[#C8A45D] text-xs font-semibold border border-[#1B2D4A] flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -198,7 +216,7 @@ export default function AdminGolfPage() {
                 </button>
 
                 <button
-                  onClick={() => setDeleteConfirmIndex(index)}
+                  onClick={() => setDeleteConfirmIndex(actualIndex)}
                   className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/30 transition-colors cursor-pointer"
                   title="Delete Golf Course"
                 >
@@ -207,7 +225,21 @@ export default function AdminGolfPage() {
               </div>
             </div>
           </div>
-        ))}
+            );
+          })}
+        </div>
+
+        {/* Pagination */}
+        <AdminPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredGolfCourses.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+          pageSizeOptions={[6, 12, 24]}
+          itemLabel="golf courses"
+        />
       </div>
 
       {/* EDIT / CREATE GOLF COURSE MODAL */}
@@ -340,20 +372,16 @@ export default function AdminGolfPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingCourse.image}
-                  onChange={(e) =>
-                    setEditingCourse({ ...editingCourse, image: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                  required
-                />
-              </div>
+              <ImageUpload
+                value={editingCourse.image}
+                onChange={(url) =>
+                  setEditingCourse({ ...editingCourse, image: url })
+                }
+                label="Golf Course Image"
+                required
+                aspectRatio="video"
+                helpText="Upload a championship course photo directly to ImageBB or provide an image URL."
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
