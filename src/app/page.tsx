@@ -335,7 +335,7 @@ export default function HomePage() {
                   >
                     <img
                       src={img.wildlife}
-                      alt="Yala Leopard Safari Jeep"
+                      alt="Yala & Udawalawe Elephant & Wildlife Safari"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
