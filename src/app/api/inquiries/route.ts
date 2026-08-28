@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sanitizeInput, getAuthSession } from "@/lib/auth";
+import { sanitizeInput } from "@/lib/auth";
+import { requireAuth } from "@/lib/api-auth";
 
 // GET all inquiries (Admin protected)
 export async function GET(req: NextRequest) {
+  const auth = requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const inquiries = await prisma.inquiry.findMany({
       orderBy: { createdAt: "desc" },
@@ -15,22 +19,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST new lead (Public inquiry submission)
+// POST new lead (Public inquiry submission - no auth required)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      name,
-      email,
-      phone,
-      country,
-      tourSlug,
-      travelers,
-      travelDate,
-      duration,
-      budget,
-      message,
-    } = body;
+    const { name, email, phone, country, tourSlug, travelers, travelDate, duration, budget, message } = body;
 
     if (!name || !email || !phone) {
       return NextResponse.json(
@@ -39,9 +32,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const reference = `LLJ-${new Date().getFullYear()}-${Math.floor(
-      1000 + Math.random() * 9000,
-    )}`;
+    const uuid = crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
+    const reference = `LLJ-${new Date().getFullYear()}-${uuid}`;
 
     const inquiry = await prisma.inquiry.create({
       data: {
@@ -60,11 +52,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      reference: inquiry.reference,
-      inquiry,
-    });
+    return NextResponse.json({ success: true, reference: inquiry.reference });
   } catch (error) {
     console.error("Create inquiry error:", error);
     return NextResponse.json(

@@ -163,26 +163,9 @@ export async function GET() {
       image: p.image,
     }));
 
-    // 6. Query Inquiries
-    const dbInquiries = await prisma.inquiry.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    const inquiries = dbInquiries.map((i) => ({
-      id: i.reference,
-      date: i.createdAt.toISOString().split("T")[0],
-      name: i.name,
-      email: i.email,
-      phone: i.phone,
-      country: i.country || undefined,
-      tourSlug: i.tourSlug || undefined,
-      travelers: i.travelers || undefined,
-      travelDate: i.travelDate || undefined,
-      duration: i.duration || undefined,
-      budget: i.budget || undefined,
-      message: i.message || undefined,
-      status: i.status,
-      notes: i.notes || undefined,
-    }));
+    // 6. Inquiries are NOT returned here — they are PII (personal data).
+    // The admin panel fetches them from the auth-protected GET /api/inquiries endpoint.
+    const inquiries: never[] = [];
 
     // 7. Query Settings
     const settingsRows = await prisma.siteSetting.findMany();
@@ -240,7 +223,6 @@ export async function GET() {
       destinations: [],
       experiences: [],
       posts: [],
-      inquiries: [],
       siteSettings: defaultSettings,
       contact: {},
       whyUs: [],

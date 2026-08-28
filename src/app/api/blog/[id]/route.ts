@@ -1,15 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/api-auth";
 
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
+  const auth = requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { id } = await context.params;
-    await prisma.blogPost.delete({
-      where: { slug: id },
-    });
+    await prisma.blogPost.delete({ where: { slug: id } });
     return NextResponse.json({ success: true, message: "Blog post removed." });
   } catch (error) {
     console.error("Delete blog post error:", error);

@@ -2,8 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { comparePassword, hashPassword, signToken } from "@/lib/auth";
 
+// Simple in-memory rate limiter: max 5 attempts per 15 minutes per IP
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = loginAttempts.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    loginAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return true; // allowed
+  }
+
+  if (entry.count >= MAX_ATTEMPTS) {
+    return false; // blocked
+  }
+
+  entry.count += 1;
+  return true; // allowed
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit by IP
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again in 15 minutes." },
+        { status: 429 },
+      );
+    }
+
     const body = await req.json();
     const { username, password } = body;
 
@@ -21,10 +56,24 @@ export async function POST(req: NextRequest) {
       where: { username: cleanUsername },
     });
 
-    // Auto-create default admin user if database was just initialized
+    // Auto-create the default admin user on first boot (only if DB is empty)
     if (!user && (cleanUsername === "admin" || cleanUsername === "iroshan")) {
-      const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD || "admin123";
-      if (password === defaultPass || password === "lankaluxe2026" || password === "c-1734") {
+      const userCount = await prisma.user.count();
+      if (userCount === 0) {
+        const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD;
+        if (!defaultPass) {
+          return NextResponse.json(
+            { error: "Server not configured. Set ADMIN_DEFAULT_PASSWORD in environment." },
+            { status: 500 },
+          );
+        }
+        // Only auto-create if the submitted password matches the env var
+        if (password !== defaultPass) {
+          return NextResponse.json(
+            { error: "Invalid username or password." },
+            { status: 401 },
+          );
+        }
         const passwordHash = await hashPassword(defaultPass);
         user = await prisma.user.create({
           data: {
@@ -44,12 +93,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Compare bcrypt password hash (or fallback master passkeys for founder convenience)
-    const valid =
-      (await comparePassword(password, user.passwordHash)) ||
-      password === "lankaluxe2026" ||
-      password === "admin123" ||
-      password === "c-1734";
+    // Compare bcrypt password hash — no backdoors
+    const valid = await comparePassword(password, user.passwordHash);
 
     if (!valid) {
       return NextResponse.json(
@@ -76,7 +121,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Set HTTP-only secure cookie for additional security
+    // Set HTTP-only secure cookie
     response.cookies.set("llj_admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -94,3 +139,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

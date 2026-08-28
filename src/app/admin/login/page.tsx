@@ -28,44 +28,25 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        localStorage.setItem("llj_admin_auth", "true");
+        // Store the JWT in localStorage for API calls that use the Bearer header
         if (data.token) {
           localStorage.setItem("llj_admin_token", data.token);
         }
-        toast.success(`Welcome back, ${data.user?.name || "Iroshan"}! Access granted.`);
-        router.push("/admin");
-      } else {
-        // Fallback for demo / offline
-        const validUsers = ["admin", "iroshan"];
-        const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
-        const u = username.trim().toLowerCase();
-        const p = passcode.trim().toLowerCase();
-        if (validUsers.includes(u) && validKeys.includes(p)) {
-          localStorage.setItem("llj_admin_auth", "true");
-          toast.success("Welcome back, Iroshan! Access granted.");
-          router.push("/admin");
-        } else {
-          setError(true);
-          setLoading(false);
-          toast.error(data.error || "Invalid username or password.");
-        }
-      }
-    } catch (err) {
-      console.error("Login fetch error:", err);
-      // Fallback
-      const validUsers = ["admin", "iroshan"];
-      const validKeys = ["lankaluxe2026", "admin123", "c-1734"];
-      const u = username.trim().toLowerCase();
-      const p = passcode.trim().toLowerCase();
-      if (validUsers.includes(u) && validKeys.includes(p)) {
+        // The httpOnly cookie is set automatically by the server — it powers middleware.
+        // This flag is kept for backward-compat with the admin layout check.
         localStorage.setItem("llj_admin_auth", "true");
-        toast.success("Welcome back, Iroshan! Access granted.");
+        toast.success(`Welcome back, ${data.user?.name || "Admin"}! Access granted.`);
         router.push("/admin");
       } else {
         setError(true);
         setLoading(false);
-        toast.error("Authentication failed. Please check your credentials.");
+        toast.error(data.error || "Invalid username or password.");
       }
+    } catch (err) {
+      console.error("Login fetch error:", err);
+      setError(true);
+      setLoading(false);
+      toast.error("Network error. Please check your connection and try again.");
     }
   };
 

@@ -168,31 +168,46 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         if (Array.isArray(data.whyUs)) setWhyUs(data.whyUs);
         if (Array.isArray(data.testimonials)) setTestimonials(data.testimonials);
         if (Array.isArray(data.team)) setTeam(data.team);
-        if (Array.isArray(data.inquiries)) {
-          setInquiries(
-            data.inquiries.map((inq: any) => ({
-              id: inq.id || inq.reference,
-              createdAt: inq.date || inq.createdAt || new Date().toISOString(),
-              name: inq.name,
-              email: inq.email,
-              phone: inq.phone,
-              country: inq.country,
-              dates: inq.travelDate,
-              travelers: inq.travelers,
-              interest: inq.interest || "luxury",
-              tour: inq.tourSlug,
-              budget: inq.budget,
-              message: inq.message,
-              status: (inq.status?.toLowerCase().replace(" ", "_") as any) || "new",
-              notes: inq.notes,
-            })),
-          );
-        }
 
-        // Cache snapshot
+        // Cache snapshot (without inquiries — those are PII)
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, inquiries: undefined }));
         } catch {}
+      }
+
+      // Fetch inquiries separately from the auth-protected endpoint
+      const token = typeof window !== "undefined" ? localStorage.getItem("llj_admin_token") : null;
+      if (token) {
+        const inqRes = await fetch("/api/inquiries", {
+          cache: "no-store",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Pragma": "no-cache",
+          },
+        });
+        if (inqRes.ok) {
+          const inqData = await inqRes.json();
+          if (Array.isArray(inqData)) {
+            setInquiries(
+              inqData.map((i: any) => ({
+                id: i.reference || i.id,
+                createdAt: i.createdAt || new Date().toISOString(),
+                name: i.name,
+                email: i.email,
+                phone: i.phone,
+                country: i.country,
+                dates: i.travelDate,
+                travelers: i.travelers,
+                interest: i.interest || "luxury",
+                tour: i.tourSlug,
+                budget: i.budget,
+                message: i.message,
+                status: (i.status?.toLowerCase().replace(" ", "_") as any) || "new",
+                notes: i.notes,
+              }))
+            );
+          }
+        }
       }
     } catch (err) {
       console.warn("Real-time live fetch error:", err);
@@ -254,8 +269,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleVisibility);
 
-    // 4-second gentle heartbeat polling to pick up any database changes in real time
-    const interval = setInterval(fetchLiveContent, 4000);
+    // 60-second gentle heartbeat polling — reduced from 4s to avoid DB overload under traffic.
+    // Focus and visibility listeners handle instant updates when the admin returns to the tab.
+    const interval = setInterval(fetchLiveContent, 60000);
 
     return () => {
       if (channel) channel.close();

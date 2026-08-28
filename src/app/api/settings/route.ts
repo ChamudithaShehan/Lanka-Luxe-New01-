@@ -1,3 +1,4 @@
+﻿import { requireAuth } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -19,6 +20,8 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  const auth = requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
   try {
     const body = await req.json();
     const { siteSettings, contact, whyUs, testimonials, team } = body;
