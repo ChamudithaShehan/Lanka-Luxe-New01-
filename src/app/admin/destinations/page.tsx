@@ -73,7 +73,7 @@ export default function AdminDestinationsPage() {
       },
       region: "Cultural Triangle",
       image:
-        "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/35FYNgjq/lanka-luxe-sigiriya.jpg",
       short: {
         en: "A mesmerizing destination known for its cultural heritage and natural beauty.",
         ko: "문화유산과 자연의 아름다움으로 유명한 매혹적인 여행지.",

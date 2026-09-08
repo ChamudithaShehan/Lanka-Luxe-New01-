@@ -37,6 +37,7 @@ export interface Inquiry {
   message?: string;
   status: "new" | "in_progress" | "contacted" | "booked" | "archived";
   notes?: string;
+  reference?: string;
 }
 
 export interface SiteSettings {
@@ -120,8 +121,10 @@ interface ContentContextType {
   updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => void;
   deleteInquiry: (id: string) => void;
   resetToDefaults: () => void;
+  refreshContent: () => Promise<void>;
 }
 
+<<<<<<< Updated upstream
 const STORAGE_KEY = "llj_admin_live_content_v1";
 const SYNC_CHANNEL = "llj_realtime_sync_channel";
 
@@ -292,6 +295,65 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   }, [fetchLiveContent]);
 
   // Tour mutations
+=======
+const ContentContext = createContext<ContentContextType | null>(null);
+
+export function ContentProvider({ children }: { children: ReactNode }) {
+  const [tours, setTours] = useState<Tour[]>(defaultTours);
+  const [golfCourses, setGolfCourses] = useState<GolfCourse[]>(defaultGolfCourses);
+  const [destinations, setDestinations] = useState<Destination[]>(defaultDestinations);
+  const [experiences, setExperiences] = useState<Experience[]>(defaultExperiences);
+  const [posts, setPosts] = useState<Post[]>(defaultPosts);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [team, setTeam] = useState<TeamMember[]>(defaultTeam);
+  const [whyUs, setWhyUs] = useState<Feature[]>(defaultWhyUs);
+  const [contact, setContact] = useState(defaultContact);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+
+  // Function to load live content from database
+  const refreshContent = useCallback(async () => {
+    try {
+      // 1. Fetch public CMS content
+      const res = await fetch("/api/content", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.tours?.length) setTours(data.tours);
+        if (data.golfCourses?.length) setGolfCourses(data.golfCourses);
+        if (data.destinations?.length) setDestinations(data.destinations);
+        if (data.experiences?.length) setExperiences(data.experiences);
+        if (data.posts?.length) setPosts(data.posts);
+        if (data.siteSettings) setSiteSettings(data.siteSettings);
+        if (data.contact) setContact(data.contact);
+      }
+
+      // 2. Fetch admin inquiries if authenticated
+      const inqRes = await fetch("/api/admin/inquiries", { cache: "no-store" });
+      if (inqRes.ok) {
+        const inqData = await inqRes.json();
+        if (Array.isArray(inqData.inquiries)) {
+          setInquiries(inqData.inquiries);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not refresh live content from API, falling back to static cache.", e);
+    }
+  }, []);
+
+  // Hydrate on mount & purge legacy localStorage content key
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        // Clean legacy localStorage key if present
+        localStorage.removeItem("llj_admin_live_content_v1");
+      }
+    } catch {
+      // ignore
+    }
+    refreshContent();
+  }, [refreshContent]);
+
+>>>>>>> Stashed changes
   const saveTour = useCallback((tour: Tour) => {
     setTours((prev) => {
       const idx = prev.findIndex((t) => t.slug === tour.slug);
@@ -303,6 +365,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       return [tour, ...prev];
     });
 
+<<<<<<< Updated upstream
     fetch("/api/tours", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -312,10 +375,18 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         broadcastRealtimeSync();
       })
       .catch((e) => console.error("Sync tour error:", e));
+=======
+    fetch("/api/admin/tours", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(tour),
+    }).catch((err) => console.error("Failed to persist tour to database:", err));
+>>>>>>> Stashed changes
   }, []);
 
   const deleteTour = useCallback((slug: string) => {
     setTours((prev) => prev.filter((t) => t.slug !== slug));
+<<<<<<< Updated upstream
     fetch(`/api/tours/${slug}`, { method: "DELETE" })
       .then(() => {
         broadcastRealtimeSync();
@@ -401,10 +472,69 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         broadcastRealtimeSync();
       })
       .catch((e) => console.error("Sync destination error:", e));
+=======
+    fetch(`/api/admin/tours?slug=${encodeURIComponent(slug)}`, {
+      method: "DELETE",
+    }).catch((err) => console.error("Failed to delete tour from database:", err));
+  }, []);
+
+  const saveGolfCourse = useCallback((index: number, course: GolfCourse) => {
+    setGolfCourses((prev) => {
+      const updated = [...prev];
+      updated[index] = course;
+      return updated;
+    });
+
+    fetch("/api/admin/golf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(course),
+    }).catch((err) => console.error("Failed to persist golf course to database:", err));
+  }, []);
+
+  const addGolfCourse = useCallback((course: GolfCourse) => {
+    setGolfCourses((prev) => [...prev, course]);
+    fetch("/api/admin/golf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(course),
+    }).catch((err) => console.error("Failed to add golf course to database:", err));
+  }, []);
+
+  const deleteGolfCourse = useCallback((index: number) => {
+    setGolfCourses((prev) => {
+      const target = prev[index];
+      if (target) {
+        fetch(`/api/admin/golf?name=${encodeURIComponent(target.name)}`, {
+          method: "DELETE",
+        }).catch((err) => console.error("Failed to delete golf course:", err));
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  const saveDestination = useCallback((dest: Destination) => {
+    setDestinations((prev) => {
+      const idx = prev.findIndex((d) => d.slug === dest.slug);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = dest;
+        return updated;
+      }
+      return [dest, ...prev];
+    });
+
+    fetch("/api/admin/destinations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dest),
+    }).catch((err) => console.error("Failed to persist destination to database:", err));
+>>>>>>> Stashed changes
   }, []);
 
   const deleteDestination = useCallback((slug: string) => {
     setDestinations((prev) => prev.filter((d) => d.slug !== slug));
+<<<<<<< Updated upstream
     fetch(`/api/destinations/${slug}`, { method: "DELETE" })
       .then(() => {
         broadcastRealtimeSync();
@@ -490,10 +620,69 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         broadcastRealtimeSync();
       })
       .catch((e) => console.error("Sync blog error:", e));
+=======
+    fetch(`/api/admin/destinations?slug=${encodeURIComponent(slug)}`, {
+      method: "DELETE",
+    }).catch((err) => console.error("Failed to delete destination from database:", err));
+  }, []);
+
+  const saveExperience = useCallback((index: number, exp: Experience) => {
+    setExperiences((prev) => {
+      const updated = [...prev];
+      updated[index] = exp;
+      return updated;
+    });
+
+    fetch("/api/admin/experiences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(exp),
+    }).catch((err) => console.error("Failed to persist experience to database:", err));
+  }, []);
+
+  const addExperience = useCallback((exp: Experience) => {
+    setExperiences((prev) => [...prev, exp]);
+    fetch("/api/admin/experiences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(exp),
+    }).catch((err) => console.error("Failed to add experience to database:", err));
+  }, []);
+
+  const deleteExperience = useCallback((index: number) => {
+    setExperiences((prev) => {
+      const target = prev[index];
+      if (target) {
+        fetch(`/api/admin/experiences?title=${encodeURIComponent(target.title.en)}`, {
+          method: "DELETE",
+        }).catch((err) => console.error("Failed to delete experience:", err));
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  const savePost = useCallback((post: Post) => {
+    setPosts((prev) => {
+      const idx = prev.findIndex((p) => p.slug === post.slug);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = post;
+        return updated;
+      }
+      return [post, ...prev];
+    });
+
+    fetch("/api/admin/blog", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(post),
+    }).catch((err) => console.error("Failed to persist blog post to database:", err));
+>>>>>>> Stashed changes
   }, []);
 
   const deletePost = useCallback((slug: string) => {
     setPosts((prev) => prev.filter((p) => p.slug !== slug));
+<<<<<<< Updated upstream
     fetch(`/api/blog/${slug}`, { method: "DELETE" })
       .then(() => {
         broadcastRealtimeSync();
@@ -513,10 +702,25 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         broadcastRealtimeSync();
       })
       .catch((e) => console.error("Sync contact error:", e));
+=======
+    fetch(`/api/admin/blog?slug=${encodeURIComponent(slug)}`, {
+      method: "DELETE",
+    }).catch((err) => console.error("Failed to delete blog post:", err));
+  }, []);
+
+  const saveContact = useCallback((contactInfo: typeof defaultContact) => {
+    setContact(contactInfo);
+    fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contact: contactInfo }),
+    }).catch((err) => console.error("Failed to persist contact info:", err));
+>>>>>>> Stashed changes
   }, []);
 
   const saveSiteSettings = useCallback((settings: SiteSettings) => {
     setSiteSettings(settings);
+<<<<<<< Updated upstream
     fetch("/api/settings", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -534,10 +738,25 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const tempId = `LLJ-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
       const newInquiry: Inquiry = {
         ...inquiryData,
+=======
+    fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ siteSettings: settings }),
+    }).catch((err) => console.error("Failed to persist site settings:", err));
+  }, []);
+
+  const addInquiry = useCallback(
+    (inq: Omit<Inquiry, "id" | "createdAt" | "status">) => {
+      const tempId = `inq-${Date.now()}`;
+      const newEntry: Inquiry = {
+        ...inq,
+>>>>>>> Stashed changes
         id: tempId,
         createdAt: new Date().toISOString(),
         status: "new",
       };
+<<<<<<< Updated upstream
 
       setInquiries((prev) => [newInquiry, ...prev]);
 
@@ -560,10 +779,20 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           }),
         });
 
+=======
+      setInquiries((prev) => [newEntry, ...prev]);
+
+      fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inq),
+      }).then(async (res) => {
+>>>>>>> Stashed changes
         if (res.ok) {
           const data = await res.json();
           if (data.reference) {
             setInquiries((prev) =>
+<<<<<<< Updated upstream
               prev.map((i) => (i.id === tempId ? { ...i, id: data.reference } : i)),
             );
             broadcastRealtimeSync();
@@ -575,6 +804,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       }
 
       broadcastRealtimeSync();
+=======
+              prev.map((item) =>
+                item.id === tempId ? { ...item, reference: data.reference } : item
+              )
+            );
+          }
+        }
+      }).catch((err) => console.error("Failed to submit inquiry:", err));
+
+>>>>>>> Stashed changes
       return tempId;
     },
     [],
@@ -583,6 +822,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const updateInquiryStatus = useCallback(
     (id: string, status: Inquiry["status"], notes?: string) => {
       setInquiries((prev) =>
+<<<<<<< Updated upstream
         prev.map((inq) =>
           inq.id === id
             ? {
@@ -614,11 +854,26 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           broadcastRealtimeSync();
         })
         .catch((e) => console.error("Update inquiry error:", e));
+=======
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, status, ...(notes !== undefined ? { notes } : {}) }
+            : item,
+        ),
+      );
+
+      fetch(`/api/admin/inquiries/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, notes }),
+      }).catch((err) => console.error("Failed to update inquiry in database:", err));
+>>>>>>> Stashed changes
     },
     [],
   );
 
   const deleteInquiry = useCallback((id: string) => {
+<<<<<<< Updated upstream
     setInquiries((prev) => prev.filter((inq) => inq.id !== id));
     fetch(`/api/inquiries/${id}`, { method: "DELETE" })
       .then(() => {
@@ -750,6 +1005,63 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     >
       {children}
     </ContentContext.Provider>
+=======
+    setInquiries((prev) => prev.filter((item) => item.id !== id));
+    fetch(`/api/admin/inquiries/${id}`, {
+      method: "DELETE",
+    }).catch((err) => console.error("Failed to delete inquiry from database:", err));
+  }, []);
+
+  const resetToDefaults = useCallback(() => {
+    setTours(defaultTours);
+    setGolfCourses(defaultGolfCourses);
+    setDestinations(defaultDestinations);
+    setExperiences(defaultExperiences);
+    setPosts(defaultPosts);
+    setTestimonials(defaultTestimonials);
+    setTeam(defaultTeam);
+    setWhyUs(defaultWhyUs);
+    setContact(defaultContact);
+    setSiteSettings(defaultSiteSettings);
+  }, []);
+
+  const value = {
+    tours,
+    golfCourses,
+    destinations,
+    experiences,
+    posts,
+    testimonials,
+    team,
+    whyUs,
+    contact,
+    siteSettings,
+    inquiries,
+
+    saveTour,
+    deleteTour,
+    saveGolfCourse,
+    addGolfCourse,
+    deleteGolfCourse,
+    saveDestination,
+    deleteDestination,
+    saveExperience,
+    addExperience,
+    deleteExperience,
+    savePost,
+    deletePost,
+    saveContact,
+    saveSiteSettings,
+    addInquiry,
+    updateInquiryStatus,
+    deleteInquiry,
+    resetToDefaults,
+    refreshContent,
+  };
+
+  return (
+    <ContentContext.Provider value={value}>{children}</ContentContext.Provider>
+>>>>>>> Stashed changes
   );
 }
 

@@ -78,7 +78,7 @@ export default function AdminBlogPage() {
       category: "Luxury Travel",
       date: today,
       image:
-        "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/hxKG5vW4/lanka-luxe-admin-default-tour.jpg",
       excerpt: {
         en: "An exclusive look into private estates, curated routes and timeless luxury across Sri Lanka.",
         ko: "스리랑카 전역의 프라이빗 빌라와 특별한 여정을 담은 칼럼.",

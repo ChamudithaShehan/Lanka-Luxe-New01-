@@ -49,17 +49,39 @@ export default function AdminLayout({
   const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const auth = localStorage.getItem("llj_admin_auth");
-      if (auth === "true") {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-        if (!isLoginPage) {
+    if (isLoginPage) return;
+
+    let isMounted = true;
+
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache" },
+        });
+        const data = await res.json();
+
+        if (isMounted) {
+          if (res.ok && data.authenticated && data.user?.role === "admin") {
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+            router.replace("/admin/login");
+          }
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
           router.replace("/admin/login");
         }
       }
     }
+
+    checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, [pathname, isLoginPage, router]);
 
   if (isLoginPage) {
@@ -81,8 +103,12 @@ export default function AdminLayout({
 
   const unreadInquiriesCount = inquiries.filter((i) => i.status === "new").length;
 
-  const handleLogout = () => {
-    localStorage.removeItem("llj_admin_auth");
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
     setIsAuthenticated(false);
     toast.success("Logged out successfully");
     router.replace("/admin/login");

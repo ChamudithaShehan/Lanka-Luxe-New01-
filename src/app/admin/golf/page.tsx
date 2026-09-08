@@ -55,7 +55,7 @@ export default function AdminGolfPage() {
       name: "New Championship Golf Course",
       location: "Colombo / Central Province",
       image:
-        "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/jPvBcmsn/lanka-luxe-admin-default-golf.jpg",
       holes: "18 holes · Par 72",
       nights: 2,
       rounds: 1,

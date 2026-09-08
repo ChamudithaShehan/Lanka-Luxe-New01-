@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+<<<<<<< Updated upstream
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -246,5 +247,21 @@ export async function GET() {
     });
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     return response;
+=======
+import { getLiveContent } from "@/lib/content-db";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  try {
+    const data = await getLiveContent();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Failed to fetch public content:", error);
+    return NextResponse.json(
+      { error: "Failed to load content" },
+      { status: 500 }
+    );
+>>>>>>> Stashed changes
   }
 }

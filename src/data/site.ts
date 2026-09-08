@@ -1,49 +1,24 @@
 import type { Localized } from "@/lib/i18n";
 
-import _sigiriya from "@/assets/sigiriya.jpg";
-import _beach from "@/assets/beach.jpg";
-import _golf from "@/assets/golf.jpg";
-import _golf2 from "@/assets/golf2.jpg";
-import _wildlife from "@/assets/wildlife.jpg";
-import _tea from "@/assets/tea.jpg";
-import _resort from "@/assets/resort.jpg";
-import _train from "@/assets/train.jpg";
-import _culture from "@/assets/culture.jpg";
-import _colombo from "@/assets/colombo.jpg";
-import _kandy from "@/assets/kandy.jpg";
-import _galle from "@/assets/galle.jpg";
-import _ella from "@/assets/ella.jpg";
-import _honeymoon from "@/assets/honeymoon.jpg";
-import _wellness from "@/assets/wellness.jpg";
-import _aerial from "@/assets/aerial.jpg";
-import _iroshan from "@/assets/iroshan.jpg";
-import _showcase from "@/assets/showcase.jpg";
-import _logo from "@/assets/logo.png";
-
-const resolveSrc = (image: any): string =>
-  image && typeof image === "object" && "src" in image
-    ? image.src
-    : String(image || "");
-
-const sigiriya = resolveSrc(_sigiriya);
-const beach = resolveSrc(_beach);
-const golf = resolveSrc(_golf);
-const golf2 = resolveSrc(_golf2);
-const wildlife = resolveSrc(_wildlife);
-const tea = resolveSrc(_tea);
-const resort = resolveSrc(_resort);
-const train = resolveSrc(_train);
-const culture = resolveSrc(_culture);
-const colombo = resolveSrc(_colombo);
-const kandy = resolveSrc(_kandy);
-const galle = resolveSrc(_galle);
-const ella = resolveSrc(_ella);
-const honeymoon = resolveSrc(_honeymoon);
-const wellness = resolveSrc(_wellness);
-const aerial = resolveSrc(_aerial);
-const iroshan = resolveSrc(_iroshan);
-const showcase = resolveSrc(_showcase);
-const logo = resolveSrc(_logo);
+const sigiriya = "https://i.ibb.co/35FYNgjq/lanka-luxe-sigiriya.jpg";
+const beach = "https://i.ibb.co/prJvzzgt/lanka-luxe-beach.jpg";
+const golf = "https://i.ibb.co/fj3tmjt/lanka-luxe-golf.jpg";
+const golf2 = "https://i.ibb.co/xVC6Wd0/lanka-luxe-golf2.jpg";
+const wildlife = "https://i.ibb.co/jvKrVW8D/lanka-luxe-wildlife.jpg";
+const tea = "https://i.ibb.co/TMd6Zqkz/lanka-luxe-tea.jpg";
+const resort = "https://i.ibb.co/nNWk4GpK/lanka-luxe-resort.jpg";
+const train = "https://i.ibb.co/Pz6kLgJM/lanka-luxe-train.jpg";
+const culture = "https://i.ibb.co/rRhsm4Gy/lanka-luxe-culture.jpg";
+const colombo = "https://i.ibb.co/7xYY9m0w/lanka-luxe-colombo.jpg";
+const kandy = "https://i.ibb.co/XBwSsqz/lanka-luxe-kandy.jpg";
+const galle = "https://i.ibb.co/qY3CNC1y/lanka-luxe-galle.jpg";
+const ella = "https://i.ibb.co/xqM0mmhW/lanka-luxe-ella.jpg";
+const honeymoon = "https://i.ibb.co/MDg8WqyS/lanka-luxe-honeymoon.jpg";
+const wellness = "https://i.ibb.co/PGLpPwqb/lanka-luxe-wellness.jpg";
+const aerial = "https://i.ibb.co/Kj5wnr6q/lanka-luxe-aerial.jpg";
+const iroshan = "https://i.ibb.co/ym9q1F60/lanka-luxe-iroshan.jpg";
+const showcase = "https://i.ibb.co/Nd3YXxp9/lanka-luxe-showcase.jpg";
+const logo = "https://i.ibb.co/WWH9XpB1/lanka-luxe-logo.png";
 
 export const img = {
   sigiriya,

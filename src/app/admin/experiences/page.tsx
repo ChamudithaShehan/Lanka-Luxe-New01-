@@ -63,7 +63,7 @@ export default function AdminExperiencesPage() {
         ko: "전용 카타마란 요트 차터와 돌고래 관찰, 한적한 일몰 감상.",
       },
       image:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg",
     };
 
     setEditingIndex(-1);

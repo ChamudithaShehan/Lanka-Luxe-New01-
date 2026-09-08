@@ -77,10 +77,10 @@ export default function AdminToursPage() {
       days: 8,
       price: "USD 3,500",
       image:
-        "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/hxKG5vW4/lanka-luxe-admin-default-tour.jpg",
       gallery: [
-        "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1588258524675-c61922c2a075?auto=format&fit=crop&w=1200&q=80",
+        "https://i.ibb.co/hxKG5vW4/lanka-luxe-admin-default-tour.jpg",
+        "https://i.ibb.co/35FYNgjq/lanka-luxe-sigiriya.jpg",
       ],
       locations: ["Colombo", "Kandy", "Nuwara Eliya", "Galle"],
       short: {

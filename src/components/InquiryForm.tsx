@@ -5,6 +5,11 @@ import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "./LuxuryButton";
 import { CheckCircle2, Sparkles, Send } from "lucide-react";
+<<<<<<< Updated upstream
+=======
+import { toast } from "sonner";
+import { contact } from "@/data/site";
+>>>>>>> Stashed changes
 
 interface InquiryFormProps {
   initialTour?: string | undefined;
@@ -49,12 +54,35 @@ export function InquiryForm({
 
     setStatus("submitting");
     try {
+<<<<<<< Updated upstream
       await addInquiry(formData);
     } catch (err) {
       console.warn("Could not save to store", err);
     }
     setStatus("success");
     if (onSuccess) onSuccess();
+=======
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("idle");
+        toast.error(data.error || "Failed to submit inquiry. Please try again.");
+        return;
+      }
+
+      setStatus("success");
+      if (onSuccess) onSuccess();
+    } catch {
+      setStatus("idle");
+      toast.error("Network error. Please try again.");
+    }
+>>>>>>> Stashed changes
   };
 
   const isDark = variant === "dark";

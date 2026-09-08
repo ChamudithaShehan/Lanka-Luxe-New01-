@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { NextRequest } from "next/server";
@@ -38,12 +39,31 @@ export function getRequiredJwtSecret(): string {
 }
 
 export interface TokenPayload {
+=======
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
+export const COOKIE_NAME = "llj_session";
+const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
+
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET environment variable is missing.");
+  }
+  return new TextEncoder().encode(secret);
+}
+
+export interface SessionPayload {
+>>>>>>> Stashed changes
   userId: string;
   username: string;
   role: string;
 }
 
 /**
+<<<<<<< Updated upstream
  * Hash password securely with bcrypt (12 rounds salt)
  */
 export async function hashPassword(password: string): Promise<string> {
@@ -75,12 +95,50 @@ export function verifyToken(token: string): TokenPayload | null {
   try {
     const secret = getRequiredJwtSecret();
     return jwt.verify(token, secret) as TokenPayload;
+=======
+ * Creates a signed JWT session token valid for 8 hours.
+ */
+export async function createSessionToken(payload: SessionPayload): Promise<string> {
+  const secret = getJwtSecret();
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${SESSION_DURATION}s`)
+    .sign(secret);
+}
+
+/**
+ * Verifies a JWT session token and returns the payload if valid.
+ */
+export async function verifySessionToken(
+  token: string
+): Promise<SessionPayload | null> {
+  try {
+    const secret = getJwtSecret();
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ["HS256"],
+    });
+
+    if (
+      typeof payload.userId === "string" &&
+      typeof payload.username === "string" &&
+      typeof payload.role === "string"
+    ) {
+      return {
+        userId: payload.userId,
+        username: payload.username,
+        role: payload.role,
+      };
+    }
+    return null;
+>>>>>>> Stashed changes
   } catch {
     return null;
   }
 }
 
 /**
+<<<<<<< Updated upstream
  * Extract and verify authentication from Request (Bearer header or Cookie)
  */
 export function getAuthSession(req: NextRequest): TokenPayload | null {
@@ -111,3 +169,39 @@ export function sanitizeInput(input: string): string {
     .replace(/[<>]/g, "")
     .trim();
 }
+=======
+ * Reads and verifies the current session from Next.js server cookie store.
+ */
+export async function getCurrentSession(): Promise<SessionPayload | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  return verifySessionToken(token);
+}
+
+/**
+ * Server guard to ensure the current request is from an authenticated admin.
+ * Returns the session if valid, or throws an error response.
+ */
+export async function requireAdminSession(): Promise<SessionPayload> {
+  const session = await getCurrentSession();
+  if (!session || session.role !== "admin") {
+    throw new Error("UNAUTHORIZED");
+  }
+  return session;
+}
+
+/**
+ * Cookie options for the HttpOnly session cookie.
+ */
+export function getSessionCookieOptions(maxAge: number = SESSION_DURATION) {
+  return {
+    name: COOKIE_NAME,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge,
+  };
+}
+>>>>>>> Stashed changes

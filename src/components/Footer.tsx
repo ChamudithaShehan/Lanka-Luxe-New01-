@@ -5,8 +5,21 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { img } from "@/data/site";
+<<<<<<< Updated upstream
 import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock, Camera, Sparkles } from "lucide-react";
 import { defaultGalleryItems } from "@/data/site";
+=======
+import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock } from "lucide-react";
+
+const galleryImages = [
+  "https://i.ibb.co/35FYNgjq/lanka-luxe-sigiriya.jpg",
+  "https://i.ibb.co/TMkXMtbW/lanka-luxe-footer-gallery-2.jpg",
+  "https://i.ibb.co/tpsYmw8m/lanka-luxe-footer-gallery-3.jpg",
+  "https://i.ibb.co/TMd6Zqkz/lanka-luxe-tea.jpg",
+  "https://i.ibb.co/Pz6kLgJM/lanka-luxe-train.jpg",
+  "https://i.ibb.co/nNWk4GpK/lanka-luxe-resort.jpg"
+];
+>>>>>>> Stashed changes
 
 export function Footer() {
   const { t, lang } = useI18n();

@@ -22,11 +22,19 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+<<<<<<< Updated upstream
         body: JSON.stringify({ username, password: passcode }),
+=======
+        body: JSON.stringify({
+          username: username.trim(),
+          password: passcode,
+        }),
+>>>>>>> Stashed changes
       });
 
       const data = await res.json();
 
+<<<<<<< Updated upstream
       if (res.ok && data.success) {
         // Store the JWT in localStorage for API calls that use the Bearer header
         if (data.token) {
@@ -47,6 +55,22 @@ export default function AdminLoginPage() {
       setError(true);
       setLoading(false);
       toast.error("Network error. Please check your connection and try again.");
+=======
+      if (!res.ok) {
+        setError(true);
+        setLoading(false);
+        toast.error(data.error || "Invalid credentials.");
+        return;
+      }
+
+      toast.success(`Welcome back, ${data.user?.name || "Admin"}! Access granted.`);
+      router.push("/admin");
+      router.refresh();
+    } catch {
+      setError(true);
+      setLoading(false);
+      toast.error("An error occurred during authentication.");
+>>>>>>> Stashed changes
     }
   };
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+<<<<<<< Updated upstream
 import { prisma } from "@/lib/prisma";
 import { comparePassword, hashPassword, signToken } from "@/lib/auth";
 import { loginRateLimiter, getClientIp } from "@/lib/rate-limit";
@@ -90,11 +91,76 @@ export async function POST(req: NextRequest) {
 
     // Sign JWT token
     const token = signToken({
+=======
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import { createSessionToken, getSessionCookieOptions } from "@/lib/auth";
+import { loginRateLimiter } from "@/lib/rate-limit";
+
+const loginSchema = z.object({
+  username: z.string().min(1, "Username is required").max(100).trim(),
+  password: z.string().min(1, "Password is required").max(200),
+});
+
+export async function POST(req: NextRequest) {
+  try {
+    const forwardedFor = req.headers.get("x-forwarded-for");
+    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
+    const limitCheck = loginRateLimiter.check(ip);
+
+    if (!limitCheck.success) {
+      return NextResponse.json(
+        {
+          error: `Too many login attempts. Please try again in ${limitCheck.retryAfter || 60} seconds.`,
+        },
+        { status: 429 }
+      );
+    }
+    const body = await req.json();
+    const parseResult = loginSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Invalid credentials format" },
+        { status: 400 }
+      );
+    }
+
+    const { username, password } = parseResult.data;
+
+    const user = await prisma.user.findUnique({
+      where: { username: username.toLowerCase() },
+    });
+
+    if (!user) {
+      // Timing attack mitigation: dummy hash compare
+      await bcrypt.compare(
+        password,
+        "$2b$12$e8Y5KxJ9M9uEw0zXf9E0u.wD7aIq5YvM6X8jK9P0L1N2O3P4Q5R6S"
+      );
+      return NextResponse.json(
+        { error: "Invalid username or password" },
+        { status: 401 }
+      );
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return NextResponse.json(
+        { error: "Invalid username or password" },
+        { status: 401 }
+      );
+    }
+
+    const sessionToken = await createSessionToken({
+>>>>>>> Stashed changes
       userId: user.id,
       username: user.username,
       role: user.role,
     });
 
+<<<<<<< Updated upstream
     const response = NextResponse.json({
       success: true,
       token,
@@ -113,10 +179,28 @@ export async function POST(req: NextRequest) {
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
+=======
+    const cookieOptions = getSessionCookieOptions();
+
+    const response = NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name,
+      },
+    });
+
+    response.cookies.set({
+      ...cookieOptions,
+      value: sessionToken,
+>>>>>>> Stashed changes
     });
 
     return response;
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Login API Error:", error);
     return NextResponse.json(
       { error: "Internal server error during authentication." },
@@ -124,3 +208,12 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+=======
+    console.error("Authentication login error:", error);
+    return NextResponse.json(
+      { error: "An unexpected error occurred during authentication" },
+      { status: 500 }
+    );
+  }
+}
+>>>>>>> Stashed changes

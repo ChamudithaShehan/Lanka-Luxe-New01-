@@ -452,9 +452,9 @@ export default function HomePage() {
                 {/* Avatars & Stat */}
                 <div className="flex items-center gap-4">
                   <div className="flex -space-x-3 shrink-0">
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-30" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64" alt="" />
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-20" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64" alt="" />
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-10" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64" alt="" />
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-30" src="https://i.ibb.co/PGpyrxvT/lanka-luxe-avatar-1.jpg" alt="Reviewer" />
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-20" src="https://i.ibb.co/VcyGVDc6/lanka-luxe-avatar-2.jpg" alt="Reviewer" />
+                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-10" src="https://i.ibb.co/YTwxXM7C/lanka-luxe-avatar-3.jpg" alt="Reviewer" />
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-[#081A33] leading-none flex items-baseline gap-1">
