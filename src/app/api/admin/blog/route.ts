@@ -39,12 +39,12 @@ export async function POST(req: NextRequest) {
     }
 
     const data = result.data;
-    const existing = await prisma.blogpost.findUnique({
+    const existing = await prisma.blogPost.findUnique({
       where: { slug: data.slug },
     });
     const id = existing ? existing.id : `post_${crypto.randomUUID()}`;
 
-    const saved = await prisma.blogpost.upsert({
+    const saved = await prisma.blogPost.upsert({
       where: { slug: data.slug },
       create: {
         id,
@@ -97,7 +97,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
-    await prisma.blogpost.delete({ where: { slug } });
+    await prisma.blogPost.delete({ where: { slug } });
     return NextResponse.json({ success: true, message: "Blog post deleted" });
   } catch (error) {
     console.error("Admin delete blog post error:", error);

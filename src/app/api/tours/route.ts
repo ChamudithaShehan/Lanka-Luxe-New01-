@@ -3,8 +3,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { tourInputSchema } from "@/lib/validations/content";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "0");
+    const limit = parseInt(searchParams.get("limit") || "0");
+
+    if (page > 0 && limit > 0) {
+      const [total, tours] = await Promise.all([
+        prisma.tour.count(),
+        prisma.tour.findMany({
+          orderBy: { createdAt: "asc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
+      return NextResponse.json({
+        tours,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      });
+    }
+
     const tours = await prisma.tour.findMany({ orderBy: { createdAt: "asc" } });
     return NextResponse.json(tours);
   } catch (error) {

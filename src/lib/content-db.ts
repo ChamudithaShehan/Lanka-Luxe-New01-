@@ -22,11 +22,11 @@ export async function getLiveContent() {
     const [toursDb, golfDb, destsDb, expsDb, postsDb, settingsDb] =
       await Promise.all([
         prisma.tour.findMany({ orderBy: { createdAt: "asc" } }),
-        prisma.golfcourse.findMany({ orderBy: { createdAt: "asc" } }),
+        prisma.golfCourse.findMany({ orderBy: { createdAt: "asc" } }),
         prisma.destination.findMany({ orderBy: { createdAt: "asc" } }),
         prisma.experience.findMany({ orderBy: { createdAt: "asc" } }),
-        prisma.blogpost.findMany({ orderBy: { createdAt: "desc" } }),
-        prisma.sitesetting.findMany(),
+        prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } }),
+        prisma.siteSetting.findMany(),
       ]);
 
     const tours: Tour[] = toursDb.map((t) => {

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     if (siteSettings) {
       updates.push(
-        prisma.sitesetting.upsert({
+        prisma.siteSetting.upsert({
           where: { key: "global_site_settings" },
           create: {
             id: "setting_global_site",
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     if (contact) {
       updates.push(
-        prisma.sitesetting.upsert({
+        prisma.siteSetting.upsert({
           where: { key: "global_contact" },
           create: {
             id: "setting_global_contact",

@@ -8,6 +8,7 @@ import { blogCategories } from "@/data/site";
 import { BlogCard } from "@/components/BlogCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
+import { Pagination } from "@/components/Pagination";
 import { Calendar, ArrowRight } from "lucide-react";
 
 export default function BlogPage() {
@@ -15,6 +16,18 @@ export default function BlogPage() {
   const { posts } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
+
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   const filteredPosts = posts.filter((p) => {
     const matchesCat =
@@ -27,6 +40,12 @@ export default function BlogPage() {
       (p.excerpt && tl(p.excerpt).toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCat && matchesSearch;
   });
+
+  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE);
+  const paginatedPosts = filteredPosts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const featured = posts[0];
 
@@ -120,7 +139,7 @@ export default function BlogPage() {
                 : "Search journal articles (e.g. Golf, Tea, Safari, Tips)..."
             }
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full sm:max-w-xs px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
           />
 
@@ -128,7 +147,7 @@ export default function BlogPage() {
             {blogCategories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-4 py-2 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                   selectedCategory === cat
                     ? "bg-[#0B1F3A] text-white shadow-sm"
@@ -143,14 +162,26 @@ export default function BlogPage() {
       </section>
 
       {/* Articles Grid */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post) => (
+      <section id="articles-grid" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20 scroll-mt-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          {paginatedPosts.map((post) => (
             <Reveal key={post.slug} variant="fade-up">
               <BlogCard post={post} />
             </Reveal>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredPosts.length}
+          pageSize={ITEMS_PER_PAGE}
+          itemLabel={lang === "ko" ? "칼럼" : "articles"}
+          showRange
+          scrollToId="articles-grid"
+        />
       </section>
     </div>
   );

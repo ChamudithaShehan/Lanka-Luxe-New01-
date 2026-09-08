@@ -65,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [toursDb, destsDb, postsDb] = await Promise.all([
       prisma.tour.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.destination.findMany({ select: { slug: true, updatedAt: true } }),
-      prisma.blogpost.findMany({ select: { slug: true, updatedAt: true } }),
+      prisma.blogPost.findMany({ select: { slug: true, updatedAt: true } }),
     ]);
 
     const tourSlugs = toursDb.length ? toursDb : defaultTours.map((t) => ({ slug: t.slug, updatedAt: new Date() }));

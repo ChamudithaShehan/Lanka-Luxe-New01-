@@ -7,6 +7,7 @@ import { useInquiry } from "@/lib/inquiry-context";
 import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
+import { Pagination } from "@/components/Pagination";
 import { Sparkles } from "lucide-react";
 
 export default function ExperiencesPage() {
@@ -14,6 +15,13 @@ export default function ExperiencesPage() {
   const { openInquiry } = useInquiry();
   const { experiences } = useContentStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
+  const handleSearchChange = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+  };
 
   const filteredExperiences = experiences.filter((exp) => {
     const titleMatch = tl(exp.title).toLowerCase().includes(searchQuery.toLowerCase());
@@ -21,6 +29,12 @@ export default function ExperiencesPage() {
     const descMatch = exp.description ? tl(exp.description).toLowerCase().includes(searchQuery.toLowerCase()) : false;
     return searchQuery ? (titleMatch || textMatch || descMatch) : true;
   });
+
+  const totalPages = Math.ceil(filteredExperiences.length / ITEMS_PER_PAGE);
+  const paginatedExperiences = filteredExperiences.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
@@ -55,21 +69,22 @@ export default function ExperiencesPage() {
                   : "Search experiences (e.g. Safari, Train, Catamaran, Tea)..."
               }
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
             />
           </div>
         </Reveal>
       </section>
 
-      {/* 6 In-Depth Experience Cards */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 mb-28">
-        {filteredExperiences.map((exp, idx) => {
-          const isEven = idx % 2 === 0;
+      {/* In-Depth Experience Cards */}
+      <section id="experiences-list" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 mb-28 scroll-mt-28">
+        {paginatedExperiences.map((exp, idx) => {
+          const globalIdx = (currentPage - 1) * ITEMS_PER_PAGE + idx;
+          const isEven = globalIdx % 2 === 0;
 
           return (
             <div
-              key={idx}
+              key={exp.slug || globalIdx}
               className="p-8 sm:p-10 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-md transition-all"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -88,7 +103,7 @@ export default function ExperiencesPage() {
                     <div className="absolute top-4 left-4">
                       <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm flex items-center gap-1">
                         <Sparkles className="w-3 h-3 text-[#C8A45D]" />
-                        Experience 0{idx + 1}
+                        Experience 0{globalIdx + 1}
                       </span>
                     </div>
                   </div>
@@ -136,6 +151,18 @@ export default function ExperiencesPage() {
             </div>
           );
         })}
+
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredExperiences.length}
+          pageSize={ITEMS_PER_PAGE}
+          itemLabel={lang === "ko" ? "체험" : "experiences"}
+          showRange
+          scrollToId="experiences-list"
+        />
       </section>
 
       {/* Bottom CTA */}

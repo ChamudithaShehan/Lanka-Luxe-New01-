@@ -33,14 +33,14 @@ export async function POST(req: NextRequest) {
 
     const data = result.data;
     const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    const existing = await prisma.golfcourse.findFirst({
+    const existing = await prisma.golfCourse.findFirst({
       where: { OR: [{ slug }, { name: data.name }] },
     });
 
     const id = existing ? existing.id : `golf_${crypto.randomUUID()}`;
     const holesNum = parseInt(data.holes?.replace(/\D/g, "") || "18") || 18;
 
-    const saved = await prisma.golfcourse.upsert({
+    const saved = await prisma.golfCourse.upsert({
       where: { slug: existing ? existing.slug : slug },
       create: {
         id,
@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Course name is required" }, { status: 400 });
     }
 
-    await prisma.golfcourse.deleteMany({ where: { name } });
+    await prisma.golfCourse.deleteMany({ where: { name } });
     return NextResponse.json({ success: true, message: "Course deleted" });
   } catch (error) {
     console.error("Admin delete golf error:", error);

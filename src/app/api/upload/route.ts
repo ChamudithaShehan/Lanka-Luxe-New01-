@@ -1,99 +1,10 @@
-<<<<<<< Updated upstream
-import { requireAuth } from "@/lib/api-auth";
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-
-export const dynamic = "force-dynamic";
-
-export async function POST(req: NextRequest) {
-  const auth = requireAuth(req);
-  if (auth instanceof NextResponse) return auth;
-
-  try {
-    const apiKey = process.env.IMGBB_API_KEY?.trim();
-
-    if (!apiKey) {
-      return NextResponse.json(
-        {
-          error:
-            "ImageBB API Key is missing. Please configure IMGBB_API_KEY in your .env file.",
-          needsKey: true,
-        },
-        { status: 400 },
-      );
-    }
-
-    // 2. Parse Multipart Form Data
-    const formData = await req.formData();
-    const file = formData.get("file") as File | null;
-    const base64Image = formData.get("image") as string | null;
-
-    if (!file && !base64Image) {
-      return NextResponse.json(
-        { error: "No image file or data provided for upload." },
-        { status: 400 },
-      );
-    }
-
-    // 3. Prepare payload for ImageBB
-    const imgbbForm = new FormData();
-    if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const base64 = buffer.toString("base64");
-      imgbbForm.append("image", base64);
-    } else if (base64Image) {
-      // Strip data:image/...;base64, prefix if present
-      const cleanBase64 = base64Image.replace(/^data:image\/\w+;base64,/, "");
-      imgbbForm.append("image", cleanBase64);
-    }
-
-    const name = formData.get("name") as string | null;
-    if (name) imgbbForm.append("name", name);
-
-    // 4. Send request to ImageBB API
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-      method: "POST",
-      body: imgbbForm,
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      const errorMessage =
-        result?.error?.message || "Failed to upload image to ImageBB.";
-      return NextResponse.json(
-        { error: errorMessage, details: result },
-        { status: response.status || 500 },
-      );
-    }
-
-    const data = result.data;
-    const uploadedUrl = data.display_url || data.url;
-
-    return NextResponse.json({
-      success: true,
-      url: uploadedUrl,
-      display_url: data.display_url,
-      thumb: data.thumb?.url,
-      delete_url: data.delete_url,
-      width: data.width,
-      height: data.height,
-      size: data.size,
-    });
-  } catch (error: any) {
-    console.error("ImageBB upload error:", error);
-    return NextResponse.json(
-      { error: error?.message || "Internal server error during image upload." },
-      { status: 500 },
-=======
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
+import { uploadRateLimiter, getClientIp } from "@/lib/rate-limit";
 import dns from "dns/promises";
 import net from "net";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max
-const uploadRateLimiter = new Map<string, { count: number; resetTime: number }>();
 
 function isPrivateIp(ip: string): boolean {
   if (net.isIPv4(ip)) {
@@ -115,14 +26,22 @@ function isPrivateIp(ip: string): boolean {
   if (net.isIPv6(ip)) {
     const lower = ip.toLowerCase();
     if (lower === "::1" || lower === "0:0:0:0:0:0:0:1") return true;
-    if (lower.startsWith("fe8") || lower.startsWith("fe9") || lower.startsWith("fea") || lower.startsWith("feb")) return true;
+    if (
+      lower.startsWith("fe8") ||
+      lower.startsWith("fe9") ||
+      lower.startsWith("fea") ||
+      lower.startsWith("feb")
+    )
+      return true;
     if (lower.startsWith("fc") || lower.startsWith("fd")) return true;
     return false;
   }
   return true;
 }
 
-function validateImageMagicBytes(buffer: Buffer): { valid: boolean; ext: string; mime: string } {
+function validateImageMagicBytes(
+  buffer: Buffer
+): { valid: boolean; ext: string; mime: string } {
   if (buffer.length < 12) return { valid: false, ext: "", mime: "" };
 
   // JPEG: FF D8 FF
@@ -161,25 +80,6 @@ function validateImageMagicBytes(buffer: Buffer): { valid: boolean; ext: string;
   return { valid: false, ext: "", mime: "" };
 }
 
-function checkUploadRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const windowMs = 10 * 60 * 1000;
-  const maxUploads = 20;
-
-  const record = uploadRateLimiter.get(ip);
-  if (!record || now > record.resetTime) {
-    uploadRateLimiter.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (record.count >= maxUploads) {
-    return false;
-  }
-
-  record.count += 1;
-  return true;
-}
-
 export async function POST(req: NextRequest) {
   try {
     // 1. Enforce Server-Side Admin Authentication
@@ -191,18 +91,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Rate Limiting
-    const forwardedFor = req.headers.get("x-forwarded-for");
-    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
-    if (!checkUploadRateLimit(ip)) {
+    // 2. Distributed Rate Limiting
+    const ip = getClientIp(req);
+    const limitCheck = await uploadRateLimiter.check(ip);
+    if (!limitCheck.success) {
       return NextResponse.json(
-        { error: "Upload rate limit exceeded. Please wait a few minutes." },
-        { status: 429 }
+        {
+          error: `Upload rate limit exceeded. Please wait ${limitCheck.retryAfter} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": limitCheck.retryAfter.toString(),
+          },
+        }
       );
     }
 
     // 3. ImgBB API Key validation (Strictly from env, no hardcoded fallbacks)
-    const apiKey = process.env.IMGBB_API_KEY;
+    const apiKey = process.env.IMGBB_API_KEY?.trim();
     if (!apiKey) {
       return NextResponse.json(
         { error: "ImgBB API key is not configured on the server." },
@@ -246,7 +153,10 @@ export async function POST(req: NextRequest) {
       }
       if (body.name) imageName = body.name;
 
-      if (typeof body.image === "string" && (body.image.startsWith("http://") || body.image.startsWith("https://"))) {
+      if (
+        typeof body.image === "string" &&
+        (body.image.startsWith("http://") || body.image.startsWith("https://"))
+      ) {
         // SSRF Defense: Validate URL
         let parsedUrl: URL;
         try {
@@ -267,6 +177,12 @@ export async function POST(req: NextRequest) {
         const hostname = parsedUrl.hostname;
         try {
           const resolved = await dns.lookup(hostname, { all: true });
+          if (!resolved || resolved.length === 0) {
+            return NextResponse.json(
+              { error: "Could not resolve hostname for remote image." },
+              { status: 400 }
+            );
+          }
           for (const addr of resolved) {
             if (isPrivateIp(addr.address)) {
               return NextResponse.json(
@@ -295,41 +211,49 @@ export async function POST(req: NextRequest) {
 
           if (!remoteRes.ok) {
             return NextResponse.json(
-              { error: `Remote image fetch failed with status ${remoteRes.status}` },
+              { error: `Remote image fetch failed with status ${remoteRes.status}.` },
               { status: 400 }
             );
           }
 
-          const contentLength = remoteRes.headers.get("content-length");
-          if (contentLength && parseInt(contentLength) > MAX_FILE_SIZE) {
+          const contentLength = Number(remoteRes.headers.get("content-length") || 0);
+          if (contentLength > MAX_FILE_SIZE) {
             return NextResponse.json(
-              { error: "Remote file exceeds the 5MB size limit." },
+              { error: "Remote image exceeds the 5MB maximum limit." },
               { status: 400 }
             );
           }
 
-          const arrayBuffer = await remoteRes.arrayBuffer();
-          if (arrayBuffer.byteLength > MAX_FILE_SIZE) {
+          const arrayBuf = await remoteRes.arrayBuffer();
+          if (arrayBuf.byteLength > MAX_FILE_SIZE) {
             return NextResponse.json(
-              { error: "Remote file exceeds the 5MB size limit." },
+              { error: "Remote image exceeds the 5MB maximum limit." },
               { status: 400 }
             );
           }
 
-          rawBuffer = Buffer.from(arrayBuffer);
-        } catch (fetchError: any) {
+          rawBuffer = Buffer.from(arrayBuf);
+        } catch (fetchErr: any) {
           clearTimeout(timeout);
+          if (fetchErr.name === "AbortError") {
+            return NextResponse.json(
+              { error: "Remote image fetch timed out after 5 seconds." },
+              { status: 408 }
+            );
+          }
           return NextResponse.json(
-            { error: `Remote image fetch timed out or failed: ${fetchError?.message || "Unknown error"}` },
+            { error: "Failed to securely fetch remote image." },
             { status: 400 }
           );
         }
       } else if (typeof body.image === "string") {
-        const base64Data = body.image.replace(/^data:image\/[a-z]+;base64,/, "");
-        rawBuffer = Buffer.from(base64Data, "base64");
+        // Base64 encoded image
+        const cleanBase64 = body.image.replace(/^data:image\/[a-zA-Z0-9+]+;base64,/, "");
+        rawBuffer = Buffer.from(cleanBase64, "base64");
+
         if (rawBuffer.length > MAX_FILE_SIZE) {
           return NextResponse.json(
-            { error: "Payload exceeds 5MB size limit." },
+            { error: "Image payload exceeds the 5MB maximum limit." },
             { status: 400 }
           );
         }
@@ -337,57 +261,58 @@ export async function POST(req: NextRequest) {
     }
 
     if (!rawBuffer) {
-      return NextResponse.json({ error: "Failed to process image payload." }, { status: 400 });
-    }
-
-    // 4. Magic-Byte Validation (Never trust Content-Type header alone)
-    const magicCheck = validateImageMagicBytes(rawBuffer);
-    if (!magicCheck.valid) {
       return NextResponse.json(
-        { error: "Invalid image format. Only authentic JPEG, PNG, and WebP images are allowed." },
+        { error: "Could not process image payload." },
         { status: 400 }
       );
     }
 
-    // 5. Sanitize filename
-    const sanitizedName = imageName
-      .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
-      .slice(0, 80);
+    // 4. Magic Byte Verification (Protects against disguised executables/scripts)
+    const formatCheck = validateImageMagicBytes(rawBuffer);
+    if (!formatCheck.valid) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid file format. Only legitimate JPEG, PNG, and WebP image files are accepted.",
+        },
+        { status: 400 }
+      );
+    }
 
-    // 6. Upload to ImgBB
-    const imgbbParams = new URLSearchParams();
-    imgbbParams.append("key", apiKey);
-    imgbbParams.append("image", rawBuffer.toString("base64"));
-    imgbbParams.append("name", `${sanitizedName}.${magicCheck.ext}`);
+    // 5. Forward to ImgBB API
+    const imgbbFormData = new FormData();
+    imgbbFormData.append("image", rawBuffer.toString("base64"));
+    imgbbFormData.append("name", imageName);
 
-    const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
+    const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
       method: "POST",
-      body: imgbbParams,
+      body: imgbbFormData,
     });
 
-    const data = await imgbbRes.json();
+    const imgbbData = await imgbbRes.json();
 
-    if (!imgbbRes.ok || !data.success) {
+    if (!imgbbRes.ok || !imgbbData.success) {
+      console.error("ImgBB upload rejection:", imgbbData);
       return NextResponse.json(
-        { error: data?.error?.message || "Failed to upload image to ImgBB." },
-        { status: imgbbRes.status || 500 }
+        { error: imgbbData?.error?.message || "Failed to upload image to host." },
+        { status: 502 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      url: data.data.url,
-      display_url: data.data.display_url,
-      thumb: data.data.thumb?.url,
-      delete_url: data.data.delete_url,
-      id: data.data.id,
+      url: imgbbData.data.url,
+      display_url: imgbbData.data.display_url,
+      delete_url: imgbbData.data.delete_url,
+      thumb: imgbbData.data.thumb?.url || imgbbData.data.url,
+      medium: imgbbData.data.medium?.url || imgbbData.data.url,
+      title: imgbbData.data.title,
     });
-  } catch (error: any) {
-    console.error("ImgBB upload API error:", error);
+  } catch (error) {
+    console.error("Upload route error:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred during image upload." },
+      { error: "An unexpected error occurred during image processing." },
       { status: 500 }
->>>>>>> Stashed changes
     );
   }
 }

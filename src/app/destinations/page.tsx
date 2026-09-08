@@ -8,6 +8,7 @@ import { DestinationCard } from "@/components/DestinationCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
+import { Pagination } from "@/components/Pagination";
 import { useInquiry } from "@/lib/inquiry-context";
 
 export default function DestinationsPage() {
@@ -16,6 +17,18 @@ export default function DestinationsPage() {
   const { destinations } = useContentStore();
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
+
+  const handleRegionChange = (reg: string) => {
+    setSelectedRegion(reg);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   const regions = [
     "All",
@@ -38,6 +51,12 @@ export default function DestinationsPage() {
       (d.short && tl(d.short).toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesRegion && matchesSearch;
   });
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedDestinations = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="pt-28 pb-20 bg-[#F9FAFB] text-slate-800 min-h-screen">
@@ -65,7 +84,7 @@ export default function DestinationsPage() {
       </section>
 
       {/* Destination Grid with Filter */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
+      <section id="destinations-directory" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28 scroll-mt-28">
         <SectionHeader
           eyebrow="Directory"
           title={
@@ -85,7 +104,7 @@ export default function DestinationsPage() {
                 : "Search destinations by name or region (e.g. Sigiriya, Galle)..."
             }
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs text-[#081A33] placeholder:text-slate-400 focus:border-[#C8A45D] outline-none shadow-sm"
           />
         </div>
@@ -94,7 +113,7 @@ export default function DestinationsPage() {
           {regions.map((reg) => (
             <button
               key={reg}
-              onClick={() => setSelectedRegion(reg)}
+              onClick={() => handleRegionChange(reg)}
               className={`px-5 py-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 selectedRegion === reg
                   ? "bg-[#0B1F3A] text-white shadow-sm"
@@ -106,13 +125,25 @@ export default function DestinationsPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map((dest) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          {paginatedDestinations.map((dest) => (
             <Reveal key={dest.slug} variant="fade-up">
               <DestinationCard destination={dest} />
             </Reveal>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filtered.length}
+          pageSize={ITEMS_PER_PAGE}
+          itemLabel={lang === "ko" ? "여행지" : "destinations"}
+          showRange
+          scrollToId="destinations-directory"
+        />
       </section>
 
       {/* Inquiry Callout */}

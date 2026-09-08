@@ -8,6 +8,7 @@ import { useInquiry } from "@/lib/inquiry-context";
 import { galleryCategories, type GalleryItem } from "@/data/site";
 import { Reveal } from "@/components/Reveal";
 import { LuxuryButton } from "@/components/LuxuryButton";
+import { Pagination } from "@/components/Pagination";
 import {
   Sparkles,
   MapPin,
@@ -25,14 +26,22 @@ export default function GalleryPage() {
   const { gallery } = useContentStore();
 
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(
     null,
   );
+  const ITEMS_PER_PAGE = 12;
 
   const filteredItems = gallery.filter((item) => {
     if (selectedCategory === "All") return true;
     return item.category === selectedCategory;
   });
+
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const activePhoto =
     activeLightboxIndex !== null ? filteredItems[activeLightboxIndex] : null;
@@ -120,6 +129,7 @@ export default function GalleryPage() {
                   key={category}
                   onClick={() => {
                     setSelectedCategory(category);
+                    setCurrentPage(1);
                     setActiveLightboxIndex(null);
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
@@ -137,7 +147,7 @@ export default function GalleryPage() {
       </section>
 
       {/* Gallery Photo Grid */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-24">
+      <section id="gallery-grid" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-24 scroll-mt-28">
         {filteredItems.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
             <Camera className="w-12 h-12 text-slate-300 mx-auto mb-3" />
@@ -148,56 +158,73 @@ export default function GalleryPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredItems.map((item, idx) => (
-              <div
-                key={item.id || idx}
-                onClick={() => setActiveLightboxIndex(idx)}
-                className="group relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-2xl hover:border-[#C8A45D]/40 transition-all duration-500 cursor-pointer flex flex-col justify-between"
-              >
-                {/* Photo Image Frame */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                  <img
-                    src={item.image}
-                    alt={tl(item.title)}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-black/20 opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8">
+              {paginatedItems.map((item, idx) => {
+                const globalIdx = (currentPage - 1) * ITEMS_PER_PAGE + idx;
+                return (
+                  <div
+                    key={item.id || globalIdx}
+                    onClick={() => setActiveLightboxIndex(globalIdx)}
+                    className="group relative bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-2xl hover:border-[#C8A45D]/40 transition-all duration-500 cursor-pointer flex flex-col justify-between"
+                  >
+                    {/* Photo Image Frame */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                      <img
+                        src={item.image}
+                        alt={tl(item.title)}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-black/20 opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
 
-                  {/* Top Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm flex items-center gap-1.5">
-                      <Sparkles className="w-3 h-3 text-[#C8A45D]" />
-                      {getCategoryLabel(item.category)}
-                    </span>
-                  </div>
+                      {/* Top Badge */}
+                      <div className="absolute top-4 left-4">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3 text-[#C8A45D]" />
+                          {getCategoryLabel(item.category)}
+                        </span>
+                      </div>
 
-                  {/* Hover Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
-                    <div className="w-12 h-12 rounded-full bg-[#C8A45D] text-[#081A33] flex items-center justify-center shadow-2xl">
-                      <Maximize2 className="w-5 h-5" />
+                      {/* Hover Icon */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
+                        <div className="w-12 h-12 rounded-full bg-[#C8A45D] text-[#081A33] flex items-center justify-center shadow-2xl">
+                          <Maximize2 className="w-5 h-5" />
+                        </div>
+                      </div>
+
+                      {/* Location Tag */}
+                      {item.location && (
+                        <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-xs text-white bg-[#081A33]/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                          <MapPin className="w-3.5 h-3.5 text-[#C8A45D]" />
+                          <span>{item.location}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Caption */}
+                    <div className="p-6">
+                      <h3 className="font-display text-lg font-semibold text-[#081A33] group-hover:text-[#C8A45D] transition-colors leading-snug">
+                        {tl(item.title)}
+                      </h3>
                     </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* Location Tag */}
-                  {item.location && (
-                    <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-xs text-white bg-[#081A33]/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                      <MapPin className="w-3.5 h-3.5 text-[#C8A45D]" />
-                      <span>{item.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Caption */}
-                <div className="p-6">
-                  <h3 className="font-display text-lg font-semibold text-[#081A33] group-hover:text-[#C8A45D] transition-colors leading-snug">
-                    {tl(item.title)}
-                  </h3>
-                </div>
-              </div>
-            ))}
-          </div>
+            {/* Pagination Controls */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filteredItems.length}
+              pageSize={ITEMS_PER_PAGE}
+              itemLabel={lang === "ko" ? "사진" : "photos"}
+              showRange
+              scrollToId="gallery-grid"
+            />
+          </>
         )}
       </section>
 

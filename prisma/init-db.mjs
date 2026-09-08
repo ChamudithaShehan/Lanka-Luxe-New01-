@@ -22,7 +22,7 @@ if (!fs.existsSync(envPath)) {
 try {
   // Push database schema (creates tables if missing)
   console.log("📦 Synchronizing MySQL database schema with Prisma...");
-  execSync("npx prisma db push --skip-generate --accept-data-loss", {
+  execSync("npx prisma db push --accept-data-loss", {
     cwd: rootDir,
     stdio: "inherit",
     env: { ...process.env },

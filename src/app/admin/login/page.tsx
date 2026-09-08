@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, ShieldCheck, ArrowRight, Sparkles, Lock } from "lucide-react";
+import { KeyRound, ShieldCheck, ArrowRight, Lock } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -22,40 +22,14 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-<<<<<<< Updated upstream
-        body: JSON.stringify({ username, password: passcode }),
-=======
         body: JSON.stringify({
           username: username.trim(),
           password: passcode,
         }),
->>>>>>> Stashed changes
       });
 
       const data = await res.json();
 
-<<<<<<< Updated upstream
-      if (res.ok && data.success) {
-        // Store the JWT in localStorage for API calls that use the Bearer header
-        if (data.token) {
-          localStorage.setItem("llj_admin_token", data.token);
-        }
-        // The httpOnly cookie is set automatically by the server — it powers middleware.
-        // This flag is kept for backward-compat with the admin layout check.
-        localStorage.setItem("llj_admin_auth", "true");
-        toast.success(`Welcome back, ${data.user?.name || "Admin"}! Access granted.`);
-        router.push("/admin");
-      } else {
-        setError(true);
-        setLoading(false);
-        toast.error(data.error || "Invalid username or password.");
-      }
-    } catch (err) {
-      console.error("Login fetch error:", err);
-      setError(true);
-      setLoading(false);
-      toast.error("Network error. Please check your connection and try again.");
-=======
       if (!res.ok) {
         setError(true);
         setLoading(false);
@@ -70,7 +44,6 @@ export default function AdminLoginPage() {
       setError(true);
       setLoading(false);
       toast.error("An error occurred during authentication.");
->>>>>>> Stashed changes
     }
   };
 

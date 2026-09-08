@@ -3,8 +3,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { blogPostInputSchema } from "@/lib/validations/content";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "0");
+    const limit = parseInt(searchParams.get("limit") || "0");
+
+    if (page > 0 && limit > 0) {
+      const [total, posts] = await Promise.all([
+        prisma.blogPost.count(),
+        prisma.blogPost.findMany({
+          orderBy: { publishedAt: "desc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
+      return NextResponse.json({
+        posts,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      });
+    }
+
     const posts = await prisma.blogPost.findMany({ orderBy: { publishedAt: "desc" } });
     return NextResponse.json(posts);
   } catch (error) {

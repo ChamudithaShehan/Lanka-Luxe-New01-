@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
-<<<<<<< Updated upstream
-
-export async function POST() {
-  const response = NextResponse.json({ success: true, message: "Logged out successfully." });
-  response.cookies.delete("llj_admin_token");
-=======
 import { COOKIE_NAME } from "@/lib/auth";
 
 export async function POST() {
   const response = NextResponse.json({
     success: true,
-    message: "Logged out successfully",
+    message: "Logged out successfully.",
   });
 
   response.cookies.set({
@@ -24,6 +18,5 @@ export async function POST() {
     expires: new Date(0),
   });
 
->>>>>>> Stashed changes
   return response;
 }

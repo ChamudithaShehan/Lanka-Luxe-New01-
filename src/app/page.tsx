@@ -303,6 +303,8 @@ export default function HomePage() {
                       src={img.train}
                       alt="Highland Scenic Train & Happy Travelers"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      fetchPriority="high"
+                      decoding="sync"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   </motion.div>

@@ -9,7 +9,8 @@ import { tourFilters, isCategoryMatch } from "@/data/site";
 import { TourCard } from "@/components/TourCard";
 import { LuxuryButton } from "@/components/LuxuryButton";
 import { Reveal } from "@/components/Reveal";
-import { Search, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pagination } from "@/components/Pagination";
+import { Search, Sparkles, SlidersHorizontal } from "lucide-react";
 
 export default function ToursPage() {
   const { t, tl, lang } = useI18n();
@@ -183,41 +184,15 @@ export default function ToursPage() {
             </div>
 
             {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-4">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
-                  aria-label="Previous Page"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`w-10 h-10 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      currentPage === pageNum
-                        ? "bg-[#0B1F3A] text-white shadow-md"
-                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 flex items-center justify-center hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
-                  aria-label="Next Page"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filteredTours.length}
+              pageSize={ITEMS_PER_PAGE}
+              itemLabel={lang === "ko" ? "여정" : "journeys"}
+              showRange
+            />
           </>
         )}
       </section>

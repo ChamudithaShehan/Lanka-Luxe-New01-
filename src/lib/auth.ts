@@ -1,104 +1,130 @@
-<<<<<<< Updated upstream
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import type { NextRequest } from "next/server";
-
-/**
- * Validates and retrieves the JWT secret.
- * In production: Throws a fatal server error if missing, empty, or < 32 characters.
- * In development: Uses environment variable or a development fallback with warning.
- */
-export function getRequiredJwtSecret(): string {
-  const secret = process.env.JWT_SECRET;
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (!secret || secret.trim().length === 0) {
-    if (isProduction) {
-      throw new Error(
-        "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET environment variable is missing or empty in production.",
-      );
-    }
-    console.warn(
-      "[DEV WARNING] JWT_SECRET is not set in environment. Using development fallback. Set a secure JWT_SECRET in .env.",
-    );
-    return "dev_fallback_jwt_secret_min_32_characters_long_for_local_testing";
-  }
-
-  if (secret.length < 32) {
-    if (isProduction) {
-      throw new Error(
-        "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET must be at least 32 characters long in production.",
-      );
-    }
-    console.warn(
-      "[DEV WARNING] JWT_SECRET is shorter than 32 characters. Use a 256-bit+ secure random secret for production.",
-    );
-  }
-
-  return secret;
-}
-
-export interface TokenPayload {
-=======
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 
 export const COOKIE_NAME = "llj_session";
 const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
 
 function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error("JWT_SECRET environment variable is missing.");
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (!secret || secret.trim().length === 0) {
+    if (isProduction) {
+      throw new Error(
+        "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET environment variable is missing in production."
+      );
+    }
+    console.warn(
+      "[DEV WARNING] JWT_SECRET is not set in environment. Using fallback for local development."
+    );
+    return new TextEncoder().encode(
+      "lanka_luxe_development_secret_min_32_characters_key_2026"
+    );
   }
+
+  if (secret.length < 32 && isProduction) {
+    throw new Error(
+      "FATAL SERVER CONFIGURATION ERROR: JWT_SECRET must be at least 32 characters in production."
+    );
+  }
+
   return new TextEncoder().encode(secret);
 }
 
+import crypto from "crypto";
+import type { NextRequest } from "next/server";
+
 export interface SessionPayload {
->>>>>>> Stashed changes
   userId: string;
   username: string;
   role: string;
 }
 
-/**
-<<<<<<< Updated upstream
- * Hash password securely with bcrypt (12 rounds salt)
- */
-export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 12);
-}
+export type TokenPayload = SessionPayload;
 
 /**
- * Compare plain password against bcrypt hash
+ * Synchronously verifies a JWT session token with timing-safe HMAC SHA-256
  */
-export async function comparePassword(
-  password: string,
-  hash: string,
-): Promise<boolean> {
-  return await bcrypt.compare(password, hash);
-}
+export function verifyToken(token: string): SessionPayload | null {
+  if (!token || typeof token !== "string") return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
 
-/**
- * Sign JWT token for admin session (valid for 7 days)
- */
-export function signToken(payload: TokenPayload): string {
-  const secret = getRequiredJwtSecret();
-  return jwt.sign(payload, secret, { expiresIn: "7d" });
-}
-
-/**
- * Verify JWT token from request
- */
-export function verifyToken(token: string): TokenPayload | null {
   try {
-    const secret = getRequiredJwtSecret();
-    return jwt.verify(token, secret) as TokenPayload;
-=======
+    const secret =
+      process.env.JWT_SECRET ||
+      (process.env.NODE_ENV !== "production"
+        ? "lanka_luxe_development_secret_min_32_characters_key_2026"
+        : "");
+    if (!secret) return null;
+
+    const expectedSig = crypto
+      .createHmac("sha256", secret)
+      .update(`${parts[0]}.${parts[1]}`)
+      .digest("base64url");
+
+    const sigBuf = Buffer.from(parts[2]);
+    const expectedBuf = Buffer.from(expectedSig);
+
+    if (sigBuf.length !== expectedBuf.length) return null;
+    if (!crypto.timingSafeEqual(sigBuf, expectedBuf)) return null;
+
+    const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
+    const payload = JSON.parse(payloadJson);
+
+    if (payload.exp && typeof payload.exp === "number") {
+      if (Date.now() / 1000 > payload.exp) return null;
+    }
+
+    if (
+      typeof payload.userId === "string" &&
+      typeof payload.username === "string" &&
+      typeof payload.role === "string"
+    ) {
+      return {
+        userId: payload.userId,
+        username: payload.username,
+        role: payload.role,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extract and verify authentication from Request (Bearer header or HttpOnly Cookie)
+ */
+export function getAuthSession(req: NextRequest): SessionPayload | null {
+  const authHeader = req.headers.get("authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.slice(7).trim();
+    const session = verifyToken(token);
+    if (session && session.role === "admin") return session;
+  }
+
+  const sessionCookie = req.cookies.get(COOKIE_NAME)?.value;
+  if (sessionCookie) {
+    const session = verifyToken(sessionCookie);
+    if (session && session.role === "admin") return session;
+  }
+
+  const legacyCookie = req.cookies.get("llj_admin_token")?.value;
+  if (legacyCookie) {
+    const session = verifyToken(legacyCookie);
+    if (session && session.role === "admin") return session;
+  }
+
+  return null;
+}
+
+/**
  * Creates a signed JWT session token valid for 8 hours.
  */
-export async function createSessionToken(payload: SessionPayload): Promise<string> {
+export async function createSessionToken(
+  payload: SessionPayload
+): Promise<string> {
   const secret = getJwtSecret();
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
@@ -131,45 +157,12 @@ export async function verifySessionToken(
       };
     }
     return null;
->>>>>>> Stashed changes
   } catch {
     return null;
   }
 }
 
 /**
-<<<<<<< Updated upstream
- * Extract and verify authentication from Request (Bearer header or Cookie)
- */
-export function getAuthSession(req: NextRequest): TokenPayload | null {
-  // 1. Check Authorization header
-  const authHeader = req.headers.get("authorization");
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    const token = authHeader.substring(7).trim();
-    const verified = verifyToken(token);
-    if (verified) return verified;
-  }
-
-  // 2. Check Cookie
-  const cookieToken = req.cookies.get("llj_admin_token")?.value;
-  if (cookieToken) {
-    const verified = verifyToken(cookieToken);
-    if (verified) return verified;
-  }
-
-  return null;
-}
-
-/**
- * Basic HTML/script sanitization to prevent injection
- */
-export function sanitizeInput(input: string): string {
-  if (typeof input !== "string") return "";
-  return input
-    .replace(/[<>]/g, "")
-    .trim();
-}
-=======
  * Reads and verifies the current session from Next.js server cookie store.
  */
 export async function getCurrentSession(): Promise<SessionPayload | null> {
@@ -204,4 +197,11 @@ export function getSessionCookieOptions(maxAge: number = SESSION_DURATION) {
     maxAge,
   };
 }
->>>>>>> Stashed changes
+
+/**
+ * Basic HTML/script sanitization to prevent injection
+ */
+export function sanitizeInput(input: string): string {
+  if (typeof input !== "string") return "";
+  return input.replace(/[<>]/g, "").trim();
+}

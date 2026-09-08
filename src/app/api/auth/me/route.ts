@@ -1,25 +1,3 @@
-<<<<<<< Updated upstream
-import { NextRequest, NextResponse } from "next/server";
-import { getAuthSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-
-export async function GET(req: NextRequest) {
-  const session = getAuthSession(req);
-  if (!session) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.userId },
-    select: { id: true, username: true, name: true, role: true },
-  });
-
-  if (!user) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
-  }
-
-  return NextResponse.json({ authenticated: true, user });
-=======
 import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -30,7 +8,7 @@ export async function GET() {
 
     if (!session) {
       return NextResponse.json(
-        { authenticated: false, error: "Not authenticated" },
+        { authenticated: false, error: "Not authenticated." },
         { status: 401 }
       );
     }
@@ -48,7 +26,7 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json(
-        { authenticated: false, error: "User no longer exists" },
+        { authenticated: false, error: "User no longer exists." },
         { status: 401 }
       );
     }
@@ -60,9 +38,8 @@ export async function GET() {
   } catch (error) {
     console.error("Auth me check error:", error);
     return NextResponse.json(
-      { authenticated: false, error: "Failed to verify session" },
+      { authenticated: false, error: "Failed to verify session." },
       { status: 500 }
     );
   }
->>>>>>> Stashed changes
 }

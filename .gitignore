@@ -48,6 +48,9 @@ lerna-debug.log*
 *.db-journal
 dev.db
 prisma/dev.db
+backups/
+*.sql
+*.sql.gz
 
 # Vercel
 .vercel

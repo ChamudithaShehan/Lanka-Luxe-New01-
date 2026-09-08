@@ -6,11 +6,36 @@ import { galleryItemInputSchema } from "@/lib/validations/content";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const dbGallery = await prisma.galleryItem.findMany({
-      orderBy: { order: "asc" },
-    });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "0");
+    const limit = parseInt(searchParams.get("limit") || "0");
+
+    let dbGallery;
+    let paginationMeta = undefined;
+
+    if (page > 0 && limit > 0) {
+      const [total, items] = await Promise.all([
+        prisma.galleryItem.count(),
+        prisma.galleryItem.findMany({
+          orderBy: { order: "asc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
+      dbGallery = items;
+      paginationMeta = {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      };
+    } else {
+      dbGallery = await prisma.galleryItem.findMany({
+        orderBy: { order: "asc" },
+      });
+    }
 
     const gallery = dbGallery.map((item) => ({
       id: item.id,
@@ -21,6 +46,13 @@ export async function GET() {
       featured: item.featured,
       order: item.order,
     }));
+
+    if (paginationMeta) {
+      return NextResponse.json({
+        gallery,
+        pagination: paginationMeta,
+      });
+    }
 
     return NextResponse.json(gallery);
   } catch (error) {
