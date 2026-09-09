@@ -38,6 +38,7 @@ export interface SessionPayload {
   userId: string;
   username: string;
   role: string;
+  expiresAt?: number;
 }
 
 export type TokenPayload = SessionPayload;
@@ -85,6 +86,7 @@ export function verifyToken(token: string): SessionPayload | null {
         userId: payload.userId,
         username: payload.username,
         role: payload.role,
+        expiresAt: typeof payload.exp === "number" ? payload.exp * 1000 : undefined,
       };
     }
     return null;
@@ -126,7 +128,10 @@ export async function createSessionToken(
   payload: SessionPayload
 ): Promise<string> {
   const secret = getJwtSecret();
-  return new SignJWT({ ...payload })
+  // Strip out any previous expiresAt from payload before signing
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { expiresAt, ...tokenData } = payload;
+  return new SignJWT({ ...tokenData })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION}s`)
@@ -154,6 +159,7 @@ export async function verifySessionToken(
         userId: payload.userId,
         username: payload.username,
         role: payload.role,
+        expiresAt: typeof payload.exp === "number" ? payload.exp * 1000 : undefined,
       };
     }
     return null;

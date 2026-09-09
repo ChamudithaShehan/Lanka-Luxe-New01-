@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContentStore } from "@/lib/content-store";
+import { onSessionExpired } from "@/lib/auth-client";
 import {
   LayoutDashboard,
   Compass,
@@ -21,6 +22,7 @@ import {
   ShieldCheck,
   UserCheck,
   AlertTriangle,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,6 +38,16 @@ const navItems = [
   { href: "/admin/settings", label: "Site & Founder Settings", icon: Settings },
   { href: "/admin/admins", label: "Admins & Security", icon: ShieldCheck },
 ];
+
+function formatRemainingTime(seconds: number): string {
+  if (seconds <= 0) return "0s";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
 
 export default function AdminLayout({
   children,
@@ -53,45 +65,189 @@ export default function AdminLayout({
   } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Real-time Session Expiration States
+  const [expiresAt, setExpiresAt] = useState<number | null>(null);
+  const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
+  const [showExpiringWarning, setShowExpiringWarning] = useState(false);
+  const [isExtendingSession, setIsExtendingSession] = useState(false);
+  const isExitingRef = useRef(false);
+
   // If on /admin/login, don't wrap with admin chrome
   const isLoginPage = pathname === "/admin/login";
 
+  // Centralized Session Expiration & Exit handler
+  const handleSessionExpired = useCallback(
+    async (reason: string = "expired") => {
+      if (isExitingRef.current) return;
+      isExitingRef.current = true;
+
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch {
+        // ignore
+      }
+
+      setIsAuthenticated(false);
+      setShowExpiringWarning(false);
+      toast.error(
+        "Your administrative session has expired. You have been safely logged out for security.",
+        { id: "session-expired", duration: 6000 }
+      );
+
+      const fromParam =
+        pathname && pathname !== "/admin/login"
+          ? `?expired=1&from=${encodeURIComponent(pathname)}`
+          : "?expired=1";
+      router.replace(`/admin/login${fromParam}`);
+    },
+    [pathname, router]
+  );
+
+  // Authentication & Heartbeat verification
+  const checkAuth = useCallback(async () => {
+    if (isLoginPage || isExitingRef.current) return false;
+
+    try {
+      const res = await fetch("/api/auth/me", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.authenticated && data.user?.role === "admin") {
+        setIsAuthenticated(true);
+        setCurrentUser(data.user);
+        if (typeof data.expiresAt === "number") {
+          setExpiresAt(data.expiresAt);
+        }
+        return true;
+      } else {
+        handleSessionExpired(data.error || "unauthenticated");
+        return false;
+      }
+    } catch {
+      return false;
+    }
+  }, [isLoginPage, handleSessionExpired]);
+
+  // Initial check on mount or path change
+  useEffect(() => {
+    if (isLoginPage) return;
+    checkAuth();
+  }, [pathname, isLoginPage, checkAuth]);
+
+  // Periodic heartbeat, tab focus / visibility change, and 401 interception
   useEffect(() => {
     if (isLoginPage) return;
 
-    let isMounted = true;
+    // Heartbeat every 30 seconds to verify active session
+    const heartbeatInterval = setInterval(() => {
+      checkAuth();
+    }, 30000);
 
-    async function checkAuth() {
-      try {
-        const res = await fetch("/api/auth/me", {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-cache" },
-        });
-        const data = await res.json();
+    // Re-verify immediately whenever the user switches back to this tab
+    const handleFocus = () => {
+      checkAuth();
+    };
 
-        if (isMounted) {
-          if (res.ok && data.authenticated && data.user?.role === "admin") {
-            setIsAuthenticated(true);
-            setCurrentUser(data.user);
-          } else {
-            setIsAuthenticated(false);
-            router.replace("/admin/login");
-          }
-        }
-      } catch {
-        if (isMounted) {
-          setIsAuthenticated(false);
-          router.replace("/admin/login");
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkAuth();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Listen for session expired events dispatched across the client
+    const unsubscribeSessionExpired = onSessionExpired((detail) => {
+      handleSessionExpired(detail.reason);
+    });
+
+    // Intercept 401 responses globally across admin fetch calls
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        const url = typeof args[0] === "string" ? args[0] : (args[0] as Request)?.url || "";
+        if (
+          url.includes("/api/admin") ||
+          url.includes("/api/upload") ||
+          url.includes("/api/auth/me")
+        ) {
+          handleSessionExpired("unauthorized_api");
         }
       }
-    }
-
-    checkAuth();
+      return response;
+    };
 
     return () => {
-      isMounted = false;
+      clearInterval(heartbeatInterval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      unsubscribeSessionExpired();
+      window.fetch = originalFetch;
     };
-  }, [pathname, isLoginPage, router]);
+  }, [isLoginPage, checkAuth, handleSessionExpired]);
+
+  // Live countdown timer based on JWT token expiresAt
+  useEffect(() => {
+    if (isLoginPage || !expiresAt) return;
+
+    const tick = () => {
+      const remainingMs = expiresAt - Date.now();
+      const remainingSec = Math.floor(remainingMs / 1000);
+
+      if (remainingSec <= 0) {
+        setSecondsRemaining(0);
+        handleSessionExpired("token_lifetime_elapsed");
+      } else {
+        setSecondsRemaining(remainingSec);
+        if (remainingSec <= 120) {
+          setShowExpiringWarning(true);
+        } else {
+          setShowExpiringWarning(false);
+        }
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt, isLoginPage, handleSessionExpired]);
+
+  // Extend session handler ("Stay Signed In")
+  const handleExtendSession = async () => {
+    setIsExtendingSession(true);
+    try {
+      const res = await fetch("/api/auth/refresh", { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.success && data.expiresAt) {
+        setExpiresAt(data.expiresAt);
+        setShowExpiringWarning(false);
+        isExitingRef.current = false;
+        toast.success("Session renewed for 8 hours.");
+      } else {
+        handleSessionExpired("renewal_failed");
+      }
+    } catch {
+      toast.error("Failed to renew session.");
+    } finally {
+      setIsExtendingSession(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    isExitingRef.current = true;
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
+    setIsAuthenticated(false);
+    toast.success("Logged out successfully");
+    router.replace("/admin/login");
+  };
 
   if (isLoginPage) {
     return <>{children}</>;
@@ -112,19 +268,46 @@ export default function AdminLayout({
 
   const unreadInquiriesCount = inquiries.filter((i) => i.status === "new").length;
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // ignore
-    }
-    setIsAuthenticated(false);
-    toast.success("Logged out successfully");
-    router.replace("/admin/login");
-  };
-
   return (
     <div className="min-h-screen bg-[#07111E] text-slate-100 flex font-sans selection:bg-[#C8A45D] selection:text-[#0B1A30]">
+      {/* Session Expiring Warning Modal (shown 2 minutes before exit) */}
+      {showExpiringWarning && secondsRemaining !== null && secondsRemaining > 0 && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[#0B1A30] border border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-5">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+              <Clock className="w-7 h-7 animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-serif text-xl font-bold text-white">
+                Session Expiring Soon
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Your administrative session will automatically exit in{" "}
+                <span className="font-bold text-amber-400 text-sm font-mono">
+                  {secondsRemaining}s
+                </span>{" "}
+                for security. Would you like to remain signed in?
+              </p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={handleLogout}
+                className="flex-1 py-2.5 px-4 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Logout Now
+              </button>
+              <button
+                onClick={handleExtendSession}
+                disabled={isExtendingSession}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-[#C8A45D] hover:bg-[#b5924d] text-[#081426] text-xs font-bold transition-all shadow-[0_4px_16px_rgba(200,164,93,0.3)] cursor-pointer disabled:opacity-50"
+              >
+                {isExtendingSession ? "Renewing..." : "Stay Signed In"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -264,6 +447,37 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Live Session Status Indicator */}
+            {secondsRemaining !== null && secondsRemaining > 0 && (
+              <div
+                className={`hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                  secondsRemaining <= 120
+                    ? "bg-amber-500/10 border-amber-500/40 text-amber-300 animate-pulse"
+                    : "bg-[#12233D] border-[#1B2D4A] text-slate-300"
+                }`}
+                title={`Admin session expires in ${formatRemainingTime(secondsRemaining)}`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    secondsRemaining <= 120 ? "bg-amber-400" : "bg-emerald-400"
+                  }`}
+                />
+                <span className="text-[11px] font-mono">
+                  {secondsRemaining <= 120
+                    ? `Expiring in ${secondsRemaining}s`
+                    : `Session: ${formatRemainingTime(secondsRemaining)}`}
+                </span>
+                <button
+                  onClick={handleExtendSession}
+                  disabled={isExtendingSession}
+                  className="text-[10px] text-[#C8A45D] hover:text-[#e0bb70] uppercase tracking-wider font-bold ml-1 cursor-pointer disabled:opacity-50 transition-colors"
+                  title="Renew session for another 8 hours"
+                >
+                  {isExtendingSession ? "..." : "Extend"}
+                </button>
+              </div>
+            )}
+
             <Link
               href="/"
               target="_blank"

@@ -34,6 +34,8 @@ export async function GET() {
     return NextResponse.json({
       authenticated: true,
       user,
+      expiresAt: session.expiresAt || null,
+      serverTime: Date.now(),
     });
   } catch (error) {
     console.error("Auth me check error:", error);

@@ -213,12 +213,12 @@ function isValidIp(ip: string): boolean {
   );
 }
 
-// 1. Login: 5 attempts per 15 minutes (fail-closed protection on Redis failure)
+// 1. Login: 5 attempts per 15 minutes in production (50 in development)
 export const loginRateLimiter = new DistributedRateLimiter({
   prefix: "auth_login",
-  maxRequests: 5,
+  maxRequests: process.env.NODE_ENV === "production" ? 5 : 50,
   intervalMs: 15 * 60 * 1000, // 15 minutes
-  failClosed: true,
+  failClosed: process.env.NODE_ENV === "production",
 });
 
 // 2. Customer Inquiries: 5 submissions per 10 minutes (controlled in-memory fallback)

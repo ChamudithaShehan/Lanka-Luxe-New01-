@@ -527,53 +527,6 @@ const defaultPosts = [
   },
 ];
 
-const sampleInquiries = [
-  {
-    id: "LLJ-2026-1001",
-    name: "Park Min-Woo",
-    email: "minwoo.park@seoul-travel.kr",
-    phone: "+82 10-5542-8891",
-    country: "South Korea",
-    tourSlug: "ultimate-sri-lanka-golf-escape",
-    travelers: "4 Adults (Golf Group)",
-    travelDate: "2026-10-15",
-    duration: "10 Days",
-    budget: "$4,000 - $6,000 per person",
-    message: "We are 4 golfers from Seoul looking for 7 rounds including Victoria Golf and Shangri-La. Need Korean speaking coordination and private van with ample luggage capacity.",
-    status: "New",
-    notes: "Followed up via KakaoTalk. Sent customized 10-day golf itinerary with confirmed tee times.",
-  },
-  {
-    id: "LLJ-2026-1002",
-    name: "Dr. Jonathan Reynolds",
-    email: "jreynolds@oxford.ac.uk",
-    phone: "+44 7911 123456",
-    country: "United Kingdom",
-    tourSlug: "luxury-sri-lanka-discovery",
-    travelers: "2 Adults (Couple)",
-    travelDate: "2026-11-04",
-    duration: "12 Days",
-    budget: "$5,000+ per person",
-    message: "Interested in archaeology and Tea Trails bungalow stay. Require a qualified archaeologist guide for Sigiriya and Anuradhapura.",
-    status: "In Progress",
-    notes: "Iroshan will guide personally due to university archaeology background.",
-  },
-  {
-    id: "LLJ-2026-1003",
-    name: "Elena Rostova",
-    email: "elena.rostova@geneva-wealth.ch",
-    phone: "+41 22 819 4400",
-    country: "Switzerland",
-    tourSlug: "south-coast-wellness-and-ocean-villa",
-    travelers: "2 Adults",
-    travelDate: "2026-12-22",
-    duration: "8 Days",
-    budget: "$6,000+ per person",
-    message: "Seeking complete Ayurvedic rejuvenation and private beach villa during festive holidays.",
-    status: "Contacted",
-    notes: "Reserved Cape Weligama ocean pool residence.",
-  },
-];
 
 const siteSettings = {
   brandName: "Lanka Luxe Journeys",
@@ -921,42 +874,18 @@ async function main() {
   }
   console.log(`✅ ${defaultPosts.length} journal articles seeded.`);
 
-  // 7. Seed Inquiries
-  for (const inq of sampleInquiries) {
-    await prisma.inquiry.upsert({
-      where: { reference: inq.id },
-      update: {
-        name: inq.name,
-        email: inq.email,
-        phone: inq.phone,
-        country: inq.country || null,
-        tourSlug: inq.tourSlug || null,
-        travelers: inq.travelers || null,
-        travelDate: inq.travelDate || null,
-        duration: inq.duration || null,
-        budget: inq.budget || null,
-        message: inq.message || null,
-        status: inq.status,
-        notes: inq.notes || null,
+  // 7. Clean up any legacy demo inquiries from development
+  const deletedDemoInquiries = await prisma.inquiry.deleteMany({
+    where: {
+      reference: {
+        in: ["LLJ-2026-1001", "LLJ-2026-1002", "LLJ-2026-1003"],
       },
-      create: {
-        reference: inq.id,
-        name: inq.name,
-        email: inq.email,
-        phone: inq.phone,
-        country: inq.country || null,
-        tourSlug: inq.tourSlug || null,
-        travelers: inq.travelers || null,
-        travelDate: inq.travelDate || null,
-        duration: inq.duration || null,
-        budget: inq.budget || null,
-        message: inq.message || null,
-        status: inq.status,
-        notes: inq.notes || null,
-      },
-    });
+    },
+  });
+  if (deletedDemoInquiries.count > 0) {
+    console.log(`🧹 Cleaned up ${deletedDemoInquiries.count} legacy demo inquiries from database.`);
   }
-  console.log(`✅ ${sampleInquiries.length} sample inquiries seeded.`);
+  console.log(`✅ Inquiries verified: pure database pipeline active (0 mock inquiries seeded).`);
 
   // 8. Seed Site Settings
   await prisma.siteSetting.upsert({
