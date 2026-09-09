@@ -7,6 +7,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnpm-store
 
 # Next.js & Build Outputs
 /.next/
@@ -20,13 +21,21 @@
 /.wrangler
 .dev.vars
 
-# Turbopack & Cache
+# Turbopack, TypeScript & Cache
 .turbo
 *.tsbuildinfo
 next-env.d.ts
+.cache
+.eslintcache
+.prettiercache
+.parcel-cache
 
-# Coverage
+# Testing & Coverage
 /coverage
+*.lcov
+.nyc_output
+playwright-report/
+test-results/
 
 # Debug & Logs
 logs
@@ -37,32 +46,85 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment Variables
-.env*.local
+# Environment Variables & Secrets
 .env
+.env.*
 !.env.example
+!.env*.example
 *.local
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
 
-# Database
+# Database & Backups
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
 dev.db
 prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-shm
+prisma/*.db-wal
+/backups
 backups/
 *.sql
 *.sql.gz
+*.dump
+*.tar.gz
+*.bak
 
 # Vercel
 .vercel
 
-# Editor & OS Files
-.DS_Store
-*.pem
-.idea
+# IDEs and Editors
+.idea/
 .vscode/*
 !.vscode/extensions.json
+*.code-workspace
+.fleet/
+.history/
+.cursor/
+.windsurf/
+*.sublime-project
+*.sublime-workspace
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
+
+# OS Files
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Temporary & Scratch Files
+scratch/
+tmp/
+temp/
