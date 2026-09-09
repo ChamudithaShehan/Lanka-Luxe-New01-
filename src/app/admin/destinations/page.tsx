@@ -93,7 +93,10 @@ export default function AdminDestinationsPage() {
   };
 
   const handleEdit = (dest: Destination) => {
-    setEditingDest(JSON.parse(JSON.stringify(dest)));
+    setEditingDest({
+      ...JSON.parse(JSON.stringify(dest)),
+      originalSlug: dest.slug,
+    });
     setIsModalOpen(true);
   };
 

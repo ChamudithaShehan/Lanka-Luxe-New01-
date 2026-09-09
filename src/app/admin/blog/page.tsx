@@ -90,7 +90,10 @@ export default function AdminBlogPage() {
   };
 
   const handleEdit = (post: Post) => {
-    setEditingPost(JSON.parse(JSON.stringify(post)));
+    setEditingPost({
+      ...JSON.parse(JSON.stringify(post)),
+      originalSlug: post.slug,
+    });
     setIsModalOpen(true);
   };
 

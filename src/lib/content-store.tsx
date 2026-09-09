@@ -76,9 +76,9 @@ interface ContentContextType {
   deleteGolfCourse: (index: number) => Promise<{ success: boolean; error?: string }>;
   saveDestination: (dest: Destination) => Promise<{ success: boolean; error?: string }>;
   deleteDestination: (slug: string) => Promise<{ success: boolean; error?: string }>;
-  saveExperience: (index: number, exp: Experience) => Promise<{ success: boolean; error?: string }>;
+  saveExperience: (expOrIndex: Experience | number, maybeExp?: Experience) => Promise<{ success: boolean; error?: string }>;
   addExperience: (exp: Experience) => Promise<{ success: boolean; error?: string }>;
-  deleteExperience: (index: number) => Promise<{ success: boolean; error?: string }>;
+  deleteExperience: (identifier: number | string) => Promise<{ success: boolean; error?: string }>;
   savePost: (post: Post) => Promise<{ success: boolean; error?: string }>;
   deletePost: (slug: string) => Promise<{ success: boolean; error?: string }>;
   saveContact: (contactInfo: any) => Promise<{ success: boolean; error?: string }>;
@@ -375,7 +375,12 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   // Experience mutations
   const saveExperience = useCallback(
-    async (index: number, exp: Experience): Promise<{ success: boolean; error?: string }> => {
+    async (
+      expOrIndex: Experience | number,
+      maybeExp?: Experience
+    ): Promise<{ success: boolean; error?: string }> => {
+      const exp = typeof expOrIndex === "number" ? maybeExp : expOrIndex;
+      if (!exp) return { success: false, error: "Experience data is missing." };
       try {
         const res = await fetch("/api/admin/experiences", {
           method: "POST",
@@ -397,34 +402,30 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const addExperience = useCallback(
     async (exp: Experience): Promise<{ success: boolean; error?: string }> => {
-      try {
-        const res = await fetch("/api/admin/experiences", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(exp),
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          return { success: false, error: data.error || "Failed to add experience to database." };
-        }
-        await refreshContent();
-        return { success: true };
-      } catch (err: any) {
-        return { success: false, error: "Database connection failed. Could not add experience." };
-      }
+      return saveExperience(exp);
     },
-    [refreshContent]
+    [saveExperience]
   );
 
   const deleteExperience = useCallback(
-    async (index: number): Promise<{ success: boolean; error?: string }> => {
-      const target = experiences[index];
-      if (!target) return { success: false, error: "Experience not found." };
+    async (identifier: number | string): Promise<{ success: boolean; error?: string }> => {
+      let queryParam = "";
+      if (typeof identifier === "number") {
+        const target = experiences[identifier];
+        if (!target) return { success: false, error: "Experience not found." };
+        if (target.slug) {
+          queryParam = `slug=${encodeURIComponent(target.slug)}`;
+        } else {
+          queryParam = `title=${encodeURIComponent(target.title?.en || "")}`;
+        }
+      } else {
+        queryParam = `slug=${encodeURIComponent(identifier)}`;
+      }
+
       try {
-        const res = await fetch(
-          `/api/admin/experiences?title=${encodeURIComponent(target.title?.en || "")}`,
-          { method: "DELETE" }
-        );
+        const res = await fetch(`/api/admin/experiences?${queryParam}`, {
+          method: "DELETE",
+        });
         const data = await res.json();
         if (!res.ok || !data.success) {
           return { success: false, error: data.error || "Failed to delete experience from database." };

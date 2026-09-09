@@ -50,53 +50,61 @@ export async function POST(req: NextRequest) {
     }
 
     const holesNum = parseInt(data.holes?.replace(/\D/g, "") || "18") || 18;
-    const targetSlug =
-      existing?.slug ||
-      data.slug ||
-      data.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
 
-    const id = existing ? existing.id : `golf_${crypto.randomUUID()}`;
+    if (existing) {
+      const targetSlug = data.slug || existing.slug;
+      const saved = await prisma.golfCourse.update({
+        where: { id: existing.id },
+        data: {
+          slug: targetSlug,
+          name: data.name,
+          location: data.location,
+          holes: holesNum,
+          duration: `${data.nights} Nights`,
+          rounds: data.rounds,
+          nights: data.nights,
+          image: data.image,
+          textEn: data.text.en,
+          textKo: data.text.ko,
+          hotelPairing: data.hotel,
+          features: JSON.stringify([`${holesNum} holes`, data.location]),
+          updatedAt: new Date(),
+        },
+      });
 
-    const saved = await prisma.golfCourse.upsert({
-      where: { slug: targetSlug },
-      create: {
-        id,
-        slug: targetSlug,
-        name: data.name,
-        location: data.location,
-        holes: holesNum,
-        par: 72,
-        duration: `${data.nights} Nights`,
-        rounds: data.rounds,
-        nights: data.nights,
-        image: data.image,
-        textEn: data.text.en,
-        textKo: data.text.ko,
-        hotelPairing: data.hotel,
-        features: JSON.stringify([`${holesNum} holes`, data.location]),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      update: {
-        name: data.name,
-        location: data.location,
-        holes: holesNum,
-        duration: `${data.nights} Nights`,
-        rounds: data.rounds,
-        nights: data.nights,
-        image: data.image,
-        textEn: data.text.en,
-        textKo: data.text.ko,
-        hotelPairing: data.hotel,
-        features: JSON.stringify([`${holesNum} holes`, data.location]),
-        updatedAt: new Date(),
-      },
-    });
+      return NextResponse.json({ success: true, course: saved });
+    } else {
+      const targetSlug =
+        data.slug ||
+        data.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      const id = `golf_${crypto.randomUUID()}`;
 
-    return NextResponse.json({ success: true, course: saved });
+      const saved = await prisma.golfCourse.create({
+        data: {
+          id,
+          slug: targetSlug,
+          name: data.name,
+          location: data.location,
+          holes: holesNum,
+          par: 72,
+          duration: `${data.nights} Nights`,
+          rounds: data.rounds,
+          nights: data.nights,
+          image: data.image,
+          textEn: data.text.en,
+          textKo: data.text.ko,
+          hotelPairing: data.hotel,
+          features: JSON.stringify([`${holesNum} holes`, data.location]),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({ success: true, course: saved });
+    }
   } catch (error) {
     console.error("Admin save golf error:", error);
     return NextResponse.json(

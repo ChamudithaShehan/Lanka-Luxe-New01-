@@ -54,7 +54,9 @@ export type Feature = {
 };
 
 export type Tour = {
+  id?: string;
   slug: string;
+  originalSlug?: string;
   name: Localized;
   category: string;
   categories: string[];
@@ -74,7 +76,9 @@ export type Tour = {
 };
 
 export type GolfCourse = {
+  id?: string;
   slug?: string;
+  originalSlug?: string;
   name: string;
   location: string;
   image: string;
@@ -90,7 +94,9 @@ export type GolfCourse = {
 };
 
 export type Experience = {
+  id?: string;
   slug?: string;
+  originalSlug?: string;
   title: Localized;
   text: Localized;
   description?: Localized;
@@ -102,7 +108,9 @@ export type Experience = {
 };
 
 export type Destination = {
+  id?: string;
   slug: string;
+  originalSlug?: string;
   name: Localized;
   region: string;
   image: string;
@@ -131,7 +139,9 @@ export type TeamMember = {
 };
 
 export type Post = {
+  id?: string;
   slug: string;
+  originalSlug?: string;
   title: Localized;
   category: string;
   date: string;

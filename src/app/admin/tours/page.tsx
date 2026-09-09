@@ -124,7 +124,10 @@ export default function AdminToursPage() {
   };
 
   const handleEdit = (tour: Tour) => {
-    setEditingTour(JSON.parse(JSON.stringify(tour)));
+    setEditingTour({
+      ...JSON.parse(JSON.stringify(tour)),
+      originalSlug: tour.slug,
+    });
     setIsModalOpen(true);
   };
 

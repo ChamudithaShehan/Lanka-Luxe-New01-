@@ -11,11 +11,24 @@ import {
   Check,
   X,
   Eye,
+  Tag,
+  Clock,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { AdminPagination } from "@/components/admin/AdminPagination";
+
+const experienceCategories = [
+  "Bespoke",
+  "Wildlife & Safari",
+  "Tea Country Living",
+  "Cultural Heritage",
+  "Ayurveda & Wellness",
+  "Ocean & Marine",
+  "Scenic Rail & Flight",
+];
 
 export default function AdminExperiencesPage() {
   const {
@@ -28,7 +41,7 @@ export default function AdminExperiencesPage() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingExp, setEditingExp] = useState<Experience | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+  const [deleteConfirmExp, setDeleteConfirmExp] = useState<Experience | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
 
@@ -41,7 +54,9 @@ export default function AdminExperiencesPage() {
     return (
       exp.title.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (exp.title.ko || "").includes(searchTerm) ||
-      (exp.text?.en && exp.text.en.toLowerCase().includes(searchTerm.toLowerCase()))
+      (exp.text?.en && exp.text.en.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (exp.category && exp.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (exp.location && exp.location.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
 
@@ -58,6 +73,9 @@ export default function AdminExperiencesPage() {
         en: "Bespoke Ocean & Island Safari",
         ko: "프라이빗 해양 & 섬 탐험",
       },
+      category: "Ocean & Marine",
+      duration: "Full Day",
+      location: "Mirissa Coast",
       text: {
         en: "Private catamaran charter, dolphin naturalists, and secluded sunset anchorages.",
         ko: "전용 카타마란 요트 차터와 돌고래 관찰, 한적한 일몰 감상.",
@@ -71,15 +89,33 @@ export default function AdminExperiencesPage() {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (index: number) => {
-    setEditingIndex(index);
-    setEditingExp(JSON.parse(JSON.stringify(experiences[index])));
+  const handleEdit = (exp: Experience) => {
+    const originalIndex = experiences.findIndex(
+      (e) => e.slug === exp.slug || e.title.en === exp.title.en
+    );
+    setEditingIndex(originalIndex !== -1 ? originalIndex : 0);
+    setEditingExp({
+      ...JSON.parse(JSON.stringify(exp)),
+      originalSlug: exp.slug,
+      category: exp.category || "Bespoke",
+      duration: exp.duration || "Full Day",
+      location: exp.location || "Sri Lanka",
+      text: {
+        en: exp.text?.en || exp.description?.en || "",
+        ko: exp.text?.ko || exp.description?.ko || "",
+      },
+    });
     setIsModalOpen(true);
   };
 
   const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingExp) return;
+
+    if (!editingExp.title.en.trim()) {
+      toast.error("Experience title in English is required");
+      return;
+    }
 
     if (editingIndex === -1) {
       const res = await addExperience(editingExp);
@@ -89,8 +125,8 @@ export default function AdminExperiencesPage() {
       } else {
         toast.error(res.error || "Failed to add experience to database.");
       }
-    } else if (editingIndex !== null) {
-      const res = await saveExperience(editingIndex, editingExp);
+    } else {
+      const res = await saveExperience(editingExp);
       if (res.success) {
         setIsModalOpen(false);
         toast.success(`Experience "${editingExp.title.en}" updated successfully!`);
@@ -100,10 +136,11 @@ export default function AdminExperiencesPage() {
     }
   };
 
-  const handleDelete = async (index: number) => {
-    const res = await deleteExperience(index);
+  const handleDelete = async (exp: Experience) => {
+    const target = exp.slug || exp.title.en;
+    const res = await deleteExperience(target);
     if (res.success) {
-      setDeleteConfirmIndex(null);
+      setDeleteConfirmExp(null);
       toast.success("Experience removed.");
     } else {
       toast.error(res.error || "Failed to delete experience from database.");
@@ -140,82 +177,104 @@ export default function AdminExperiencesPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search experiences by title, narrative..."
+            placeholder="Search experiences by title, category, location..."
             className="w-full px-4 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white placeholder-slate-500 focus:border-[#C8A45D] outline-none"
           />
+        </div>
+        <div className="text-xs text-slate-400 font-medium">
+          Total Experiences: <span className="text-[#C8A45D] font-bold">{experiences.length}</span>
         </div>
       </div>
 
       {/* Grid */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {paginatedExperiences.map((exp, idx) => {
-            const actualIndex = (currentPage - 1) * pageSize + idx;
-            return (
+          {paginatedExperiences.map((exp, idx) => (
             <div
-              key={exp.slug || actualIndex}
+              key={exp.slug || exp.id || idx}
               className="bg-[#0B1A30] border border-[#1B2D4A] hover:border-[#C8A45D]/40 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between group shadow-lg"
             >
-            <div>
-              {/* Cover Image */}
-              <div className="relative h-48 w-full bg-slate-800 overflow-hidden">
-                <img
-                  src={exp.image}
-                  alt={exp.title.en}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A30] via-transparent to-transparent opacity-80" />
-              </div>
-
-              {/* Content */}
-              <div className="p-5 space-y-2">
-                <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#C8A45D] transition-colors leading-snug">
-                  {exp.title.en}
-                </h3>
-                <div className="text-xs text-[#C8A45D] font-medium">
-                  {exp.title.ko}
+              <div>
+                {/* Cover Image */}
+                <div className="relative h-48 w-full bg-slate-800 overflow-hidden">
+                  <img
+                    src={exp.image}
+                    alt={exp.title.en}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A30] via-transparent to-transparent opacity-80" />
+                  {exp.category && (
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081426]/80 backdrop-blur-sm border border-[#C8A45D]/40 text-[10px] font-semibold text-[#C8A45D]">
+                      {exp.category}
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed pt-1">
-                  {exp.text?.en || exp.description?.en || ""}
-                </p>
-                <p className="text-xs text-slate-500 italic">
-                  {exp.text?.ko || exp.description?.ko || ""}
-                </p>
+
+                {/* Content */}
+                <div className="p-5 space-y-2">
+                  <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#C8A45D] transition-colors leading-snug">
+                    {exp.title.en}
+                  </h3>
+                  <div className="text-xs text-[#C8A45D] font-medium">
+                    {exp.title.ko}
+                  </div>
+
+                  {/* Metadata Chips */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1 pb-1">
+                    {exp.duration && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-300 bg-[#07111E] px-2 py-0.5 rounded-md border border-[#1B2D4A]">
+                        <Clock className="w-3 h-3 text-[#C8A45D]" />
+                        {exp.duration}
+                      </span>
+                    )}
+                    {exp.location && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-300 bg-[#07111E] px-2 py-0.5 rounded-md border border-[#1B2D4A]">
+                        <MapPin className="w-3 h-3 text-[#C8A45D]" />
+                        {exp.location}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-slate-400 leading-relaxed pt-1 line-clamp-3">
+                    {exp.text?.en || exp.description?.en || ""}
+                  </p>
+                  <p className="text-xs text-slate-500 italic line-clamp-2">
+                    {exp.text?.ko || exp.description?.ko || ""}
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions Bar */}
+              <div className="p-4 border-t border-[#1B2D4A] bg-[#081426]/50 flex items-center justify-between">
+                <Link
+                  href="/experiences"
+                  target="_blank"
+                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
+                >
+                  <Eye className="w-3.5 h-3.5 text-[#C8A45D]" />
+                  <span>View on Site</span>
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleEdit(exp)}
+                    className="px-3 py-1.5 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 hover:text-[#C8A45D] text-xs font-semibold border border-[#1B2D4A] flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>Edit</span>
+                  </button>
+
+                  <button
+                    onClick={() => setDeleteConfirmExp(exp)}
+                    className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/30 transition-colors cursor-pointer"
+                    title="Delete Experience"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Actions Bar */}
-            <div className="p-4 border-t border-[#1B2D4A] bg-[#081426]/50 flex items-center justify-between">
-              <Link
-                href="/experiences"
-                target="_blank"
-                className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
-              >
-                <Eye className="w-3.5 h-3.5 text-[#C8A45D]" />
-                <span>View on Site</span>
-              </Link>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleEdit(actualIndex)}
-                  className="px-3 py-1.5 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 hover:text-[#C8A45D] text-xs font-semibold border border-[#1B2D4A] flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span>Edit</span>
-                </button>
-
-                <button
-                  onClick={() => setDeleteConfirmIndex(actualIndex)}
-                  className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/30 transition-colors cursor-pointer"
-                  title="Delete Experience"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-            );
-          })}
+          ))}
         </div>
 
         {/* Pagination */}
@@ -242,7 +301,7 @@ export default function AdminExperiencesPage() {
                   {editingIndex !== -1 ? `Edit: ${editingExp.title.en}` : "Add New Experience"}
                 </h2>
                 <p className="text-xs text-slate-400">
-                  Configure experience headline, narrative, and photography.
+                  Configure experience headline, narrative, category, and photography.
                 </p>
               </div>
               <button
@@ -257,7 +316,7 @@ export default function AdminExperiencesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-300">
-                    Title (English)
+                    Title (English) *
                   </label>
                   <input
                     type="text"
@@ -287,9 +346,89 @@ export default function AdminExperiencesPage() {
                       })
                     }
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                    required
                   />
                 </div>
+              </div>
+
+              {/* Category, Duration & Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    list="exp-categories-list"
+                    value={editingExp.category || "Bespoke"}
+                    onChange={(e) =>
+                      setEditingExp({
+                        ...editingExp,
+                        category: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                  />
+                  <datalist id="exp-categories-list">
+                    {experienceCategories.map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Duration
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Full Day, 3 Hours"
+                    value={editingExp.duration || "Full Day"}
+                    onChange={(e) =>
+                      setEditingExp({
+                        ...editingExp,
+                        duration: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Yala, Sigiriya, Galle"
+                    value={editingExp.location || "Sri Lanka"}
+                    onChange={(e) =>
+                      setEditingExp({
+                        ...editingExp,
+                        location: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Slug Identifier */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  URL Slug Identifier
+                </label>
+                <input
+                  type="text"
+                  value={editingExp.slug || ""}
+                  onChange={(e) =>
+                    setEditingExp({
+                      ...editingExp,
+                      slug: e.target.value,
+                    })
+                  }
+                  placeholder="auto-generated from English title if blank"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                />
               </div>
 
               <ImageUpload
@@ -306,7 +445,7 @@ export default function AdminExperiencesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-300">
-                    Narrative (English)
+                    Narrative (English) *
                   </label>
                   <textarea
                     rows={3}
@@ -342,7 +481,6 @@ export default function AdminExperiencesPage() {
                       })
                     }
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
-                    required
                   />
                 </div>
               </div>
@@ -357,7 +495,7 @@ export default function AdminExperiencesPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-[#C8A45D] hover:bg-[#b5924d] text-[#081426] text-xs font-bold shadow-[0_4px_16px_rgba(200,164,93,0.3)] transition-all flex items-center gap-1.5"
+                  className="px-6 py-2.5 rounded-xl bg-[#C8A45D] hover:bg-[#b5924d] text-[#081426] text-xs font-bold shadow-[0_4px_16px_rgba(200,164,93,0.3)] transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
                   <span>Save Experience</span>
@@ -369,25 +507,25 @@ export default function AdminExperiencesPage() {
       )}
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmIndex !== null && (
+      {deleteConfirmExp && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#0B1A30] border border-red-500/40 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-slate-200">
             <h3 className="font-serif text-lg font-bold text-white">
               Delete Experience?
             </h3>
             <p className="text-xs text-slate-300">
-              Are you sure you want to remove this signature experience from the catalog?
+              Are you sure you want to remove &quot;{deleteConfirmExp.title.en}&quot; from the catalog?
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
-                onClick={() => setDeleteConfirmIndex(null)}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#12233D] text-slate-300"
+                onClick={() => setDeleteConfirmExp(null)}
+                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#12233D] text-slate-300 cursor-pointer"
               >
                 Cancel
               </button>
               <button
-                onClick={() => handleDelete(deleteConfirmIndex)}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                onClick={() => handleDelete(deleteConfirmExp)}
+                className="px-4 py-2 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white cursor-pointer"
               >
                 Delete
               </button>

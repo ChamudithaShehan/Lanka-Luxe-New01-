@@ -5,7 +5,9 @@ import { z } from "zod";
 import crypto from "crypto";
 
 const postSchema = z.object({
+  id: z.string().optional(),
   slug: z.string().min(1).max(100),
+  originalSlug: z.string().optional(),
   title: z.object({
     en: z.string().min(1).max(255),
     ko: z.string().optional().default(""),
@@ -39,45 +41,70 @@ export async function POST(req: NextRequest) {
     }
 
     const data = result.data;
-    const existing = await prisma.blogPost.findUnique({
-      where: { slug: data.slug },
-    });
-    const id = existing ? existing.id : `post_${crypto.randomUUID()}`;
+    const lookupSlug = data.originalSlug || data.slug;
+    let existing = null;
 
-    const saved = await prisma.blogPost.upsert({
-      where: { slug: data.slug },
-      create: {
-        id,
-        slug: data.slug,
-        titleEn: data.title.en,
-        titleKo: data.title.ko || data.title.en,
-        category: data.category,
-        author: "Iroshan Jayawickrame",
-        readTime: "5 min read",
-        publishedAt: data.date,
-        image: data.image,
-        excerptEn: data.excerpt.en,
-        excerptKo: data.excerpt.ko,
-        contentEn: data.content?.en || data.excerpt.en,
-        contentKo: data.content?.ko || data.excerpt.ko,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      update: {
-        titleEn: data.title.en,
-        titleKo: data.title.ko || data.title.en,
-        category: data.category,
-        publishedAt: data.date,
-        image: data.image,
-        excerptEn: data.excerpt.en,
-        excerptKo: data.excerpt.ko,
-        contentEn: data.content?.en || data.excerpt.en,
-        contentKo: data.content?.ko || data.excerpt.ko,
-        updatedAt: new Date(),
-      },
-    });
+    if (lookupSlug) {
+      existing = await prisma.blogPost.findUnique({
+        where: { slug: lookupSlug },
+      });
+    }
 
-    return NextResponse.json({ success: true, post: saved });
+    if (!existing && data.id) {
+      existing = await prisma.blogPost.findUnique({
+        where: { id: data.id },
+      });
+    }
+
+    if (!existing && data.title?.en) {
+      existing = await prisma.blogPost.findFirst({
+        where: { titleEn: data.title.en },
+      });
+    }
+
+    if (existing) {
+      const saved = await prisma.blogPost.update({
+        where: { id: existing.id },
+        data: {
+          slug: data.slug,
+          titleEn: data.title.en,
+          titleKo: data.title.ko || data.title.en,
+          category: data.category,
+          publishedAt: data.date,
+          image: data.image,
+          excerptEn: data.excerpt.en,
+          excerptKo: data.excerpt.ko,
+          contentEn: data.content?.en || data.excerpt.en,
+          contentKo: data.content?.ko || data.excerpt.ko,
+          updatedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({ success: true, post: saved });
+    } else {
+      const id = data.id || `post_${crypto.randomUUID()}`;
+      const saved = await prisma.blogPost.create({
+        data: {
+          id,
+          slug: data.slug,
+          titleEn: data.title.en,
+          titleKo: data.title.ko || data.title.en,
+          category: data.category,
+          author: "Iroshan Jayawickrame",
+          readTime: "5 min read",
+          publishedAt: data.date,
+          image: data.image,
+          excerptEn: data.excerpt.en,
+          excerptKo: data.excerpt.ko,
+          contentEn: data.content?.en || data.excerpt.en,
+          contentKo: data.content?.ko || data.excerpt.ko,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({ success: true, post: saved });
+    }
   } catch (error) {
     console.error("Admin save blog post error:", error);
     return NextResponse.json(
