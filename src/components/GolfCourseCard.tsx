@@ -65,7 +65,11 @@ export function GolfCourseCard({ course, className }: GolfCourseCardProps) {
           <div className="grid grid-cols-2 gap-2">
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium">
               <Moon className="w-3.5 h-3.5 text-[#C8A45D]" />
-              <span>{course.nights}N / {course.rounds} Rds</span>
+              <span>
+                {lang === "ko"
+                  ? `${course.nights}박 / ${course.rounds}라운드`
+                  : `${course.nights}N / ${course.rounds} Rds`}
+              </span>
             </div>
 
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium truncate">

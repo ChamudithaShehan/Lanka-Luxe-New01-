@@ -8,7 +8,7 @@ import { img } from "@/data/site";
 import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock, Camera, Sparkles } from "lucide-react";
 
 export function Footer() {
-  const { t, lang } = useI18n();
+  const { t, tl, lang } = useI18n();
   const { siteSettings, contact, gallery } = useContentStore();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
@@ -101,7 +101,7 @@ export function Footer() {
               <div className="absolute inset-0 bg-[#081A33]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-3 text-center backdrop-blur-xs">
                 <Camera className="w-6 h-6 text-gold mb-1.5 scale-75 group-hover:scale-100 transition-transform duration-500" />
                 <span className="text-[11px] font-semibold text-white line-clamp-1">
-                  {item.title?.en}
+                  {tl(item.title) || item.title?.en}
                 </span>
                 {item.location && (
                   <span className="text-[9px] text-mist/80 uppercase tracking-wider mt-0.5">
@@ -140,10 +140,11 @@ export function Footer() {
               <div>
                 <h3 className="font-display text-xl font-bold text-white tracking-wide">Lanka Luxe Journeys</h3>
                 <p className="text-xs text-[#C8A45D] font-medium tracking-wider uppercase mt-0.5">
-                  Curated Luxury Experiences in Sri Lanka
+                  {lang === "ko" ? "스리랑카 큐레이티드 럭셔리 여행" : "Curated Luxury Experiences in Sri Lanka"}
                 </p>
                 <div className="text-[11px] text-mist/70 mt-1">
-                  SLTDA Registered Guide Licence: <strong className="text-white">{siteSettings?.licenseNumber || "C-1734"}</strong>
+                  {lang === "ko" ? "스리랑카 관광청(SLTDA) 공인 가이드 라이선스: " : "SLTDA Registered Guide Licence: "}
+                  <strong className="text-white">{siteSettings?.licenseNumber || "C-1734"}</strong>
                 </div>
               </div>
             </div>

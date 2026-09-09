@@ -49,7 +49,15 @@ export default function GolfPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Play Asia's Most Scenic <span className="text-[#C8A45D]">Golf Fairways.</span>
+            {lang === "ko" ? (
+              <>
+                아시아에서 가장 아름다운 <span className="text-[#C8A45D]">골프 페어웨이를 누비다.</span>
+              </>
+            ) : (
+              <>
+                Play Asia's Most Scenic <span className="text-[#C8A45D]">Golf Fairways.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
@@ -153,7 +161,7 @@ export default function GolfPage() {
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
           <div className="mb-6">
             <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
-              FEATURED GOLF PACKAGE
+              {lang === "ko" ? "추천 골프 패키지" : "FEATURED GOLF PACKAGE"}
             </span>
           </div>
           <TourCard tour={golfTour} variant="horizontal" />
@@ -163,11 +171,17 @@ export default function GolfPage() {
       {/* The 5 Championship Courses Showcase */}
       <section id="courses" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28">
         <SectionHeader
-          eyebrow="Championship Venues"
+          eyebrow={lang === "ko" ? "챔피언십 코스" : "Championship Venues"}
           title={
-            <>
-              Sri Lanka's <span className="text-[#C8A45D]">5 Championship Courses</span>
-            </>
+            lang === "ko" ? (
+              <>
+                스리랑카 <span className="text-[#C8A45D]">5대 챔피언십 코스</span>
+              </>
+            ) : (
+              <>
+                Sri Lanka's <span className="text-[#C8A45D]">5 Championship Courses</span>
+              </>
+            )
           }
           subtitle={
             lang === "ko"
@@ -249,7 +263,7 @@ export default function GolfPage() {
       <section className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <div className="p-10 sm:p-14 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#C8A45D] block mb-2">
-            Custom Golf Groups
+            {lang === "ko" ? "골프 단체 맞춤 투어" : "Custom Golf Groups"}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] mb-4">
             {lang === "ko"

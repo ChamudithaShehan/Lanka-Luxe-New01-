@@ -5,6 +5,8 @@ import { z } from "zod";
 import crypto from "crypto";
 
 const golfSchema = z.object({
+  slug: z.string().optional(),
+  originalSlug: z.string().optional(),
   name: z.string().min(1).max(255),
   location: z.string().min(1).max(255),
   image: z.string().min(1),
@@ -32,19 +34,37 @@ export async function POST(req: NextRequest) {
     }
 
     const data = result.data;
-    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    const existing = await prisma.golfCourse.findFirst({
-      where: { OR: [{ slug }, { name: data.name }] },
-    });
+    const lookupSlug = data.originalSlug || data.slug;
+    let existing = null;
+
+    if (lookupSlug) {
+      existing = await prisma.golfCourse.findUnique({
+        where: { slug: lookupSlug },
+      });
+    }
+
+    if (!existing && data.name) {
+      existing = await prisma.golfCourse.findFirst({
+        where: { name: data.name },
+      });
+    }
+
+    const holesNum = parseInt(data.holes?.replace(/\D/g, "") || "18") || 18;
+    const targetSlug =
+      existing?.slug ||
+      data.slug ||
+      data.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
 
     const id = existing ? existing.id : `golf_${crypto.randomUUID()}`;
-    const holesNum = parseInt(data.holes?.replace(/\D/g, "") || "18") || 18;
 
     const saved = await prisma.golfCourse.upsert({
-      where: { slug: existing ? existing.slug : slug },
+      where: { slug: targetSlug },
       create: {
         id,
-        slug,
+        slug: targetSlug,
         name: data.name,
         location: data.location,
         holes: holesNum,
@@ -64,12 +84,14 @@ export async function POST(req: NextRequest) {
         name: data.name,
         location: data.location,
         holes: holesNum,
+        duration: `${data.nights} Nights`,
         rounds: data.rounds,
         nights: data.nights,
         image: data.image,
         textEn: data.text.en,
         textKo: data.text.ko,
         hotelPairing: data.hotel,
+        features: JSON.stringify([`${holesNum} holes`, data.location]),
         updatedAt: new Date(),
       },
     });
@@ -89,12 +111,17 @@ export async function DELETE(req: NextRequest) {
     await requireAdminSession();
     const { searchParams } = new URL(req.url);
     const name = searchParams.get("name");
+    const slug = searchParams.get("slug");
 
-    if (!name) {
-      return NextResponse.json({ error: "Course name is required" }, { status: 400 });
+    if (!name && !slug) {
+      return NextResponse.json({ error: "Course slug or name is required" }, { status: 400 });
     }
 
-    await prisma.golfCourse.deleteMany({ where: { name } });
+    if (slug) {
+      await prisma.golfCourse.deleteMany({ where: { slug } });
+    } else if (name) {
+      await prisma.golfCourse.deleteMany({ where: { name } });
+    }
     return NextResponse.json({ success: true, message: "Course deleted" });
   } catch (error) {
     console.error("Admin delete golf error:", error);

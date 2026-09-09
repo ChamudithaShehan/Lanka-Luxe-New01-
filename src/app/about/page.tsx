@@ -42,7 +42,15 @@ export default function AboutPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Private Travel Atelier of <span className="text-[#C8A45D]">Sri Lanka.</span>
+            {lang === "ko" ? (
+              <>
+                스리랑카 최고의 <span className="text-[#C8A45D]">프라이빗 여행 아틀리에</span>
+              </>
+            ) : (
+              <>
+                The Private Travel Atelier of <span className="text-[#C8A45D]">Sri Lanka.</span>
+              </>
+            )}
           </h1>
 
           <div className="max-w-4xl space-y-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">

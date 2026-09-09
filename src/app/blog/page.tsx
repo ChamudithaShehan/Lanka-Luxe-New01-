@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, getCategoryLabel } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { blogCategories } from "@/data/site";
 import { BlogCard } from "@/components/BlogCard";
@@ -63,7 +63,15 @@ export default function BlogPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Lanka Luxe <span className="text-[#C8A45D]">Journal.</span>
+            {lang === "ko" ? (
+              <>
+                란카 럭스 <span className="text-[#C8A45D]">공식 저널</span>
+              </>
+            ) : (
+              <>
+                The Lanka Luxe <span className="text-[#C8A45D]">Journal.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
@@ -88,7 +96,7 @@ export default function BlogPage() {
                   />
                   <div className="absolute top-4 left-4">
                     <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm">
-                      {t("blog.featured")} • {featured.category}
+                      {t("blog.featured")} • {getCategoryLabel(featured.category, lang)}
                     </span>
                   </div>
                 </div>
@@ -154,7 +162,7 @@ export default function BlogPage() {
                     : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
                 }`}
               >
-                {cat}
+                {cat === "All" ? t("tours.filterAll") : getCategoryLabel(cat, lang)}
               </button>
             ))}
           </div>

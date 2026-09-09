@@ -313,7 +313,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const target = golfCourses[index];
       if (!target) return { success: false, error: "Golf course not found." };
       try {
-        const res = await fetch(`/api/admin/golf?name=${encodeURIComponent(target.name)}`, {
+        const queryParams = new URLSearchParams();
+        if (target.slug) queryParams.set("slug", target.slug);
+        if (target.name) queryParams.set("name", target.name);
+        const res = await fetch(`/api/admin/golf?${queryParams.toString()}`, {
           method: "DELETE",
         });
         const data = await res.json();

@@ -99,7 +99,15 @@ export default function ToursPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-4">
-            Signature Luxury <span className="text-[#C8A45D]">Journeys.</span>
+            {lang === "ko" ? (
+              <>
+                시그니처 <span className="text-[#C8A45D]">럭셔리 여정</span>
+              </>
+            ) : (
+              <>
+                Signature Luxury <span className="text-[#C8A45D]">Journeys.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-2xl leading-relaxed mb-8">

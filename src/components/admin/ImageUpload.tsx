@@ -22,6 +22,7 @@ interface ImageUploadProps {
   required?: boolean;
   aspectRatio?: "square" | "video" | "wide" | "auto";
   helpText?: string;
+  allowUpload?: boolean;
 }
 
 export function ImageUpload({
@@ -32,8 +33,9 @@ export function ImageUpload({
   required = false,
   aspectRatio = "video",
   helpText,
+  allowUpload = true,
 }: ImageUploadProps) {
-  const [mode, setMode] = useState<"upload" | "url">("upload");
+  const [mode, setMode] = useState<"upload" | "url">(allowUpload ? "upload" : "url");
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +50,7 @@ export function ImageUpload({
           : "aspect-auto max-h-60";
 
   const handleFileUpload = async (file: File) => {
-    if (!file) return;
+    if (!file || !allowUpload) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
@@ -67,6 +69,7 @@ export function ImageUpload({
 
     try {
       const formData = new FormData();
+      formData.append("image", file);
       formData.append("file", file);
       formData.append("name", file.name.replace(/\.[^/.]+$/, ""));
 
@@ -124,30 +127,34 @@ export function ImageUpload({
           {label} {required && <span className="text-red-400">*</span>}
         </label>
 
-        <div className="flex items-center bg-[#07111E] rounded-lg p-0.5 border border-[#1B2D4A] text-[10px]">
-          <button
-            type="button"
-            onClick={() => setMode("upload")}
-            className={`px-2.5 py-1 rounded-md transition-all font-medium flex items-center gap-1 ${mode === "upload"
-                ? "bg-[#C8A45D] text-[#081A33] font-bold shadow-xs"
-                : "text-slate-400 hover:text-white"
-              }`}
-          >
-            <UploadCloud className="w-3 h-3" />
-            <span>ImageBB Upload</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("url")}
-            className={`px-2.5 py-1 rounded-md transition-all font-medium flex items-center gap-1 ${mode === "url"
-                ? "bg-[#C8A45D] text-[#081A33] font-bold shadow-xs"
-                : "text-slate-400 hover:text-white"
-              }`}
-          >
-            <LinkIcon className="w-3 h-3" />
-            <span>Direct URL</span>
-          </button>
-        </div>
+        {allowUpload ? (
+          <div className="flex items-center bg-[#07111E] rounded-lg p-0.5 border border-[#1B2D4A] text-[10px]">
+            <button
+              type="button"
+              onClick={() => setMode("upload")}
+              className={`px-2.5 py-1 rounded-md transition-all font-medium flex items-center gap-1 ${mode === "upload"
+                  ? "bg-[#C8A45D] text-[#081A33] font-bold shadow-xs"
+                  : "text-slate-400 hover:text-white"
+                }`}
+            >
+              <UploadCloud className="w-3 h-3" />
+              <span>ImageBB Upload</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("url")}
+              className={`px-2.5 py-1 rounded-md transition-all font-medium flex items-center gap-1 ${mode === "url"
+                  ? "bg-[#C8A45D] text-[#081A33] font-bold shadow-xs"
+                  : "text-slate-400 hover:text-white"
+                }`}
+            >
+              <LinkIcon className="w-3 h-3" />
+              <span>Direct URL</span>
+            </button>
+          </div>
+        ) : (
+          <span className="text-[10px] text-slate-400 font-medium">Image URL Only</span>
+        )}
       </div>
 
       {/* Hidden File Input */}

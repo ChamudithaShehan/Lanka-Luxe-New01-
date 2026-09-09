@@ -292,3 +292,48 @@ export function useI18n() {
   if (!ctx) throw new Error("useI18n must be used inside I18nProvider");
   return ctx;
 }
+
+export function getCategoryLabel(cat: string, lang: Lang): string {
+  if (!cat) return "";
+  if (cat === "All") return lang === "ko" ? "전체 보기" : "All Journeys";
+  if (lang === "ko") {
+    switch (cat.toLowerCase().trim()) {
+      case "signature journeys":
+      case "luxury":
+        return "시그니처 여정";
+      case "golf & leisure":
+      case "golf":
+        return "골프 & 휴양";
+      case "wildlife & nature":
+      case "wildlife & safari":
+      case "wildlife":
+        return "사파리 & 야생";
+      case "culture & heritage":
+      case "culture":
+        return "문화 & 유산";
+      case "honeymoon & romance":
+      case "honeymoon":
+        return "허니문 & 로맨스";
+      case "wellness & ayurveda":
+      case "wellness":
+        return "웰니스 & 아유르베다";
+      case "family & group":
+      case "family":
+        return "가족 & 그룹";
+      case "coastal & beaches":
+      case "coastal":
+      case "beaches":
+        return "해변 & 휴양";
+      case "highlands & tea":
+      case "highlands":
+        return "고산지대 & 차밭";
+      case "scenic golf":
+        return "시닉 골프";
+      case "luxury resorts":
+        return "럭셔리 리조트";
+      default:
+        return cat;
+    }
+  }
+  return cat;
+}

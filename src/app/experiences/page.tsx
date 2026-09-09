@@ -50,7 +50,15 @@ export default function ExperiencesPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Extraordinary Island <span className="text-[#C8A45D]">Immersions.</span>
+            {lang === "ko" ? (
+              <>
+                스리랑카에서 만나는 <span className="text-[#C8A45D]">특별한 시그니처 체험</span>
+              </>
+            ) : (
+              <>
+                Extraordinary Island <span className="text-[#C8A45D]">Immersions.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">

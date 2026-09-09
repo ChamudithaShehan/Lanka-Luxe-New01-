@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { type Tour } from "@/data/site";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, getCategoryLabel } from "@/lib/i18n";
 import { Calendar, MapPin, Star, ArrowRight } from "lucide-react";
 import { useInquiry } from "@/lib/inquiry-context";
 
@@ -32,7 +32,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
           />
           <div className="absolute top-4 left-4">
             <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-[#081A33] shadow-sm">
-              {tour.category}
+              {getCategoryLabel(tour.category, lang)}
             </span>
           </div>
         </div>
@@ -62,10 +62,10 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                 <Calendar className="w-4 h-4 text-[#C8A45D]" />
                 <div>
                   <span className="block text-[0.625rem] text-slate-400 font-normal uppercase">
-                    Duration
+                    {lang === "ko" ? "여행 기간" : "Duration"}
                   </span>
                   <span>
-                    {tour.days} Days - {tour.days - 1} Nights
+                    {lang === "ko" ? `${tour.days}일 ${tour.days - 1}박` : `${tour.days} Days - ${tour.days - 1} Nights`}
                   </span>
                 </div>
               </div>
@@ -81,7 +81,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                     {tour.price}
                   </span>
                   <span className="text-xs text-slate-400 block font-normal">
-                    / Traveler
+                    {lang === "ko" ? "/ 1인 기준" : "/ Traveler"}
                   </span>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                 href={`/tours/${tour.slug}`}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm"
               >
-                <span>Read more</span>
+                <span>{lang === "ko" ? "자세히 보기" : "Read more"}</span>
                 <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
                   <ArrowRight className="w-3 h-3" />
                 </span>
@@ -134,7 +134,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
         />
         <div className="absolute top-4 left-4">
           <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm">
-            {tour.category}
+            {getCategoryLabel(tour.category, lang)}
           </span>
         </div>
       </div>
@@ -167,7 +167,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium">
               <Calendar className="w-3.5 h-3.5 text-[#C8A45D]" />
               <span>
-                {tour.days} Days - {tour.days - 1} Nights
+                {lang === "ko" ? `${tour.days}일 ${tour.days - 1}박` : `${tour.days} Days - ${tour.days - 1} Nights`}
               </span>
             </div>
 
@@ -184,7 +184,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                 {tour.price}
               </span>
               <span className="text-[0.6875rem] text-slate-400 ml-1">
-                / traveler
+                {lang === "ko" ? "/ 1인 기준" : "/ traveler"}
               </span>
             </div>
 

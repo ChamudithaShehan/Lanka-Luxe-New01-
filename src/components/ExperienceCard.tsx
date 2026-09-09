@@ -32,7 +32,7 @@ export function ExperienceCard({ experience, index, className }: ExperienceCardP
         <div className="absolute top-4 left-4">
           <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-[#C8A45D]" />
-            Experience 0{index + 1}
+            {lang === "ko" ? `시그니처 0${index + 1}` : `Experience 0${index + 1}`}
           </span>
         </div>
       </div>

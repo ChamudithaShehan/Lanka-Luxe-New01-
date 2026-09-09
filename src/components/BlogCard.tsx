@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { type Post } from "@/data/site";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, getCategoryLabel } from "@/lib/i18n";
 import { Calendar, ArrowRight } from "lucide-react";
 
 interface BlogCardProps {
@@ -30,7 +30,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
 
         <div className="absolute top-4 left-4">
           <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm">
-            {post.category}
+            {getCategoryLabel(post.category, lang)}
           </span>
         </div>
       </div>

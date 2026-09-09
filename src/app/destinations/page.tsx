@@ -72,7 +72,15 @@ export default function DestinationsPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            The Island of <span className="text-[#C8A45D]">Serendipity.</span>
+            {lang === "ko" ? (
+              <>
+                찬란한 <span className="text-[#C8A45D]">스리랑카의 여행지</span>
+              </>
+            ) : (
+              <>
+                The Island of <span className="text-[#C8A45D]">Serendipity.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
@@ -86,11 +94,17 @@ export default function DestinationsPage() {
       {/* Destination Grid with Filter */}
       <section id="destinations-directory" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-28 scroll-mt-28">
         <SectionHeader
-          eyebrow="Directory"
+          eyebrow={lang === "ko" ? "여행지 가이드" : "Directory"}
           title={
-            <>
-              All Island <span className="text-[#C8A45D]">Destinations</span>
-            </>
+            lang === "ko" ? (
+              <>
+                스리랑카 전역 <span className="text-[#C8A45D]">인기 여행지</span>
+              </>
+            ) : (
+              <>
+                All Island <span className="text-[#C8A45D]">Destinations</span>
+              </>
+            )
           }
         />
 
@@ -120,7 +134,17 @@ export default function DestinationsPage() {
                   : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
               }`}
             >
-              {reg}
+              {reg === "All"
+                ? (lang === "ko" ? "전체 지역" : "All")
+                : lang === "ko"
+                ? (reg === "Cultural Triangle" ? "문화 삼각지대"
+                  : reg === "Hill Country" ? "고산 차밭 지대"
+                  : reg === "South Coast" ? "남부 해안"
+                  : reg === "West Coast" ? "서부 해안"
+                  : reg === "Southern Wilderness" ? "남부 사파리/야생"
+                  : reg === "East Coast" ? "동부 해안"
+                  : reg)
+                : reg}
             </button>
           ))}
         </div>

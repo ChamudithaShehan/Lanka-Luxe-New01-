@@ -123,13 +123,17 @@ export async function POST(req: NextRequest) {
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
-      const file = formData.get("image") as File | null;
+      const file = (formData.get("image") || formData.get("file")) as File | null;
       const customName = formData.get("name") as string | null;
-      if (customName) imageName = customName;
+      if (customName) {
+        imageName = customName;
+      } else if (file && file.name) {
+        imageName = file.name.replace(/\.[^/.]+$/, "");
+      }
 
       if (!file) {
         return NextResponse.json(
-          { error: "No image file provided in form data ('image' field required)." },
+          { error: "No image file provided in form data ('image' or 'file' field required)." },
           { status: 400 }
         );
       }

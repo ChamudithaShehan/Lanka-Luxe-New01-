@@ -239,12 +239,12 @@ export function InquiryForm({
               className={inputStyles}
             >
               <option value="">{lang === "ko" ? "기간 선택..." : "Duration..."}</option>
-              <option value="1-3 Days">1–3 Days</option>
-              <option value="4-7 Days">4–7 Days</option>
-              <option value="8-10 Days">8–10 Days</option>
-              <option value="11-14 Days">11–14 Days</option>
-              <option value="15+ Days">15+ Days</option>
-              <option value="Flexible">Flexible</option>
+              <option value="1-3 Days">{lang === "ko" ? "1-3일" : "1–3 Days"}</option>
+              <option value="4-7 Days">{lang === "ko" ? "4-7일" : "4–7 Days"}</option>
+              <option value="8-10 Days">{lang === "ko" ? "8-10일" : "8–10 Days"}</option>
+              <option value="11-14 Days">{lang === "ko" ? "11-14일" : "11–14 Days"}</option>
+              <option value="15+ Days">{lang === "ko" ? "15일 이상" : "15+ Days"}</option>
+              <option value="Flexible">{lang === "ko" ? "일정 유동적" : "Flexible"}</option>
             </select>
           </div>
         </div>
@@ -256,11 +256,11 @@ export function InquiryForm({
             onChange={(e) => setFormData({ ...formData, travelers: e.target.value })}
             className={inputStyles}
           >
-            <option value="1">1 Guest (Solo)</option>
-            <option value="2">2 Guests (Couple)</option>
-            <option value="3-4">3–4 Guests (Family / Small Group)</option>
-            <option value="5-8">5–8 Guests (Golf / Private Group)</option>
-            <option value="8+">8+ Guests (Corporate / Charter)</option>
+            <option value="1">{lang === "ko" ? "1인 (나홀로 여행)" : "1 Guest (Solo)"}</option>
+            <option value="2">{lang === "ko" ? "2인 (커플 / 부부)" : "2 Guests (Couple)"}</option>
+            <option value="3-4">{lang === "ko" ? "3–4인 (가족 / 소그룹)" : "3–4 Guests (Family / Small Group)"}</option>
+            <option value="5-8">{lang === "ko" ? "5–8인 (골프 / 프라이빗 단체)" : "5–8 Guests (Golf / Private Group)"}</option>
+            <option value="8+">{lang === "ko" ? "8인 이상 (기업 / 전세 투어)" : "8+ Guests (Corporate / Charter)"}</option>
           </select>
         </div>
       </div>
@@ -291,10 +291,10 @@ export function InquiryForm({
             onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
             className={inputStyles}
           >
-            <option value="ultra">Ultra-Luxury (Aman, Tea Trails, Wild Coast)</option>
-            <option value="5star">5-Star Boutique & Heritage Resorts</option>
-            <option value="golf-resort">Championship Golf & Spa Resorts</option>
-            <option value="bespoke">Bespoke Mix (Villas + Tented Safaris)</option>
+            <option value="ultra">{lang === "ko" ? "최고급 럭셔리 (아만, 티 트레일스, 와일드 코스트 등)" : "Ultra-Luxury (Aman, Tea Trails, Wild Coast)"}</option>
+            <option value="5star">{lang === "ko" ? "5성급 부티크 & 헤리티지 리조트" : "5-Star Boutique & Heritage Resorts"}</option>
+            <option value="golf-resort">{lang === "ko" ? "챔피언십 골프 & 스파 리조트" : "Championship Golf & Spa Resorts"}</option>
+            <option value="bespoke">{lang === "ko" ? "맞춤형 조합 (프라이빗 빌라 + 텐티드 사파리)" : "Bespoke Mix (Villas + Tented Safaris)"}</option>
           </select>
         </div>
       </div>
@@ -308,9 +308,9 @@ export function InquiryForm({
           <button
             type="button"
             onClick={() => setFormData({ ...formData, tour: "" })}
-            className="text-slate-400 hover:text-slate-700 underline ml-2 text-xs"
+            className="text-slate-400 hover:text-slate-700 underline ml-2 text-xs cursor-pointer"
           >
-            Clear
+            {lang === "ko" ? "취소" : "Clear"}
           </button>
         </div>
       )}

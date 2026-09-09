@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, getCategoryLabel } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { useContentStore } from "@/lib/content-store";
 import {
@@ -176,7 +176,7 @@ export default function HomePage() {
               {/* Main Heading */}
               <Reveal variant="fade-up" delay={0.15}>
                 <h1 className="text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight">
-                  DISCOVER SRI LANKA <br />
+                  {lang === "ko" ? "스리랑카를 발견하다" : "DISCOVER SRI LANKA"} <br />
                   <span className="text-[#C8A45D] font-normal italic font-sans lowercase">
                     {lang === "ko" ? "현지 전문가와 함께." : "with a local expert."}
                   </span>
@@ -411,7 +411,7 @@ export default function HomePage() {
               </span>
               
               <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-display font-medium text-[#081A33] leading-[1.05] mt-4 mb-6">
-                Discover Sri Lanka <br className="hidden xl:block" />
+                {lang === "ko" ? "스리랑카를 발견하다" : "Discover Sri Lanka"} <br className="hidden xl:block" />
                 <span className="text-[#C8A45D]">{lang === "ko" ? "현지 전문가와 함께" : "with a local expert"}</span>
               </h2>
               
@@ -427,25 +427,33 @@ export default function HomePage() {
                   <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Globe2 className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-semibold text-[#081A33]">Global Destinations</span>
+                  <span className="text-sm font-semibold text-[#081A33]">
+                    {lang === "ko" ? "글로벌 여행지" : "Global Destinations"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Users className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-semibold text-[#081A33]">Expert Guidance</span>
+                  <span className="text-sm font-semibold text-[#081A33]">
+                    {lang === "ko" ? "전문가 가이드" : "Expert Guidance"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-semibold text-[#081A33]">Safe Travels</span>
+                  <span className="text-sm font-semibold text-[#081A33]">
+                    {lang === "ko" ? "안전한 여정" : "Safe Travels"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-full bg-[#C8A45D]/10 flex items-center justify-center text-[#C8A45D] shrink-0">
                     <Building2 className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-semibold text-[#081A33]">Luxury Lodging</span>
+                  <span className="text-sm font-semibold text-[#081A33]">
+                    {lang === "ko" ? "럭셔리 숙소" : "Luxury Lodging"}
+                  </span>
                 </div>
               </div>
 
@@ -462,7 +470,9 @@ export default function HomePage() {
                     <div className="text-3xl font-bold text-[#081A33] leading-none flex items-baseline gap-1">
                       <Counter value={9500} />+
                     </div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mt-1.5">Positive Reviews</div>
+                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mt-1.5">
+                      {lang === "ko" ? "만족 후기" : "Positive Reviews"}
+                    </div>
                   </div>
                 </div>
                 
@@ -471,7 +481,7 @@ export default function HomePage() {
                   href="/tours"
                   className="inline-flex items-center justify-between gap-4 pl-7 pr-1.5 py-1.5 rounded-full bg-[#0B1F3A] text-white font-bold text-sm hover:bg-[#08172b] transition-all duration-300 shadow-[0_8px_20px_rgba(11,31,58,0.3)] group w-fit"
                 >
-                  <span>Read more</span>
+                  <span>{lang === "ko" ? "자세히 보기" : "Read more"}</span>
                   <span className="w-9 h-9 rounded-full bg-white text-[#C8A45D] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
                     <ArrowRight className="w-4 h-4" />
                   </span>
@@ -525,7 +535,7 @@ export default function HomePage() {
             <div className="lg:col-span-7 space-y-6 text-left">
               <Reveal variant="slide-right">
                 <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
-                  WHY CHOOSE LANKA LUXE
+                  {lang === "ko" ? "란카 럭스를 선택하는 이유" : "WHY CHOOSE LANKA LUXE"}
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium text-[#081A33] leading-tight">
                   {lang === "ko"
@@ -579,12 +589,21 @@ export default function HomePage() {
           <div className="lg:col-span-5 lg:sticky lg:top-32">
             <Reveal variant="slide-left" once={false} className="space-y-5 text-left">
               <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
-                CHOOSE YOUR PLACE
+                {lang === "ko" ? "원하는 여행지를 선택하세요" : "CHOOSE YOUR PLACE"}
               </span>
 
               <h2 className="text-4xl sm:text-5xl font-display font-medium text-[#081A33] leading-tight">
-                Discover dream <br />
-                <span className="text-[#C8A45D]">destinations</span>
+                {lang === "ko" ? (
+                  <>
+                    꿈꿔온 <br />
+                    <span className="text-[#C8A45D]">여행지를 만나다</span>
+                  </>
+                ) : (
+                  <>
+                    Discover dream <br />
+                    <span className="text-[#C8A45D]">destinations</span>
+                  </>
+                )}
               </h2>
 
               <p className="text-sm sm:text-base text-slate-500 font-normal leading-relaxed">
@@ -686,9 +705,15 @@ export default function HomePage() {
         <SectionHeader
           eyebrow={t("journeys.eyebrow")}
           title={
-            <>
-              Curated <span className="text-[#C8A45D]">Journeys</span>
-            </>
+            lang === "ko" ? (
+              <>
+                엄선된 <span className="text-[#C8A45D]">시그니처 여정</span>
+              </>
+            ) : (
+              <>
+                Curated <span className="text-[#C8A45D]">Journeys</span>
+              </>
+            )
           }
           subtitle={
             lang === "ko"
@@ -708,7 +733,7 @@ export default function HomePage() {
                   : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
                 }`}
             >
-              {cat === "All" ? t("tours.filterAll") : cat}
+              {cat === "All" ? t("tours.filterAll") : getCategoryLabel(cat, lang)}
             </button>
           ))}
         </div>
@@ -749,8 +774,17 @@ export default function HomePage() {
                 </span>
 
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#081A33] leading-tight">
-                  Play the World's Most Scenic{" "}
-                  <span className="text-[#C8A45D]">Golf Journey.</span>
+                  {lang === "ko" ? (
+                    <>
+                      세상에서 가장 아름다운{" "}
+                      <span className="text-[#C8A45D]">골프 코스를 만나다.</span>
+                    </>
+                  ) : (
+                    <>
+                      Play the World's Most Scenic{" "}
+                      <span className="text-[#C8A45D]">Golf Journey.</span>
+                    </>
+                  )}
                 </h2>
 
                 <p className="text-base text-slate-600 leading-relaxed">
@@ -842,9 +876,15 @@ export default function HomePage() {
           <SectionHeader
             eyebrow={t("exp.eyebrow")}
             title={
-              <>
-                Signature <span className="text-[#C8A45D]">Experiences</span>
-              </>
+              lang === "ko" ? (
+                <>
+                  특별한 <span className="text-[#C8A45D]">시그니처 체험</span>
+                </>
+              ) : (
+                <>
+                  Signature <span className="text-[#C8A45D]">Experiences</span>
+                </>
+              )
             }
             subtitle={
               lang === "ko"
@@ -876,9 +916,15 @@ export default function HomePage() {
         <SectionHeader
           eyebrow={t("why.eyebrow")}
           title={
-            <>
-              Why Travel With <span className="text-[#C8A45D]">Lanka Luxe?</span>
-            </>
+            lang === "ko" ? (
+              <>
+                왜 <span className="text-[#C8A45D]">란카 럭스</span>인가요?
+              </>
+            ) : (
+              <>
+                Why Travel With <span className="text-[#C8A45D]">Lanka Luxe?</span>
+              </>
+            )
           }
           subtitle={
             lang === "ko"
@@ -914,9 +960,15 @@ export default function HomePage() {
           <SectionHeader
             eyebrow={t("reviews.eyebrow")}
             title={
-              <>
-                Guest <span className="text-[#C8A45D]">Stories</span>
-              </>
+              lang === "ko" ? (
+                <>
+                  여행자들의 <span className="text-[#C8A45D]">생생한 후기</span>
+                </>
+              ) : (
+                <>
+                  Guest <span className="text-[#C8A45D]">Stories</span>
+                </>
+              )
             }
             subtitle={
               lang === "ko"
@@ -946,11 +998,17 @@ export default function HomePage() {
       {/* 10. THE JOURNAL / LATEST STORIES */}
       <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <SectionHeader
-          eyebrow="Editorial"
+          eyebrow={lang === "ko" ? "칼럼 & 인사이트" : "Editorial"}
           title={
-            <>
-              The <span className="text-[#C8A45D]">Journal</span>
-            </>
+            lang === "ko" ? (
+              <>
+                스리랑카 <span className="text-[#C8A45D]">저널</span>
+              </>
+            ) : (
+              <>
+                The <span className="text-[#C8A45D]">Journal</span>
+              </>
+            )
           }
           subtitle={
             lang === "ko"
@@ -991,9 +1049,15 @@ export default function HomePage() {
           <SectionHeader
             eyebrow={t("contact.eyebrow")}
             title={
-              <>
-                Let's Plan Your <span className="text-[#C8A45D]">Journey</span>
-              </>
+              lang === "ko" ? (
+                <>
+                  스리랑카 여행 <span className="text-[#C8A45D]">맞춤 상담</span>
+                </>
+              ) : (
+                <>
+                  Let's Plan Your <span className="text-[#C8A45D]">Journey</span>
+                </>
+              )
             }
             subtitle={t("contact.reassure")}
           />

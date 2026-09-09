@@ -71,9 +71,13 @@ export default function AdminGolfPage() {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (index: number) => {
-    setEditingIndex(index);
-    setEditingCourse(JSON.parse(JSON.stringify(golfCourses[index])));
+  const handleEdit = (course: GolfCourse) => {
+    const originalIndex = golfCourses.findIndex((c) => c.slug === course.slug);
+    setEditingIndex(originalIndex !== -1 ? originalIndex : 0);
+    setEditingCourse({
+      ...JSON.parse(JSON.stringify(course)),
+      originalSlug: course.slug,
+    } as any);
     setIsModalOpen(true);
   };
 
@@ -220,7 +224,7 @@ export default function AdminGolfPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleEdit(actualIndex)}
+                  onClick={() => handleEdit(course)}
                   className="px-3 py-1.5 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 hover:text-[#C8A45D] text-xs font-semibold border border-[#1B2D4A] flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -228,7 +232,10 @@ export default function AdminGolfPage() {
                 </button>
 
                 <button
-                  onClick={() => setDeleteConfirmIndex(actualIndex)}
+                  onClick={() => {
+                    const originalIndex = golfCourses.findIndex((c) => c.slug === course.slug);
+                    setDeleteConfirmIndex(originalIndex !== -1 ? originalIndex : actualIndex);
+                  }}
                   className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/30 transition-colors cursor-pointer"
                   title="Delete Golf Course"
                 >
@@ -392,7 +399,9 @@ export default function AdminGolfPage() {
                 label="Golf Course Image"
                 required
                 aspectRatio="video"
-                helpText="Upload a championship course photo directly to ImageBB or provide an image URL."
+                allowUpload={false}
+                placeholder="https://images.unsplash.com/... or /hero-elephant.jpg"
+                helpText="Direct image URL only. File uploading is disabled for Golf Packages as requested."
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

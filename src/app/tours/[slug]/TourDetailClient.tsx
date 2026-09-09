@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, getCategoryLabel } from "@/lib/i18n";
 import { useInquiry } from "@/lib/inquiry-context";
 import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "@/components/LuxuryButton";
@@ -89,7 +89,7 @@ export function TourDetailClient() {
               />
               <div className="absolute top-4 left-4">
                 <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#081A33] shadow-sm">
-                  {tour.category}
+                  {getCategoryLabel(tour.category, lang)}
                 </span>
               </div>
             </div>
@@ -162,15 +162,15 @@ export function TourDetailClient() {
               <div className="space-y-2 text-xs text-slate-600 font-medium">
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>Private Chauffeur & Luxury Fleet</span>
+                  <span>{lang === "ko" ? "전담 의전 기사 & 최고급 전용 차량" : "Private Chauffeur & Luxury Fleet"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>5-Star Boutique & Heritage Stays</span>
+                  <span>{lang === "ko" ? "5성급 부티크 & 헤리티지 숙소" : "5-Star Boutique & Heritage Stays"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>24/7 Bilingual Concierge (EN / KO)</span>
+                  <span>{lang === "ko" ? "24시간 1:1 컨시어지 케어 (한국어 / 영어)" : "24/7 Bilingual Concierge (EN / KO)"}</span>
                 </div>
               </div>
 
@@ -224,7 +224,7 @@ export function TourDetailClient() {
                   {t("tour.itinerary")}
                 </h2>
                 <span className="text-xs font-semibold text-[#C8A45D] uppercase">
-                  {tour.days} Days Total
+                  {lang === "ko" ? `총 ${tour.days}일 여정` : `${tour.days} Days Total`}
                 </span>
               </div>
 
@@ -246,7 +246,7 @@ export function TourDetailClient() {
                           </span>
                           <div>
                             <span className="text-[0.625rem] font-semibold text-[#C8A45D] uppercase block">
-                              Day {item.day}
+                              {lang === "ko" ? `${item.day}일차` : `Day ${item.day}`}
                             </span>
                             <h3 className="text-base sm:text-lg text-[#081A33] font-bold">
                               {item.title}
@@ -371,9 +371,15 @@ export function TourDetailClient() {
         <SectionHeader
           eyebrow="Collection"
           title={
-            <>
-              Other Curated <span className="text-[#C8A45D]">Journeys</span>
-            </>
+            lang === "ko" ? (
+              <>
+                다른 추천 <span className="text-[#C8A45D]">여정 둘러보기</span>
+              </>
+            ) : (
+              <>
+                Other Curated <span className="text-[#C8A45D]">Journeys</span>
+              </>
+            )
           }
         />
 
