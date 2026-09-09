@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useContentStore } from "@/lib/content-store";
 import {
   Settings,
@@ -13,6 +14,9 @@ import {
   Check,
   User,
   Award,
+  KeyRound,
+  Database,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -51,6 +55,34 @@ export default function AdminSettingsPage() {
             Configure founder credentials (SLTDA Licence C-1734), contact channels, and homepage headlines.
           </p>
         </div>
+      </div>
+
+      {/* Security & Database Backup Quick Access Banner */}
+      <div className="bg-gradient-to-r from-[#0B1A30] via-[#10223D] to-[#0B1A30] border border-[#C8A45D]/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-3.5">
+          <div className="p-2.5 rounded-xl bg-[#C8A45D]/15 text-[#C8A45D]">
+            <KeyRound className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+              <span>Admin Accounts, Password Management & Database Backups</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#C8A45D]/20 text-[#C8A45D]">
+                Security Center
+              </span>
+            </div>
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+              Add new admins, change your login password, or download full database JSON/MySQL backup snapshots.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          href="/admin/admins"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C8A45D] hover:bg-[#b5924d] text-[#081426] font-bold text-xs shadow-md transition-all self-start sm:self-auto shrink-0"
+        >
+          <span>Open Security Console</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       <form onSubmit={handleSave} className="space-y-8">

@@ -19,6 +19,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -32,6 +33,7 @@ const navItems = [
   { href: "/admin/gallery", label: "Gallery & Visuals", icon: Images },
   { href: "/admin/blog", label: "Journal & Blog", icon: BookOpen },
   { href: "/admin/settings", label: "Site & Founder Settings", icon: Settings },
+  { href: "/admin/admins", label: "Admins & Security", icon: ShieldCheck },
 ];
 
 export default function AdminLayout({
@@ -43,6 +45,11 @@ export default function AdminLayout({
   const router = useRouter();
   const { inquiries, siteSettings } = useContentStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    username: string;
+    name: string;
+  } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // If on /admin/login, don't wrap with admin chrome
@@ -64,6 +71,7 @@ export default function AdminLayout({
         if (isMounted) {
           if (res.ok && data.authenticated && data.user?.role === "admin") {
             setIsAuthenticated(true);
+            setCurrentUser(data.user);
           } else {
             setIsAuthenticated(false);
             router.replace("/admin/login");
@@ -206,16 +214,22 @@ export default function AdminLayout({
         {/* User Info & Footer Actions */}
         <div className="p-4 border-t border-[#1B2D4A] space-y-3 bg-[#081426]/60">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-[#C8A45D]/20 border border-[#C8A45D]/40 flex items-center justify-center text-[#C8A45D] font-serif font-bold text-xs">
-              IJ
+            <div className="w-8 h-8 rounded-full bg-[#C8A45D]/20 border border-[#C8A45D]/40 flex items-center justify-center text-[#C8A45D] font-serif font-bold text-xs uppercase">
+              {(currentUser?.name || siteSettings.founderName || "Admin")
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")}
             </div>
             <div className="overflow-hidden">
               <div className="text-xs font-semibold text-white truncate">
-                {siteSettings.founderName}
+                {currentUser?.name || siteSettings.founderName}
               </div>
               <div className="text-[10px] text-slate-400 flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 text-[#C8A45D]" />
-                <span>SLTDA {siteSettings.licenseNumber}</span>
+                <span className="truncate">
+                  {currentUser?.username ? `@${currentUser.username} • Admin` : `SLTDA ${siteSettings.licenseNumber}`}
+                </span>
               </div>
             </div>
           </div>
