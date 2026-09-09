@@ -1,7 +1,22 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+function getConnectionUrl() {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+  const user = process.env.DB_USER || "root";
+  const password = process.env.DB_PASSWORD ? `:${encodeURIComponent(process.env.DB_PASSWORD)}` : "";
+  const host = process.env.DB_HOST || "localhost";
+  const port = process.env.DB_PORT || "3306";
+  const dbName = process.env.DB_NAME || "lanka_luxe_db";
+  return `mysql://${user}${password}@${host}:${port}/${dbName}`;
+}
+
+const adapter = new PrismaMariaDb(getConnectionUrl());
+const prisma = new PrismaClient({ adapter });
 
 const defaultTours = [
   {

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
@@ -22,7 +23,7 @@ if (!fs.existsSync(envPath)) {
 try {
   // Push database schema (creates tables if missing)
   console.log("📦 Synchronizing MySQL database schema with Prisma...");
-  execSync("npx prisma db push --accept-data-loss", {
+  execSync("npx prisma db push", {
     cwd: rootDir,
     stdio: "inherit",
     env: { ...process.env },
@@ -38,6 +39,7 @@ try {
 
   console.log("✅ MySQL Database schema & seed synchronized successfully!");
 } catch (dbErr) {
+  console.error("❌ Database initialization error:", dbErr.message || dbErr);
   console.warn(
     "ℹ️ Note: MySQL synchronization checked. If your server credentials change, update .env and run `npm run db:init`.",
   );

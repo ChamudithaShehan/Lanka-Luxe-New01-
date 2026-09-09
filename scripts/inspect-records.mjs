@@ -9,7 +9,7 @@ async function main() {
   const tour = await prisma.tour.findFirst();
   console.log("Sample Tour:", JSON.stringify(tour, null, 2));
 
-  const golf = await prisma.golfcourse.findFirst();
+  const golf = await prisma.golfCourse.findFirst();
   console.log("Sample Golf:", JSON.stringify(golf, null, 2));
 
   const dest = await prisma.destination.findFirst();
@@ -18,10 +18,10 @@ async function main() {
   const exp = await prisma.experience.findFirst();
   console.log("Sample Exp:", JSON.stringify(exp, null, 2));
 
-  const post = await prisma.blogpost.findFirst();
+  const post = await prisma.blogPost.findFirst();
   console.log("Sample Post:", JSON.stringify(post, null, 2));
 
-  const settings = await prisma.sitesetting.findMany();
+  const settings = await prisma.siteSetting.findMany();
   console.log("Settings keys:", settings.map(s => s.key));
 
   await prisma.$disconnect();
