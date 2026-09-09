@@ -23,7 +23,7 @@ import {
 export default function GalleryPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
-  const { gallery } = useContentStore();
+  const { gallery, isLoaded, dbError } = useContentStore();
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -148,7 +148,37 @@ export default function GalleryPage() {
 
       {/* Gallery Photo Grid */}
       <section id="gallery-grid" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-24 scroll-mt-28">
-        {filteredItems.length === 0 ? (
+        {dbError && gallery.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100">
+            <p className="text-lg text-slate-700 font-medium mb-2">
+              Content is temporarily unavailable.
+            </p>
+            <p className="text-sm text-slate-500">
+              Please try again later.
+            </p>
+          </div>
+        ) : !isLoaded && gallery.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-100">
+            <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+              Loading Gallery...
+            </p>
+          </div>
+        ) : gallery.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <Camera className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-600 font-medium text-base mb-1">
+              {lang === "ko"
+                ? "현재 등록된 갤러리 사진이 없습니다."
+                : "No gallery photos available yet."}
+            </p>
+            <p className="text-xs text-slate-400">
+              {lang === "ko"
+                ? "새로운 사진 컬렉션이 곧 등록됩니다."
+                : "New curated photo collections will be published soon."}
+            </p>
+          </div>
+        ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
             <Camera className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-600 font-medium text-base">

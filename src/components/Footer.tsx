@@ -6,7 +6,6 @@ import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { img } from "@/data/site";
 import { ArrowRight, Facebook, Twitter, Instagram, Linkedin, ArrowUp, Lock, Camera, Sparkles } from "lucide-react";
-import { defaultGalleryItems } from "@/data/site";
 
 export function Footer() {
   const { t, lang } = useI18n();
@@ -24,13 +23,12 @@ export function Footer() {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Get featured gallery images for footer showcase
+  // Featured gallery images strictly from MySQL database
   const featured = (gallery || []).filter((item) => item.featured);
-  const pool = featured.length >= 6 ? featured : (gallery && gallery.length > 0 ? gallery : defaultGalleryItems);
-  const displayImages = pool.slice(0, 6);
+  const displayImages = featured.length >= 6 ? featured.slice(0, 6) : (gallery || []).slice(0, 6);
 
   return (
     <footer className="bg-navy border-t border-white/10 text-white relative z-10 overflow-hidden">
@@ -145,7 +143,7 @@ export function Footer() {
                   Curated Luxury Experiences in Sri Lanka
                 </p>
                 <div className="text-[11px] text-mist/70 mt-1">
-                  SLTDA Registered Guide Licence: <strong className="text-white">{siteSettings.licenseNumber}</strong>
+                  SLTDA Registered Guide Licence: <strong className="text-white">{siteSettings?.licenseNumber || "C-1734"}</strong>
                 </div>
               </div>
             </div>
@@ -153,15 +151,15 @@ export function Footer() {
             <div className="md:col-span-8">
               <p className="text-xs sm:text-sm text-mist/80 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? siteSettings.founderBio?.ko || "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다."
-                  : siteSettings.founderBio?.en || "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry."}
+                  ? siteSettings?.founderBio?.ko || "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다."
+                  : siteSettings?.founderBio?.en || "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry."}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1 flex items-center gap-2" suppressHydrationWarning>
-              <span>© {new Date().getFullYear()} {siteSettings.brandName}. All Rights Reserved. · Founder: {siteSettings.founderName} (SLTDA {siteSettings.licenseNumber})</span>
+              <span>© {new Date().getFullYear()} {siteSettings?.brandName || "Lanka Luxe Journeys"}. All Rights Reserved. · Founder: {siteSettings?.founderName || "Iroshan Jayawickrame"} (SLTDA {siteSettings?.licenseNumber || "C-1734"})</span>
               <Link href="/admin" className="text-mist/30 hover:text-gold transition-colors inline-flex items-center" title="Admin Atelier">
                 <Lock className="w-3 h-3" />
               </Link>

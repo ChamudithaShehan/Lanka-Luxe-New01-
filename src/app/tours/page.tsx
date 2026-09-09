@@ -15,7 +15,7 @@ import { Search, Sparkles, SlidersHorizontal } from "lucide-react";
 export default function ToursPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
-  const { tours, isLoaded } = useContentStore();
+  const { tours, isLoaded, dbError } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,11 +149,33 @@ export default function ToursPage() {
 
       {/* Tours Grid */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20">
-        {!isLoaded && tours.length === 0 ? (
+        {dbError && tours.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100">
+            <p className="text-lg text-slate-700 font-medium mb-2">
+              Content is temporarily unavailable.
+            </p>
+            <p className="text-sm text-slate-500">
+              Please try again later.
+            </p>
+          </div>
+        ) : !isLoaded && tours.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-100">
             <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
               Loading Luxury Journeys...
+            </p>
+          </div>
+        ) : tours.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <p className="text-lg text-slate-600 font-medium mb-2">
+              {lang === "ko"
+                ? "현재 등록된 투어 여정이 없습니다."
+                : "No journeys available yet."}
+            </p>
+            <p className="text-sm text-slate-400">
+              {lang === "ko"
+                ? "새로운 맞춤 여정이 곧 추가될 예정입니다."
+                : "New curated journeys will be published soon."}
             </p>
           </div>
         ) : filteredTours.length === 0 ? (

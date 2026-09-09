@@ -19,18 +19,6 @@ import type {
   Feature,
   GalleryItem,
 } from "@/data/site";
-import {
-  tours as defaultTours,
-  golfCourses as defaultGolfCourses,
-  destinations as defaultDestinations,
-  experiences as defaultExperiences,
-  posts as defaultPosts,
-  testimonials as defaultTestimonials,
-  team as defaultTeam,
-  whyUs as defaultWhyUs,
-  contact as defaultContact,
-  defaultGalleryItems,
-} from "@/data/site";
 
 export interface Inquiry {
   id: string;
@@ -63,37 +51,6 @@ export interface SiteSettings {
   heroSubtitle: { en: string; ko: string };
 }
 
-const defaultSiteSettings: SiteSettings = {
-  brandName: "Lanka Luxe Journeys",
-  founderName: "Iroshan Jayawickrame",
-  founderTitle: "Founder & Licensed Tourist Guide",
-  founderBio: {
-    en: "Founder of Lanka Luxe Journeys with 10+ years of experience in the Sri Lankan tourism industry. Diploma in Archaeology from the University of Kelaniya and licensed by the Sri Lanka Tourism Development Authority (SLTDA Licence: C-1734). Specializing in luxury private travel, cultural heritage, wildlife, golf and wellness.",
-    ko: "10년 이상의 관광 업계 경력을 가진 Lanka Luxe Journeys 설립자. 켈라니야 대학교 고고학 디플로마 취득 및 스리랑카 관광청(SLTDA) 공인 가이드 라이선스(C-1734) 보유. 럭셔리 맞춤 여행, 문화유산 탐방, 사파리, 골프 및 웰니스 여행을 전문으로 합니다.",
-  },
-  founderQualifications: [
-    "SLTDA National Tourist Guide Licence No: C-1734",
-    "Diploma in Archaeology — University of Kelaniya",
-    "10+ Years Professional Guiding & Itinerary Design",
-    "Specialist in Luxury Golf, Wildlife & Cultural Expeditions",
-    "Bilingual Concierge & Direct Communication (English & Korean)",
-  ],
-  licenseNumber: "C-1734",
-  experienceYears: "10+",
-  heroHeadline1: {
-    en: "DISCOVER SRI LANKA",
-    ko: "스리랑카를",
-  },
-  heroHeadline2: {
-    en: "with a local expert.",
-    ko: "현지 전문가와 함께.",
-  },
-  heroSubtitle: {
-    en: "Private journeys, authentic experiences and luxury travel, personally crafted around you.",
-    ko: "나만을 위해 섬세하게 설계된 프라이빗 럭셔리 여정, 진정한 스리랑카를 현지 전문가와 함께 경험하세요.",
-  },
-};
-
 interface ContentContextType {
   tours: Tour[];
   golfCourses: GolfCourse[];
@@ -103,90 +60,154 @@ interface ContentContextType {
   testimonials: Testimonial[];
   team: TeamMember[];
   whyUs: Feature[];
-  contact: any;
-  siteSettings: SiteSettings;
+  contact: any | null;
+  siteSettings: SiteSettings | null;
   inquiries: Inquiry[];
   gallery: GalleryItem[];
   isLoaded: boolean;
+  isLoading: boolean;
+  dbError: boolean;
+  errorMessage: string | null;
   refreshContent: () => Promise<void>;
-  saveTour: (tour: Tour) => void;
-  deleteTour: (slug: string) => void;
-  saveGolfCourse: (index: number, course: GolfCourse) => void;
-  addGolfCourse: (course: GolfCourse) => void;
-  deleteGolfCourse: (index: number) => void;
-  saveDestination: (dest: Destination) => void;
-  deleteDestination: (slug: string) => void;
-  saveExperience: (index: number, exp: Experience) => void;
-  addExperience: (exp: Experience) => void;
-  deleteExperience: (index: number) => void;
-  savePost: (post: Post) => void;
-  deletePost: (slug: string) => void;
-  saveContact: (contactInfo: any) => void;
-  saveSiteSettings: (settings: SiteSettings) => void;
-  saveGalleryItem: (item: GalleryItem) => void;
-  addGalleryItem: (item: GalleryItem) => void;
-  deleteGalleryItem: (id: string) => void;
-  reorderGallery: (items: GalleryItem[]) => void;
+  saveTour: (tour: Tour) => Promise<{ success: boolean; error?: string }>;
+  deleteTour: (slug: string) => Promise<{ success: boolean; error?: string }>;
+  saveGolfCourse: (index: number, course: GolfCourse) => Promise<{ success: boolean; error?: string }>;
+  addGolfCourse: (course: GolfCourse) => Promise<{ success: boolean; error?: string }>;
+  deleteGolfCourse: (index: number) => Promise<{ success: boolean; error?: string }>;
+  saveDestination: (dest: Destination) => Promise<{ success: boolean; error?: string }>;
+  deleteDestination: (slug: string) => Promise<{ success: boolean; error?: string }>;
+  saveExperience: (index: number, exp: Experience) => Promise<{ success: boolean; error?: string }>;
+  addExperience: (exp: Experience) => Promise<{ success: boolean; error?: string }>;
+  deleteExperience: (index: number) => Promise<{ success: boolean; error?: string }>;
+  savePost: (post: Post) => Promise<{ success: boolean; error?: string }>;
+  deletePost: (slug: string) => Promise<{ success: boolean; error?: string }>;
+  saveContact: (contactInfo: any) => Promise<{ success: boolean; error?: string }>;
+  saveSiteSettings: (settings: SiteSettings) => Promise<{ success: boolean; error?: string }>;
+  saveGalleryItem: (item: GalleryItem) => Promise<{ success: boolean; error?: string }>;
+  addGalleryItem: (item: GalleryItem) => Promise<{ success: boolean; error?: string }>;
+  deleteGalleryItem: (id: string) => Promise<{ success: boolean; error?: string }>;
+  reorderGallery: (items: GalleryItem[]) => Promise<{ success: boolean; error?: string }>;
   addInquiry: (inquiry: Omit<Inquiry, "id" | "createdAt" | "status">) => Promise<string>;
-  updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => void;
-  deleteInquiry: (id: string) => void;
-  resetToDefaults: () => void;
+  updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => Promise<{ success: boolean; error?: string }>;
+  deleteInquiry: (id: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const ContentContext = createContext<ContentContextType | null>(null);
 
 export function ContentProvider({ children }: { children: ReactNode }) {
-  const [tours, setTours] = useState<Tour[]>(defaultTours);
-  const [golfCourses, setGolfCourses] = useState<GolfCourse[]>(defaultGolfCourses);
-  const [destinations, setDestinations] = useState<Destination[]>(defaultDestinations);
-  const [experiences, setExperiences] = useState<Experience[]>(defaultExperiences);
-  const [posts, setPosts] = useState<Post[]>(defaultPosts);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
-  const [team, setTeam] = useState<TeamMember[]>(defaultTeam);
-  const [whyUs, setWhyUs] = useState<Feature[]>(defaultWhyUs);
-  const [contact, setContact] = useState<any>(defaultContact);
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSiteSettings);
-  const [gallery, setGallery] = useState<GalleryItem[]>(defaultGalleryItems);
+  // Pure database-driven states - NO static fallback arrays or demo data
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [golfCourses, setGolfCourses] = useState<GolfCourse[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [whyUs, setWhyUs] = useState<Feature[]>([]);
+  const [contact, setContact] = useState<any | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dbError, setDbError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load live content from database
+  // Load live content exclusively from MySQL through API
   const refreshContent = useCallback(async () => {
+    setIsLoading(true);
     try {
-      // 1. Fetch public CMS content
-      const res = await fetch("/api/content", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.tours?.length) setTours(data.tours);
-        if (data.golfCourses?.length) setGolfCourses(data.golfCourses);
-        if (data.destinations?.length) setDestinations(data.destinations);
-        if (data.experiences?.length) setExperiences(data.experiences);
-        if (data.posts?.length) setPosts(data.posts);
-        if (data.siteSettings) setSiteSettings(data.siteSettings);
-        if (data.contact) setContact(data.contact);
-        if (data.gallery?.length) setGallery(data.gallery);
+      // 1. Fetch public CMS content from database API
+      const res = await fetch("/api/content", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
+
+      if (!res.ok) {
+        setDbError(true);
+        setErrorMessage("Content is temporarily unavailable. Please try again later.");
+        // DO NOT inject fallback data
+        setTours([]);
+        setGolfCourses([]);
+        setDestinations([]);
+        setExperiences([]);
+        setPosts([]);
+        setGallery([]);
+        setWhyUs([]);
+        setTestimonials([]);
+        setTeam([]);
+        return;
       }
+
+      const data = await res.json();
+
+      if (data.dbConnected === false) {
+        setDbError(true);
+        setErrorMessage(data.error || "Content is temporarily unavailable. Please try again later.");
+        setTours([]);
+        setGolfCourses([]);
+        setDestinations([]);
+        setExperiences([]);
+        setPosts([]);
+        setGallery([]);
+        setWhyUs([]);
+        setTestimonials([]);
+        setTeam([]);
+        return;
+      }
+
+      // MySQL query successful
+      setDbError(false);
+      setErrorMessage(null);
+      setTours(data.tours || []);
+      setGolfCourses(data.golfCourses || []);
+      setDestinations(data.destinations || []);
+      setExperiences(data.experiences || []);
+      setPosts(data.posts || []);
+      setGallery(data.gallery || []);
+      setWhyUs(data.whyUs || []);
+      setTestimonials(data.testimonials || []);
+      setTeam(data.team || []);
+      setSiteSettings(data.siteSettings || null);
+      setContact(data.contact || null);
 
       // 2. Fetch admin inquiries if authenticated
-      const inqRes = await fetch("/api/admin/inquiries", { cache: "no-store" });
-      if (inqRes.ok) {
-        const inqData = await inqRes.json();
-        if (Array.isArray(inqData.inquiries)) {
-          setInquiries(inqData.inquiries);
+      try {
+        const inqRes = await fetch("/api/admin/inquiries", { cache: "no-store" });
+        if (inqRes.ok) {
+          const inqData = await inqRes.json();
+          if (Array.isArray(inqData.inquiries)) {
+            setInquiries(inqData.inquiries);
+          }
         }
+      } catch {
+        // Not authenticated as admin or inquiries table empty
       }
-    } catch (e) {
-      console.warn("Could not refresh live content from API, falling back to static cache.", e);
+    } catch (e: any) {
+      console.error("Database connection failure in refreshContent:", e?.message || e);
+      setDbError(true);
+      setErrorMessage("Content is temporarily unavailable. Please try again later.");
+      // Strictly no static fallback substitution
+      setTours([]);
+      setGolfCourses([]);
+      setDestinations([]);
+      setExperiences([]);
+      setPosts([]);
+      setGallery([]);
+      setWhyUs([]);
+      setTestimonials([]);
+      setTeam([]);
     } finally {
       setIsLoaded(true);
+      setIsLoading(false);
     }
   }, []);
 
-  // Hydrate on mount & purge legacy localStorage content key
+  // Hydrate on mount & purge any legacy localStorage content keys
   useEffect(() => {
     try {
       if (typeof window !== "undefined") {
-        // Clean legacy localStorage key if present
         localStorage.removeItem("llj_admin_live_content_v1");
         localStorage.removeItem("llj_admin_token");
         localStorage.removeItem("llj_admin_auth");
@@ -197,280 +218,435 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     refreshContent();
   }, [refreshContent]);
 
+  // ==========================================
+  // AUTHORITATIVE DATABASE MUTATIONS (NO FAKE SUCCESS)
+  // ==========================================
+
   // Tour mutations
-  const saveTour = useCallback((tour: Tour) => {
-    setTours((prev) => {
-      const idx = prev.findIndex((t) => t.slug === tour.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = tour;
-        return updated;
+  const saveTour = useCallback(
+    async (tour: Tour): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/tours", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(tour),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save tour to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        console.error("Failed to save tour:", err);
+        return { success: false, error: "Database connection failed. Tour could not be saved." };
       }
-      return [tour, ...prev];
-    });
+    },
+    [refreshContent]
+  );
 
-    fetch("/api/admin/tours", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(tour),
-    }).catch((err) => console.error("Failed to persist tour to database:", err));
-  }, []);
-
-  const deleteTour = useCallback((slug: string) => {
-    setTours((prev) => prev.filter((t) => t.slug !== slug));
-    fetch(`/api/admin/tours?slug=${encodeURIComponent(slug)}`, {
-      method: "DELETE",
-    }).catch((err) => console.error("Failed to delete tour from database:", err));
-  }, []);
+  const deleteTour = useCallback(
+    async (slug: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/admin/tours?slug=${encodeURIComponent(slug)}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete tour from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        console.error("Failed to delete tour:", err);
+        return { success: false, error: "Database connection failed. Tour could not be deleted." };
+      }
+    },
+    [refreshContent]
+  );
 
   // Golf Course mutations
-  const saveGolfCourse = useCallback((index: number, course: GolfCourse) => {
-    setGolfCourses((prev) => {
-      const updated = [...prev];
-      updated[index] = course;
-      return updated;
-    });
-
-    fetch("/api/admin/golf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(course),
-    }).catch((err) => console.error("Failed to persist golf course to database:", err));
-  }, []);
-
-  const addGolfCourse = useCallback((course: GolfCourse) => {
-    setGolfCourses((prev) => [...prev, course]);
-    fetch("/api/admin/golf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(course),
-    }).catch((err) => console.error("Failed to add golf course to database:", err));
-  }, []);
-
-  const deleteGolfCourse = useCallback((index: number) => {
-    setGolfCourses((prev) => {
-      const target = prev[index];
-      if (target) {
-        fetch(`/api/admin/golf?name=${encodeURIComponent(target.name)}`, {
-          method: "DELETE",
-        }).catch((err) => console.error("Failed to delete golf course:", err));
+  const saveGolfCourse = useCallback(
+    async (index: number, course: GolfCourse): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/golf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(course),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save golf course to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save golf course." };
       }
-      return prev.filter((_, i) => i !== index);
-    });
-  }, []);
+    },
+    [refreshContent]
+  );
+
+  const addGolfCourse = useCallback(
+    async (course: GolfCourse): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/golf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(course),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to add golf course to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not add golf course." };
+      }
+    },
+    [refreshContent]
+  );
+
+  const deleteGolfCourse = useCallback(
+    async (index: number): Promise<{ success: boolean; error?: string }> => {
+      const target = golfCourses[index];
+      if (!target) return { success: false, error: "Golf course not found." };
+      try {
+        const res = await fetch(`/api/admin/golf?name=${encodeURIComponent(target.name)}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete golf course from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete golf course." };
+      }
+    },
+    [golfCourses, refreshContent]
+  );
 
   // Destination mutations
-  const saveDestination = useCallback((dest: Destination) => {
-    setDestinations((prev) => {
-      const idx = prev.findIndex((d) => d.slug === dest.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = dest;
-        return updated;
+  const saveDestination = useCallback(
+    async (dest: Destination): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/destinations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dest),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save destination to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save destination." };
       }
-      return [dest, ...prev];
-    });
+    },
+    [refreshContent]
+  );
 
-    fetch("/api/admin/destinations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dest),
-    }).catch((err) => console.error("Failed to persist destination to database:", err));
-  }, []);
-
-  const deleteDestination = useCallback((slug: string) => {
-    setDestinations((prev) => prev.filter((d) => d.slug !== slug));
-    fetch(`/api/admin/destinations?slug=${encodeURIComponent(slug)}`, {
-      method: "DELETE",
-    }).catch((err) => console.error("Failed to delete destination from database:", err));
-  }, []);
+  const deleteDestination = useCallback(
+    async (slug: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/admin/destinations?slug=${encodeURIComponent(slug)}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete destination from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete destination." };
+      }
+    },
+    [refreshContent]
+  );
 
   // Experience mutations
-  const saveExperience = useCallback((index: number, exp: Experience) => {
-    setExperiences((prev) => {
-      const updated = [...prev];
-      updated[index] = exp;
-      return updated;
-    });
+  const saveExperience = useCallback(
+    async (index: number, exp: Experience): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/experiences", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(exp),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save experience to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save experience." };
+      }
+    },
+    [refreshContent]
+  );
 
-    fetch("/api/admin/experiences", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(exp),
-    }).catch((err) => console.error("Failed to persist experience to database:", err));
-  }, []);
+  const addExperience = useCallback(
+    async (exp: Experience): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/experiences", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(exp),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to add experience to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not add experience." };
+      }
+    },
+    [refreshContent]
+  );
 
-  const addExperience = useCallback((exp: Experience) => {
-    setExperiences((prev) => [...prev, exp]);
-    fetch("/api/admin/experiences", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(exp),
-    }).catch((err) => console.error("Failed to add experience to database:", err));
-  }, []);
+  const deleteExperience = useCallback(
+    async (index: number): Promise<{ success: boolean; error?: string }> => {
+      const target = experiences[index];
+      if (!target) return { success: false, error: "Experience not found." };
+      try {
+        const res = await fetch(
+          `/api/admin/experiences?title=${encodeURIComponent(target.title?.en || "")}`,
+          { method: "DELETE" }
+        );
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete experience from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete experience." };
+      }
+    },
+    [experiences, refreshContent]
+  );
 
-  const deleteExperience = useCallback((index: number) => {
-    setExperiences((prev) => {
-      const target = prev[index];
-      if (target) {
-        fetch(`/api/admin/experiences?title=${encodeURIComponent(target.title.en)}`, {
+  // Blog mutations
+  const savePost = useCallback(
+    async (post: Post): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/blog", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(post),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save blog post to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save blog post." };
+      }
+    },
+    [refreshContent]
+  );
+
+  const deletePost = useCallback(
+    async (slug: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/admin/blog?slug=${encodeURIComponent(slug)}`, {
           method: "DELETE",
-        }).catch((err) => console.error("Failed to delete experience:", err));
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete blog post from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete blog post." };
       }
-      return prev.filter((_, i) => i !== index);
-    });
-  }, []);
+    },
+    [refreshContent]
+  );
 
-  // Post / Blog mutations
-  const savePost = useCallback((post: Post) => {
-    setPosts((prev) => {
-      const idx = prev.findIndex((p) => p.slug === post.slug);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = post;
-        return updated;
+  // Contact & Settings mutations
+  const saveContact = useCallback(
+    async (contactInfo: any): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contact: contactInfo }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save contact settings." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save contact." };
       }
-      return [post, ...prev];
-    });
+    },
+    [refreshContent]
+  );
 
-    fetch("/api/admin/blog", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(post),
-    }).catch((err) => console.error("Failed to persist blog post to database:", err));
-  }, []);
-
-  const deletePost = useCallback((slug: string) => {
-    setPosts((prev) => prev.filter((p) => p.slug !== slug));
-    fetch(`/api/admin/blog?slug=${encodeURIComponent(slug)}`, {
-      method: "DELETE",
-    }).catch((err) => console.error("Failed to delete blog post:", err));
-  }, []);
-
-  // Settings & Contact mutations
-  const saveContact = useCallback((contactInfo: any) => {
-    setContact(contactInfo);
-    fetch("/api/admin/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contact: contactInfo }),
-    }).catch((err) => console.error("Failed to persist contact info:", err));
-  }, []);
-
-  const saveSiteSettings = useCallback((settings: SiteSettings) => {
-    setSiteSettings(settings);
-    fetch("/api/admin/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ siteSettings: settings }),
-    }).catch((err) => console.error("Failed to persist site settings:", err));
-  }, []);
+  const saveSiteSettings = useCallback(
+    async (settings: SiteSettings): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ siteSettings: settings }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save site settings." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save settings." };
+      }
+    },
+    [refreshContent]
+  );
 
   // Gallery mutations
-  const saveGalleryItem = useCallback((item: GalleryItem) => {
-    setGallery((prev) => {
-      const idx = prev.findIndex((g) => g.id === item.id);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = item;
-        return updated;
+  const saveGalleryItem = useCallback(
+    async (item: GalleryItem): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/gallery", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save gallery item to database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save gallery photo." };
       }
-      return [item, ...prev];
-    });
-  }, []);
+    },
+    [refreshContent]
+  );
 
-  const addGalleryItem = useCallback((item: GalleryItem) => {
-    setGallery((prev) => [item, ...prev]);
-  }, []);
+  const addGalleryItem = useCallback(
+    async (item: GalleryItem): Promise<{ success: boolean; error?: string }> => {
+      return saveGalleryItem(item);
+    },
+    [saveGalleryItem]
+  );
 
-  const deleteGalleryItem = useCallback((id: string) => {
-    setGallery((prev) => prev.filter((g) => g.id !== id));
-  }, []);
+  const deleteGalleryItem = useCallback(
+    async (id: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/gallery/${id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete gallery item from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete gallery photo." };
+      }
+    },
+    [refreshContent]
+  );
 
-  const reorderGallery = useCallback((items: GalleryItem[]) => {
-    setGallery(items);
-  }, []);
+  const reorderGallery = useCallback(
+    async (items: GalleryItem[]): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/gallery", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(items),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to reorder gallery in database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not reorder gallery." };
+      }
+    },
+    [refreshContent]
+  );
 
   // Inquiries mutations
   const addInquiry = useCallback(
     async (inq: Omit<Inquiry, "id" | "createdAt" | "status">): Promise<string> => {
-      const tempId = `inq-${Date.now()}`;
-      const newEntry: Inquiry = {
-        ...inq,
-        id: tempId,
-        createdAt: new Date().toISOString(),
-        status: "new",
-      };
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inq),
+      });
 
-      setInquiries((prev) => [newEntry, ...prev]);
-
-      try {
-        const res = await fetch("/api/inquiries", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(inq),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.reference) {
-            setInquiries((prev) =>
-              prev.map((item) =>
-                item.id === tempId ? { ...item, reference: data.reference } : item
-              )
-            );
-            return data.reference;
-          }
-        }
-      } catch (err) {
-        console.error("Failed to submit inquiry:", err);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit inquiry to database.");
       }
 
-      return tempId;
+      await refreshContent();
+      return data.reference || `inq-${Date.now()}`;
     },
-    []
+    [refreshContent]
   );
 
   const updateInquiryStatus = useCallback(
-    (id: string, status: Inquiry["status"], notes?: string) => {
-      setInquiries((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, status, ...(notes !== undefined ? { notes } : {}) }
-            : item
-        )
-      );
-
-      fetch(`/api/admin/inquiries/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status, notes }),
-      }).catch((err) => console.error("Failed to update inquiry in database:", err));
+    async (id: string, status: Inquiry["status"], notes?: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/admin/inquiries/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status, notes }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to update inquiry in database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not update inquiry." };
+      }
     },
-    []
+    [refreshContent]
   );
 
-  const deleteInquiry = useCallback((id: string) => {
-    setInquiries((prev) => prev.filter((item) => item.id !== id));
-    fetch(`/api/admin/inquiries/${id}`, {
-      method: "DELETE",
-    }).catch((err) => console.error("Failed to delete inquiry from database:", err));
-  }, []);
-
-  const resetToDefaults = useCallback(() => {
-    setTours(defaultTours);
-    setGolfCourses(defaultGolfCourses);
-    setDestinations(defaultDestinations);
-    setExperiences(defaultExperiences);
-    setPosts(defaultPosts);
-    setTestimonials(defaultTestimonials);
-    setTeam(defaultTeam);
-    setWhyUs(defaultWhyUs);
-    setContact(defaultContact);
-    setSiteSettings(defaultSiteSettings);
-    setGallery(defaultGalleryItems);
-    setInquiries([]);
-  }, []);
+  const deleteInquiry = useCallback(
+    async (id: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch(`/api/admin/inquiries/${id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete inquiry from database." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete inquiry." };
+      }
+    },
+    [refreshContent]
+  );
 
   const value = {
     tours,
@@ -486,6 +662,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     inquiries,
     gallery,
     isLoaded,
+    isLoading,
+    dbError,
+    errorMessage,
 
     saveTour,
     deleteTour,
@@ -508,7 +687,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     addInquiry,
     updateInquiryStatus,
     deleteInquiry,
-    resetToDefaults,
     refreshContent,
   };
 

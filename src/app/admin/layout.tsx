@@ -20,6 +20,7 @@ import {
   X,
   ShieldCheck,
   UserCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -43,7 +44,7 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { inquiries, siteSettings } = useContentStore();
+  const { inquiries, siteSettings, dbError, isLoading, refreshContent } = useContentStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [currentUser, setCurrentUser] = useState<{
     id: string;
@@ -164,14 +165,13 @@ export default function AdminLayout({
           </button>
         </div>
 
-        {/* Nav Links */}
-        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
+        {/* Navigation Items */}
+        <nav className="p-4 space-y-1.5 overflow-y-auto flex-1 custom-scrollbar">
           {navItems.map((item) => {
+            const Icon = item.icon;
             const isActive = item.exact
               ? pathname === item.href
               : pathname.startsWith(item.href);
-
-            const Icon = item.icon;
 
             return (
               <Link
@@ -215,7 +215,7 @@ export default function AdminLayout({
         <div className="p-4 border-t border-[#1B2D4A] space-y-3 bg-[#081426]/60">
           <div className="flex items-center gap-3 px-2">
             <div className="w-8 h-8 rounded-full bg-[#C8A45D]/20 border border-[#C8A45D]/40 flex items-center justify-center text-[#C8A45D] font-serif font-bold text-xs uppercase">
-              {(currentUser?.name || siteSettings.founderName || "Admin")
+              {(currentUser?.name || siteSettings?.founderName || "Admin")
                 .split(" ")
                 .map((n) => n[0])
                 .slice(0, 2)
@@ -223,12 +223,12 @@ export default function AdminLayout({
             </div>
             <div className="overflow-hidden">
               <div className="text-xs font-semibold text-white truncate">
-                {currentUser?.name || siteSettings.founderName}
+                {currentUser?.name || siteSettings?.founderName || "Administrator"}
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-[#C8A45D]" />
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                <UserCheck className="w-3 h-3 text-[#C8A45D]" />
                 <span className="truncate">
-                  {currentUser?.username ? `@${currentUser.username} • Admin` : `SLTDA ${siteSettings.licenseNumber}`}
+                  {currentUser?.username ? `@${currentUser.username} • Admin` : `SLTDA ${siteSettings?.licenseNumber || "C-1734"}`}
                 </span>
               </div>
             </div>
@@ -274,6 +274,25 @@ export default function AdminLayout({
             </Link>
           </div>
         </header>
+
+        {/* Database Connection Alert Banner */}
+        {dbError && (
+          <div className="bg-red-950/90 border-b border-red-500/40 text-red-200 px-4 sm:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium backdrop-blur-md z-20">
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>
+                Database connection unavailable. Changes cannot be loaded or saved until the database connection is restored.
+              </span>
+            </div>
+            <button
+              onClick={() => refreshContent()}
+              disabled={isLoading}
+              className="px-3 py-1 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-lg text-red-100 text-xs font-semibold cursor-pointer shrink-0 transition-colors disabled:opacity-50"
+            >
+              {isLoading ? "Checking..." : "Retry Database Connection"}
+            </button>
+          </div>
+        )}
 
         {/* Main Body */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">

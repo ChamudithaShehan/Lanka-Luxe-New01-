@@ -88,37 +88,45 @@ export default function AdminInquiriesPage() {
     }
   };
 
-  const handleStatusChange = (
+  const handleStatusChange = async (
     id: string,
     newStatus: Inquiry["status"],
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     e.stopPropagation();
-    updateInquiryStatus(id, newStatus);
-    toast.success(`Lead status updated to ${newStatus.replace("_", " ")}`);
+    const res = await updateInquiryStatus(id, newStatus);
+    if (res?.success) {
+      toast.success(`Lead status updated to ${newStatus.replace("_", " ")}`);
+    } else {
+      toast.error(res?.error || "Failed to update status");
+    }
   };
 
-  const handleCreateInquiry = (e: React.FormEvent) => {
+  const handleCreateInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newForm.name || !newForm.email) {
       toast.error("Name and Email are required.");
       return;
     }
 
-    addInquiry(newForm);
-    setIsNewModalOpen(false);
-    setNewForm({
-      name: "",
-      email: "",
-      country: "South Korea",
-      dates: "",
-      travelers: "2",
-      interest: "luxury",
-      tour: "",
-      budget: "",
-      message: "",
-    });
-    toast.success("New lead recorded in CRM!");
+    try {
+      await addInquiry(newForm);
+      setIsNewModalOpen(false);
+      setNewForm({
+        name: "",
+        email: "",
+        country: "South Korea",
+        dates: "",
+        travelers: "2",
+        interest: "luxury",
+        tour: "",
+        budget: "",
+        message: "",
+      });
+      toast.success("New lead recorded in CRM!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to record lead in CRM");
+    }
   };
 
   const handleExportCSV = () => {
@@ -788,10 +796,14 @@ export default function AdminInquiriesPage() {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  deleteInquiry(deleteConfirmId);
+                onClick={async () => {
+                  const res = await deleteInquiry(deleteConfirmId);
                   setDeleteConfirmId(null);
-                  toast.success("Lead deleted.");
+                  if (res?.success) {
+                    toast.success("Lead deleted.");
+                  } else {
+                    toast.error(res?.error || "Failed to delete lead");
+                  }
                 }}
                 className="px-4 py-2 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white"
               >

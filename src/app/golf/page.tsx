@@ -22,7 +22,7 @@ import {
 export default function GolfPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
-  const { golfCourses, tours } = useContentStore();
+  const { golfCourses, tours, isLoaded, dbError } = useContentStore();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredGolfCourses = golfCourses.filter((course) => {
@@ -191,13 +191,58 @@ export default function GolfPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredGolfCourses.map((course) => (
-            <Reveal key={course.name} variant="fade-up">
-              <GolfCourseCard course={course} />
-            </Reveal>
-          ))}
-        </div>
+        {dbError && golfCourses.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100">
+            <p className="text-lg text-slate-700 font-medium mb-2">
+              Content is temporarily unavailable.
+            </p>
+            <p className="text-sm text-slate-500">
+              Please try again later.
+            </p>
+          </div>
+        ) : !isLoaded && golfCourses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-100">
+            <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+              Loading Championship Courses...
+            </p>
+          </div>
+        ) : golfCourses.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <p className="text-lg text-slate-600 font-medium mb-2">
+              {lang === "ko"
+                ? "현재 등록된 골프 코스가 없습니다."
+                : "No golf courses available yet."}
+            </p>
+            <p className="text-sm text-slate-400">
+              {lang === "ko"
+                ? "챔피언십 코스 정보가 곧 추가될 예정입니다."
+                : "Championship golf courses will be published soon."}
+            </p>
+          </div>
+        ) : filteredGolfCourses.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <p className="text-lg text-slate-500 font-normal mb-4">
+              {lang === "ko"
+                ? "검색 조건에 맞는 골프 코스가 없습니다."
+                : "No golf courses match your search."}
+            </p>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="text-xs uppercase tracking-widest text-[#C8A45D] underline font-semibold cursor-pointer"
+            >
+              {lang === "ko" ? "전체 코스 보기" : "Reset Search"}
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredGolfCourses.map((course) => (
+              <Reveal key={course.name} variant="fade-up">
+                <GolfCourseCard course={course} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Golf FAQ & Booking CTA */}

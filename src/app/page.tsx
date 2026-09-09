@@ -603,11 +603,20 @@ export default function HomePage() {
 
           {/* Right Cards Area (Scrolling, Slide from Right) */}
           <div className="lg:col-span-7 flex flex-col gap-10">
-            {tours.slice(0, 4).map((tour, idx) => (
-              <Reveal key={tour.slug} variant="slide-right" once={false} delay={idx * 0.08}>
-                <TourCard tour={tour} />
-              </Reveal>
-            ))}
+            {tours.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                <Compass className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                <p className="text-base text-slate-500 font-medium">
+                  {lang === "ko" ? "등록된 투어 일정이 아직 없습니다." : "No journeys available yet."}
+                </p>
+              </div>
+            ) : (
+              tours.slice(0, 4).map((tour, idx) => (
+                <Reveal key={tour.slug} variant="slide-right" once={false} delay={idx * 0.08}>
+                  <TourCard tour={tour} />
+                </Reveal>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -705,13 +714,22 @@ export default function HomePage() {
         </div>
 
         {/* Tour Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredTours.map((tour) => (
-            <Reveal key={tour.slug} variant="fade-up">
-              <TourCard tour={tour} />
-            </Reveal>
-          ))}
-        </div>
+        {filteredTours.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 max-w-md mx-auto shadow-sm">
+            <Compass className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <p className="text-base text-slate-500 font-medium">
+              {lang === "ko" ? "등록된 투어 일정이 아직 없습니다." : "No tours available yet."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredTours.map((tour) => (
+              <Reveal key={tour.slug} variant="fade-up">
+                <TourCard tour={tour} />
+              </Reveal>
+            ))}
+          </div>
+        )}
 
         <div className="mt-14 text-center">
           <LuxuryButton variant="pill" href="/tours" size="lg" withArrow>
@@ -781,36 +799,38 @@ export default function HomePage() {
           </div>
 
           {/* Quick 3-course preview snippet */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {golfCourses.slice(0, 3).map((gc) => (
-              <div
-                key={gc.name}
-                className="p-7 rounded-[1.75rem] bg-slate-50 border border-slate-100 hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="text-xs font-semibold text-[#C8A45D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Flag className="w-3.5 h-3.5" />
-                    <span>{gc.holes}</span>
+          {golfCourses.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {golfCourses.slice(0, 3).map((gc) => (
+                <div
+                  key={gc.name}
+                  className="p-7 rounded-[1.75rem] bg-slate-50 border border-slate-100 hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="text-xs font-semibold text-[#C8A45D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <Flag className="w-3.5 h-3.5" />
+                      <span>{gc.holes}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#081A33] mb-2 leading-snug">
+                      {gc.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6 font-normal">
+                      {tl(gc.text)}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-[#081A33] mb-2 leading-snug">
-                    {gc.name}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6 font-normal">
-                    {tl(gc.text)}
-                  </p>
+                  <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 font-medium">
+                    <span>{gc.location}</span>
+                    <Link
+                      href="/golf"
+                      className="text-[#C8A45D] hover:underline font-semibold"
+                    >
+                      {lang === "ko" ? "골프 안내 →" : "Read more →"}
+                    </Link>
+                  </div>
                 </div>
-                <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 font-medium">
-                  <span>{gc.location}</span>
-                  <Link
-                    href="/golf"
-                    className="text-[#C8A45D] hover:underline font-semibold"
-                  >
-                    {lang === "ko" ? "골프 안내 →" : "Read more →"}
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -833,13 +853,21 @@ export default function HomePage() {
             }
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {experiences.map((exp, idx) => (
-              <Reveal key={idx} variant="fade-up" delay={idx * 0.1}>
-                <ExperienceCard experience={exp} index={idx} />
-              </Reveal>
-            ))}
-          </div>
+          {experiences.length === 0 ? (
+            <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-100 max-w-md mx-auto">
+              <p className="text-base text-slate-500 font-medium">
+                {lang === "ko" ? "등록된 시그니처 체험이 아직 없습니다." : "No signature experiences available yet."}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {experiences.map((exp, idx) => (
+                <Reveal key={idx} variant="fade-up" delay={idx * 0.1}>
+                  <ExperienceCard experience={exp} index={idx} />
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -897,13 +925,21 @@ export default function HomePage() {
             }
           />
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory pb-8 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-            {testimonials.map((test, idx) => (
-              <Reveal key={idx} variant="fade-up" delay={idx * 0.1} className="w-[85vw] sm:w-[60vw] md:w-auto shrink-0 snap-center">
-                <TestimonialCard testimonial={test} className="h-full" />
-              </Reveal>
-            ))}
-          </div>
+          {testimonials.length === 0 ? (
+            <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-100 max-w-md mx-auto">
+              <p className="text-base text-slate-500 font-medium">
+                {lang === "ko" ? "등록된 고객 후기가 아직 없습니다." : "No guest stories available yet."}
+              </p>
+            </div>
+          ) : (
+            <div className="flex overflow-x-auto snap-x snap-mandatory pb-8 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+              {testimonials.map((test, idx) => (
+                <Reveal key={idx} variant="fade-up" delay={idx * 0.1} className="w-[85vw] sm:w-[60vw] md:w-auto shrink-0 snap-center">
+                  <TestimonialCard testimonial={test} className="h-full" />
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -932,13 +968,21 @@ export default function HomePage() {
           }
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {posts.slice(0, 3).map((post) => (
-            <Reveal key={post.slug} variant="fade-up">
-              <BlogCard post={post} />
-            </Reveal>
-          ))}
-        </div>
+        {posts.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 max-w-md mx-auto shadow-sm">
+            <p className="text-base text-slate-500 font-medium">
+              {lang === "ko" ? "등록된 저널 칼럼이 아직 없습니다." : "No journal articles published yet."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {posts.slice(0, 3).map((post) => (
+              <Reveal key={post.slug} variant="fade-up">
+                <BlogCard post={post} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 11. BESPOKE INQUIRY & TRIP BUILDER FORM */}

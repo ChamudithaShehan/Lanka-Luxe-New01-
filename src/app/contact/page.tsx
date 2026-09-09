@@ -20,6 +20,13 @@ import {
 export default function ContactPage() {
   const { t, lang } = useI18n();
   const { contact } = useContentStore();
+  const safeContact = contact || {
+    phone: "",
+    email: "",
+    whatsapp: "",
+    kakao: "",
+    address: "",
+  };
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const faqs = [
@@ -118,7 +125,7 @@ export default function ContactPage() {
               <div className="space-y-4 pt-2 text-xs">
                 {/* WhatsApp */}
                 <a
-                  href={`https://wa.me/${contact.whatsapp}`}
+                  href={`https://wa.me/${safeContact.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#25D366] transition-all group"
@@ -130,7 +137,7 @@ export default function ContactPage() {
                     <div className="font-bold text-[#081A33] group-hover:text-[#25D366] transition-colors">
                       WhatsApp Direct Chat
                     </div>
-                    <div className="text-slate-500">{contact.phone}</div>
+                    <div className="text-slate-500">{safeContact.phone}</div>
                   </div>
                 </a>
 
@@ -141,13 +148,13 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="font-bold text-[#081A33]">KakaoTalk (한국어 상담)</div>
-                    <div className="text-slate-500">ID: <strong className="text-[#081A33]">{contact.kakao}</strong></div>
+                    <div className="text-slate-500">ID: <strong className="text-[#081A33]">{safeContact.kakao}</strong></div>
                   </div>
                 </div>
 
                 {/* Phone */}
                 <a
-                  href={`tel:${contact.phone}`}
+                  href={`tel:${safeContact.phone}`}
                   className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#C8A45D] transition-all group"
                 >
                   <div className="w-10 h-10 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center shrink-0">
@@ -157,13 +164,13 @@ export default function ContactPage() {
                     <div className="font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors">
                       Telephone
                     </div>
-                    <div className="text-slate-500">{contact.phone}</div>
+                    <div className="text-slate-500">{safeContact.phone}</div>
                   </div>
                 </a>
 
                 {/* Email */}
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`mailto:${safeContact.email}`}
                   className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#C8A45D] transition-all group"
                 >
                   <div className="w-10 h-10 rounded-full bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center shrink-0">
@@ -173,7 +180,7 @@ export default function ContactPage() {
                     <div className="font-bold text-[#081A33] group-hover:text-[#C8A45D] transition-colors">
                       Email
                     </div>
-                    <div className="text-slate-500">{contact.email}</div>
+                    <div className="text-slate-500">{safeContact.email}</div>
                   </div>
                 </a>
 
@@ -184,7 +191,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="font-bold text-[#081A33]">Colombo Headquarters</div>
-                    <div className="text-slate-500">{contact.address}</div>
+                    <div className="text-slate-500">{safeContact.address}</div>
                   </div>
                 </div>
               </div>

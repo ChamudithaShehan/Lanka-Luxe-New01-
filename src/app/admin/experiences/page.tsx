@@ -77,25 +77,37 @@ export default function AdminExperiencesPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingExp) return;
 
     if (editingIndex === -1) {
-      addExperience(editingExp);
-      toast.success(`Experience "${editingExp.title.en}" added successfully!`);
+      const res = await addExperience(editingExp);
+      if (res.success) {
+        setIsModalOpen(false);
+        toast.success(`Experience "${editingExp.title.en}" added successfully!`);
+      } else {
+        toast.error(res.error || "Failed to add experience to database.");
+      }
     } else if (editingIndex !== null) {
-      saveExperience(editingIndex, editingExp);
-      toast.success(`Experience "${editingExp.title.en}" updated successfully!`);
+      const res = await saveExperience(editingIndex, editingExp);
+      if (res.success) {
+        setIsModalOpen(false);
+        toast.success(`Experience "${editingExp.title.en}" updated successfully!`);
+      } else {
+        toast.error(res.error || "Failed to update experience in database.");
+      }
     }
-
-    setIsModalOpen(false);
   };
 
-  const handleDelete = (index: number) => {
-    deleteExperience(index);
-    setDeleteConfirmIndex(null);
-    toast.success("Experience removed.");
+  const handleDelete = async (index: number) => {
+    const res = await deleteExperience(index);
+    if (res.success) {
+      setDeleteConfirmIndex(null);
+      toast.success("Experience removed.");
+    } else {
+      toast.error(res.error || "Failed to delete experience from database.");
+    }
   };
 
   return (

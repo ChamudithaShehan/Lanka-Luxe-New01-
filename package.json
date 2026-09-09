@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node prisma/init-db.mjs && next dev",
     "build": "node prisma/init-db.mjs && next build",
-    "start": "next start",
+    "start": "node prisma/init-db.mjs && next start",
+    "postinstall": "prisma generate",
     "lint": "next lint",
     "format": "prettier --write .",
     "db:init": "node prisma/init-db.mjs",

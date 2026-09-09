@@ -97,7 +97,7 @@ export default function AdminDestinationsPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingDest) return;
 
@@ -106,15 +106,23 @@ export default function AdminDestinationsPage() {
       return;
     }
 
-    saveDestination(editingDest);
-    setIsModalOpen(false);
-    toast.success(`Destination "${editingDest.name.en}" saved successfully!`);
+    const res = await saveDestination(editingDest);
+    if (res.success) {
+      setIsModalOpen(false);
+      toast.success(`Destination "${editingDest.name.en}" saved successfully!`);
+    } else {
+      toast.error(res.error || "Failed to save destination to database.");
+    }
   };
 
-  const handleDelete = (slug: string) => {
-    deleteDestination(slug);
-    setDeleteConfirmSlug(null);
-    toast.success("Destination removed from catalog.");
+  const handleDelete = async (slug: string) => {
+    const res = await deleteDestination(slug);
+    if (res.success) {
+      setDeleteConfirmSlug(null);
+      toast.success("Destination removed from catalog.");
+    } else {
+      toast.error(res.error || "Failed to delete destination from database.");
+    }
   };
 
   return (

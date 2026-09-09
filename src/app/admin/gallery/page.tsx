@@ -88,32 +88,44 @@ export default function AdminGalleryPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !editingItem.image || !editingItem.title.en) {
       toast.error("Please fill in the required fields.");
       return;
     }
 
-    saveGalleryItem(editingItem);
-    toast.success(`Gallery photo "${editingItem.title.en}" saved successfully!`);
-    setIsModalOpen(false);
+    const res = await saveGalleryItem(editingItem);
+    if (res.success) {
+      toast.success(`Gallery photo "${editingItem.title.en}" saved successfully!`);
+      setIsModalOpen(false);
+    } else {
+      toast.error(res.error || "Failed to save gallery photo to database.");
+    }
   };
 
-  const handleToggleFeatured = (item: GalleryItem) => {
+  const handleToggleFeatured = async (item: GalleryItem) => {
     const updated = { ...item, featured: !item.featured };
-    saveGalleryItem(updated);
-    toast.success(
-      updated.featured
-        ? `Added "${item.title.en}" to Footer Gallery!`
-        : `Removed "${item.title.en}" from Footer Gallery.`,
-    );
+    const res = await saveGalleryItem(updated);
+    if (res.success) {
+      toast.success(
+        updated.featured
+          ? `Added "${item.title.en}" to Footer Gallery!`
+          : `Removed "${item.title.en}" from Footer Gallery.`,
+      );
+    } else {
+      toast.error(res.error || "Failed to update featured status.");
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteGalleryItem(id);
-    setDeleteConfirmId(null);
-    toast.success("Gallery photo removed.");
+  const handleDelete = async (id: string) => {
+    const res = await deleteGalleryItem(id);
+    if (res.success) {
+      setDeleteConfirmId(null);
+      toast.success("Gallery photo removed.");
+    } else {
+      toast.error(res.error || "Failed to delete gallery item from database.");
+    }
   };
 
   return (

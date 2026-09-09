@@ -260,7 +260,7 @@ export default function AdminOverviewPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0">
                     <a
-                      href={`https://wa.me/${contact.whatsapp.replace(
+                      href={`https://wa.me/${(contact?.whatsapp || "").replace(
                         /\D/g,
                         "",
                       )}?text=${encodeURIComponent(
@@ -302,31 +302,31 @@ export default function AdminOverviewPage() {
               <div className="flex justify-between py-2 border-b border-[#1B2D4A]">
                 <span className="text-slate-400">Founder</span>
                 <span className="font-semibold text-white">
-                  {siteSettings.founderName}
+                  {siteSettings?.founderName || "—"}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-[#1B2D4A]">
                 <span className="text-slate-400">SLTDA Licence</span>
                 <span className="font-semibold text-[#C8A45D]">
-                  {siteSettings.licenseNumber}
+                  {siteSettings?.licenseNumber || "—"}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-[#1B2D4A]">
                 <span className="text-slate-400">Experience</span>
                 <span className="font-semibold text-white">
-                  {siteSettings.experienceYears} Years Guiding
+                  {siteSettings?.experienceYears ? `${siteSettings.experienceYears} Years Guiding` : "—"}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-[#1B2D4A]">
                 <span className="text-slate-400">WhatsApp</span>
                 <span className="font-semibold text-emerald-400">
-                  +{contact.whatsapp}
+                  {contact?.whatsapp ? `+${contact.whatsapp}` : "—"}
                 </span>
               </div>
               <div className="flex justify-between py-2">
                 <span className="text-slate-400">KakaoTalk</span>
                 <span className="font-semibold text-amber-300">
-                  {contact.kakao}
+                  {contact?.kakao || "—"}
                 </span>
               </div>
             </div>

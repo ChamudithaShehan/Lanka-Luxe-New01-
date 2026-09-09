@@ -29,17 +29,54 @@ export default function AdminSettingsPage() {
   } = useContentStore();
 
   const [settingsForm, setSettingsForm] = useState(
-    JSON.parse(JSON.stringify(siteSettings)),
+    siteSettings
+      ? JSON.parse(JSON.stringify(siteSettings))
+      : {
+          brandName: "",
+          founderName: "",
+          founderTitle: "",
+          founderBio: { en: "", ko: "" },
+          founderQualifications: [],
+          licenseNumber: "",
+          experienceYears: "",
+          heroHeadline1: { en: "", ko: "" },
+          heroHeadline2: { en: "", ko: "" },
+          heroSubtitle: { en: "", ko: "" },
+        }
   );
   const [contactForm, setContactForm] = useState(
-    JSON.parse(JSON.stringify(contact)),
+    contact
+      ? JSON.parse(JSON.stringify(contact))
+      : {
+          phone: "",
+          whatsapp: "",
+          kakao: "",
+          email: "",
+          address: "",
+        }
   );
 
-  const handleSave = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if (siteSettings) {
+      setSettingsForm(JSON.parse(JSON.stringify(siteSettings)));
+    }
+  }, [siteSettings]);
+
+  React.useEffect(() => {
+    if (contact) {
+      setContactForm(JSON.parse(JSON.stringify(contact)));
+    }
+  }, [contact]);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    saveSiteSettings(settingsForm);
-    saveContact(contactForm);
-    toast.success("Site settings and contact details updated globally!");
+    const res1 = await saveSiteSettings(settingsForm);
+    const res2 = await saveContact(contactForm);
+    if (res1.success && res2.success) {
+      toast.success("Site settings and contact details updated in database!");
+    } else {
+      toast.error(res1.error || res2.error || "Failed to update settings in database.");
+    }
   };
 
   return (

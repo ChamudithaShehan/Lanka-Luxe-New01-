@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { destinations as staticDestinations } from "@/data/site";
 import { DestinationDetailClient } from "./DestinationDetailClient";
 
 interface Props {
@@ -35,21 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       if (dbDest.image && dbDest.image.startsWith("https://")) {
         imageUrl = dbDest.image;
       }
-    } else {
-      const fallback = staticDestinations.find((d) => d.slug === cleanSlug);
-      if (fallback) {
-        title = `${sanitizeMetaText(fallback.name.en)} | Lanka Luxe Journeys`;
-        description =
-          sanitizeMetaText(fallback.short.en) ||
-          sanitizeMetaText(fallback.long.en) ||
-          description;
-        if (fallback.image && fallback.image.startsWith("https://")) {
-          imageUrl = fallback.image;
-        }
-      }
     }
   } catch (err) {
-    console.warn("Failed to query destination metadata from DB, using fallback:", err);
+    console.warn("Failed to query destination metadata from MySQL database:", err);
   }
 
   const canonicalUrl = `/destinations/${cleanSlug}`;

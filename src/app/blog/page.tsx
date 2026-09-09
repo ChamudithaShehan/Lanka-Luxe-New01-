@@ -13,7 +13,7 @@ import { Calendar, ArrowRight } from "lucide-react";
 
 export default function BlogPage() {
   const { t, tl, lang } = useI18n();
-  const { posts } = useContentStore();
+  const { posts, isLoaded, dbError } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -163,25 +163,75 @@ export default function BlogPage() {
 
       {/* Articles Grid */}
       <section id="articles-grid" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20 scroll-mt-28">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {paginatedPosts.map((post) => (
-            <Reveal key={post.slug} variant="fade-up">
-              <BlogCard post={post} />
-            </Reveal>
-          ))}
-        </div>
+        {dbError && posts.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100">
+            <p className="text-lg text-slate-700 font-medium mb-2">
+              Content is temporarily unavailable.
+            </p>
+            <p className="text-sm text-slate-500">
+              Please try again later.
+            </p>
+          </div>
+        ) : !isLoaded && posts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-100">
+            <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+              Loading Journal Articles...
+            </p>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <p className="text-lg text-slate-600 font-medium mb-2">
+              {lang === "ko"
+                ? "현재 등록된 칼럼이 없습니다."
+                : "No journal articles published yet."}
+            </p>
+            <p className="text-sm text-slate-400">
+              {lang === "ko"
+                ? "새로운 여행 칼럼이 곧 업데이트됩니다."
+                : "New luxury travel articles will be published soon."}
+            </p>
+          </div>
+        ) : filteredPosts.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+            <p className="text-lg text-slate-500 font-normal mb-4">
+              {lang === "ko"
+                ? "검색 조건에 맞는 칼럼이 없습니다."
+                : "No articles match your search."}
+            </p>
+            <button
+              onClick={() => {
+                setSelectedCategory("All");
+                setSearchQuery("");
+              }}
+              className="text-xs uppercase tracking-widest text-[#C8A45D] underline font-semibold cursor-pointer"
+            >
+              {lang === "ko" ? "전체 칼럼 보기" : "Reset Filters"}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {paginatedPosts.map((post) => (
+                <Reveal key={post.slug} variant="fade-up">
+                  <BlogCard post={post} />
+                </Reveal>
+              ))}
+            </div>
 
-        {/* Pagination Controls */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          totalItems={filteredPosts.length}
-          pageSize={ITEMS_PER_PAGE}
-          itemLabel={lang === "ko" ? "칼럼" : "articles"}
-          showRange
-          scrollToId="articles-grid"
-        />
+            {/* Pagination Controls */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filteredPosts.length}
+              pageSize={ITEMS_PER_PAGE}
+              itemLabel={lang === "ko" ? "칼럼" : "articles"}
+              showRange
+              scrollToId="articles-grid"
+            />
+          </>
+        )}
       </section>
     </div>
   );

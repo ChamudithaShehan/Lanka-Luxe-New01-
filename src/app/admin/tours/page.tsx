@@ -128,7 +128,7 @@ export default function AdminToursPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTour) return;
 
@@ -137,15 +137,23 @@ export default function AdminToursPage() {
       return;
     }
 
-    saveTour(editingTour);
-    setIsModalOpen(false);
-    toast.success(`Tour "${editingTour.name.en}" saved successfully!`);
+    const res = await saveTour(editingTour);
+    if (res.success) {
+      setIsModalOpen(false);
+      toast.success(`Tour "${editingTour.name.en}" saved successfully!`);
+    } else {
+      toast.error(res.error || "Failed to save tour to database.");
+    }
   };
 
-  const handleDelete = (slug: string) => {
-    deleteTour(slug);
-    setDeleteConfirmSlug(null);
-    toast.success("Tour removed from catalog.");
+  const handleDelete = async (slug: string) => {
+    const res = await deleteTour(slug);
+    if (res.success) {
+      setDeleteConfirmSlug(null);
+      toast.success("Tour removed from catalog.");
+    } else {
+      toast.error(res.error || "Failed to delete tour from database.");
+    }
   };
 
   return (

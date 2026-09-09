@@ -8,6 +8,8 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { FloatingActions } from "@/components/FloatingActions";
 import { InquiryModal } from "@/components/InquiryModal";
 
+import { DatabaseErrorBanner } from "@/components/DatabaseErrorBanner";
+
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -20,6 +22,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     <>
       <ScrollProgress />
       <Navbar />
+      <DatabaseErrorBanner />
       <main className="flex-1 w-full overflow-x-clip">{children}</main>
       <Footer />
       <FloatingActions />

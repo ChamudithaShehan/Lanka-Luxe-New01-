@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { posts as staticPosts } from "@/data/site";
 import { BlogDetailClient } from "./BlogDetailClient";
 
 interface Props {
@@ -34,20 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       if (dbPost.image && dbPost.image.startsWith("https://")) {
         imageUrl = dbPost.image;
       }
-    } else {
-      const fallback = staticPosts.find((p) => p.slug === cleanSlug);
-      if (fallback) {
-        title = `${sanitizeMetaText(fallback.title.en)} | Lanka Luxe Journeys`;
-        description =
-          sanitizeMetaText(fallback.excerpt.en) ||
-          description;
-        if (fallback.image && fallback.image.startsWith("https://")) {
-          imageUrl = fallback.image;
-        }
-      }
     }
   } catch (err) {
-    console.warn("Failed to query blog metadata from DB, using fallback:", err);
+    console.warn("Failed to query blog metadata from MySQL database:", err);
   }
 
   const canonicalUrl = `/blog/${cleanSlug}`;

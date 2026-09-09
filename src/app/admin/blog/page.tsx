@@ -94,7 +94,7 @@ export default function AdminBlogPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPost) return;
 
@@ -103,15 +103,23 @@ export default function AdminBlogPage() {
       return;
     }
 
-    savePost(editingPost);
-    setIsModalOpen(false);
-    toast.success(`Article "${editingPost.title.en}" published successfully!`);
+    const res = await savePost(editingPost);
+    if (res.success) {
+      setIsModalOpen(false);
+      toast.success(`Article "${editingPost.title.en}" published successfully!`);
+    } else {
+      toast.error(res.error || "Failed to save article to database.");
+    }
   };
 
-  const handleDelete = (slug: string) => {
-    deletePost(slug);
-    setDeleteConfirmSlug(null);
-    toast.success("Article removed from journal.");
+  const handleDelete = async (slug: string) => {
+    const res = await deletePost(slug);
+    if (res.success) {
+      setDeleteConfirmSlug(null);
+      toast.success("Article removed from journal.");
+    } else {
+      toast.error(res.error || "Failed to delete article from database.");
+    }
   };
 
   return (

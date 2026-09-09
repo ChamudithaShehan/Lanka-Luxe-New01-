@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-import { tours as defaultTours, destinations as defaultDestinations, posts as defaultPosts } from "@/data/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://lankaluxe.com";
@@ -38,6 +37,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/gallery`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "weekly",
@@ -68,49 +73,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       prisma.blogPost.findMany({ select: { slug: true, updatedAt: true } }),
     ]);
 
-    const tourSlugs = toursDb.length ? toursDb : defaultTours.map((t) => ({ slug: t.slug, updatedAt: new Date() }));
-    const destSlugs = destsDb.length ? destsDb : defaultDestinations.map((d) => ({ slug: d.slug, updatedAt: new Date() }));
-    const postSlugs = postsDb.length ? postsDb : defaultPosts.map((p) => ({ slug: p.slug, updatedAt: new Date() }));
-
-    dynamicTours = tourSlugs.map((t) => ({
+    dynamicTours = toursDb.map((t) => ({
       url: `${baseUrl}/tours/${t.slug}`,
       lastModified: t.updatedAt,
       changeFrequency: "weekly",
       priority: 0.85,
     }));
 
-    dynamicDests = destSlugs.map((d) => ({
+    dynamicDests = destsDb.map((d) => ({
       url: `${baseUrl}/destinations/${d.slug}`,
       lastModified: d.updatedAt,
       changeFrequency: "monthly",
       priority: 0.8,
     }));
 
-    dynamicPosts = postSlugs.map((p) => ({
+    dynamicPosts = postsDb.map((p) => ({
       url: `${baseUrl}/blog/${p.slug}`,
       lastModified: p.updatedAt,
       changeFrequency: "monthly",
       priority: 0.7,
     }));
-  } catch {
-    dynamicTours = defaultTours.map((t) => ({
-      url: `${baseUrl}/tours/${t.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.85,
-    }));
-    dynamicDests = defaultDestinations.map((d) => ({
-      url: `${baseUrl}/destinations/${d.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    }));
-    dynamicPosts = defaultPosts.map((p) => ({
-      url: `${baseUrl}/blog/${p.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    }));
+  } catch (error) {
+    console.error("Failed to query dynamic sitemap entries from MySQL:", error);
+    // Never inject fake/fallback database records into sitemap
   }
 
   return [...staticRoutes, ...dynamicTours, ...dynamicDests, ...dynamicPosts];

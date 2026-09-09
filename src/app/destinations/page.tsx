@@ -14,7 +14,7 @@ import { useInquiry } from "@/lib/inquiry-context";
 export default function DestinationsPage() {
   const { t, tl, lang } = useI18n();
   const { openInquiry } = useInquiry();
-  const { destinations } = useContentStore();
+  const { destinations, isLoaded, dbError } = useContentStore();
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -125,25 +125,75 @@ export default function DestinationsPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {paginatedDestinations.map((dest) => (
-            <Reveal key={dest.slug} variant="fade-up">
-              <DestinationCard destination={dest} />
-            </Reveal>
-          ))}
-        </div>
+        {dbError && destinations.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-red-100 mb-8">
+            <p className="text-lg text-slate-700 font-medium mb-2">
+              Content is temporarily unavailable.
+            </p>
+            <p className="text-sm text-slate-500">
+              Please try again later.
+            </p>
+          </div>
+        ) : !isLoaded && destinations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-100 mb-8">
+            <div className="w-8 h-8 border-2 border-[#C8A45D] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+              Loading Destinations...
+            </p>
+          </div>
+        ) : destinations.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 mb-8">
+            <p className="text-lg text-slate-600 font-medium mb-2">
+              {lang === "ko"
+                ? "현재 등록된 여행지가 없습니다."
+                : "No destinations available yet."}
+            </p>
+            <p className="text-sm text-slate-400">
+              {lang === "ko"
+                ? "새로운 여행지가 곧 업데이트됩니다."
+                : "New island destinations will be published soon."}
+            </p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 mb-8">
+            <p className="text-lg text-slate-500 font-normal mb-4">
+              {lang === "ko"
+                ? "검색 조건에 맞는 여행지가 없습니다."
+                : "No destinations match your search."}
+            </p>
+            <button
+              onClick={() => {
+                setSelectedRegion("All");
+                setSearchQuery("");
+              }}
+              className="text-xs uppercase tracking-widest text-[#C8A45D] underline font-semibold cursor-pointer"
+            >
+              {lang === "ko" ? "전체 지역 보기" : "Reset Filters"}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {paginatedDestinations.map((dest) => (
+                <Reveal key={dest.slug} variant="fade-up">
+                  <DestinationCard destination={dest} />
+                </Reveal>
+              ))}
+            </div>
 
-        {/* Pagination Controls */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          totalItems={filtered.length}
-          pageSize={ITEMS_PER_PAGE}
-          itemLabel={lang === "ko" ? "여행지" : "destinations"}
-          showRange
-          scrollToId="destinations-directory"
-        />
+            {/* Pagination Controls */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filtered.length}
+              pageSize={ITEMS_PER_PAGE}
+              itemLabel={lang === "ko" ? "여행지" : "destinations"}
+              showRange
+              scrollToId="destinations-directory"
+            />
+          </>
+        )}
       </section>
 
       {/* Inquiry Callout */}

@@ -77,25 +77,37 @@ export default function AdminGolfPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCourse) return;
 
     if (editingIndex === -1) {
-      addGolfCourse(editingCourse);
-      toast.success(`Golf course "${editingCourse.name}" added successfully!`);
+      const res = await addGolfCourse(editingCourse);
+      if (res.success) {
+        setIsModalOpen(false);
+        toast.success(`Golf course "${editingCourse.name}" added successfully!`);
+      } else {
+        toast.error(res.error || "Failed to add golf course to database.");
+      }
     } else if (editingIndex !== null) {
-      saveGolfCourse(editingIndex, editingCourse);
-      toast.success(`Golf course "${editingCourse.name}" updated successfully!`);
+      const res = await saveGolfCourse(editingIndex, editingCourse);
+      if (res.success) {
+        setIsModalOpen(false);
+        toast.success(`Golf course "${editingCourse.name}" updated successfully!`);
+      } else {
+        toast.error(res.error || "Failed to update golf course in database.");
+      }
     }
-
-    setIsModalOpen(false);
   };
 
-  const handleDelete = (index: number) => {
-    deleteGolfCourse(index);
-    setDeleteConfirmIndex(null);
-    toast.success("Golf course package removed.");
+  const handleDelete = async (index: number) => {
+    const res = await deleteGolfCourse(index);
+    if (res.success) {
+      setDeleteConfirmIndex(null);
+      toast.success("Golf course package removed.");
+    } else {
+      toast.error(res.error || "Failed to delete golf course from database.");
+    }
   };
 
   return (
