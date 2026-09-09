@@ -30,18 +30,32 @@ export default function GalleryPage() {
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(
     null,
   );
-  const ITEMS_PER_PAGE = 12;
+  const ITEMS_PER_PAGE = 24;
 
   const filteredItems = gallery.filter((item) => {
     if (selectedCategory === "All") return true;
     return item.category === selectedCategory;
   });
 
-  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
   const paginatedItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  // Auto-open photo from query param (?photo=gal-X)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const photoId = params.get("photo");
+      if (photoId && gallery.length > 0) {
+        const foundIdx = filteredItems.findIndex((item) => item.id === photoId);
+        if (foundIdx !== -1) {
+          setActiveLightboxIndex(foundIdx);
+        }
+      }
+    }
+  }, [gallery, filteredItems]);
 
   const activePhoto =
     activeLightboxIndex !== null ? filteredItems[activeLightboxIndex] : null;
@@ -81,6 +95,11 @@ export default function GalleryPage() {
     if (cat === "Highlands & Tea") return t("gallery.highlands");
     if (cat === "Scenic Golf") return t("gallery.golf");
     return cat;
+  };
+
+  const getCategoryCount = (cat: string) => {
+    if (cat === "All") return gallery.length;
+    return gallery.filter((item) => item.category === cat).length;
   };
 
   return (
@@ -124,6 +143,7 @@ export default function GalleryPage() {
           <div className="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-200/80">
             {galleryCategories.map((category) => {
               const isActive = selectedCategory === category;
+              const count = getCategoryCount(category);
               return (
                 <button
                   key={category}
@@ -132,13 +152,22 @@ export default function GalleryPage() {
                     setCurrentPage(1);
                     setActiveLightboxIndex(null);
                   }}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 cursor-pointer ${
                     isActive
                       ? "bg-[#081A33] text-[#C8A45D] shadow-md scale-105"
                       : "bg-white text-slate-600 hover:text-[#081A33] hover:bg-slate-100/80 border border-slate-200"
                   }`}
                 >
-                  {getCategoryLabel(category)}
+                  <span>{getCategoryLabel(category)}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                      isActive
+                        ? "bg-[#C8A45D] text-[#081A33] font-bold"
+                        : "bg-slate-100 text-slate-500 font-medium"
+                    }`}
+                  >
+                    {count}
+                  </span>
                 </button>
               );
             })}
@@ -205,6 +234,9 @@ export default function GalleryPage() {
                         alt={tl(item.title)}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src = "/hero-elephant.jpg";
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-black/20 opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
 
@@ -301,6 +333,9 @@ export default function GalleryPage() {
                 src={activePhoto.image}
                 alt={tl(activePhoto.title)}
                 className="max-h-[72vh] max-w-full object-contain rounded-2xl shadow-2xl transition-all duration-300 animate-fade-in"
+                onError={(e) => {
+                  e.currentTarget.src = "/hero-elephant.jpg";
+                }}
               />
             </div>
 
