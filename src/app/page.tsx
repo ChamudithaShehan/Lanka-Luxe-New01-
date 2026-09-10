@@ -747,10 +747,14 @@ export default function HomePage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {filteredTours.map((tour) => (
-              <Reveal key={tour.slug} variant="fade-up">
-                <TourCard tour={tour} />
+              <Reveal
+                key={tour.slug}
+                variant="fade-up"
+                className="w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)] flex flex-col"
+              >
+                <TourCard tour={tour} className="h-full" />
               </Reveal>
             ))}
           </div>
@@ -900,10 +904,15 @@ export default function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex flex-wrap justify-center gap-8">
               {experiences.map((exp, idx) => (
-                <Reveal key={idx} variant="fade-up" delay={idx * 0.1}>
-                  <ExperienceCard experience={exp} index={idx} />
+                <Reveal
+                  key={idx}
+                  variant="fade-up"
+                  delay={idx * 0.1}
+                  className="w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)] flex flex-col"
+                >
+                  <ExperienceCard experience={exp} index={idx} className="h-full" />
                 </Reveal>
               ))}
             </div>

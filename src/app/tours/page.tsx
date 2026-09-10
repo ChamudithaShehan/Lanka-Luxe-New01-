@@ -205,10 +205,14 @@ export default function ToursPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="flex flex-wrap justify-center gap-8 mb-12">
               {paginatedTours.map((tour) => (
-                <Reveal key={tour.slug} variant="fade-up">
-                  <TourCard tour={tour} />
+                <Reveal
+                  key={tour.slug}
+                  variant="fade-up"
+                  className="w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)] flex flex-col"
+                >
+                  <TourCard tour={tour} className="h-full" />
                 </Reveal>
               ))}
             </div>

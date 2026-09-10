@@ -219,10 +219,14 @@ export default function BlogPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            <div className="flex flex-wrap justify-center gap-8 mb-8">
               {paginatedPosts.map((post) => (
-                <Reveal key={post.slug} variant="fade-up">
-                  <BlogCard post={post} />
+                <Reveal
+                  key={post.slug}
+                  variant="fade-up"
+                  className="w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)] flex flex-col"
+                >
+                  <BlogCard post={post} className="h-full" />
                 </Reveal>
               ))}
             </div>
