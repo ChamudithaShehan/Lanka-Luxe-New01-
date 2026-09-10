@@ -271,7 +271,7 @@ export function Footer() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1 flex items-center flex-wrap justify-center lg:justify-start gap-2" suppressHydrationWarning>
               <span>© {new Date().getFullYear()} {siteSettings?.brandName || "Lanka Luxe Journeys"}. All Rights Reserved. · Founder: {siteSettings?.founderName || "Iroshan Jayawickrame"} (SLTDA {siteSettings?.licenseNumber || "C-1734"})</span>
-              <span>· Developed by <a href="https://braintisa.com/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Brain<span className="text-gold">t</span>isa</a></span>
+              <span>· Developed by <a href="https://braintisa.com/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-mist transition-colors font-medium">Brain<span className="text-gold">t</span>isa</a></span>
               <Link href="/admin" className="text-mist/30 hover:text-gold transition-colors inline-flex items-center" title="Admin Atelier">
                 <Lock className="w-3 h-3" />
               </Link>
