@@ -32,28 +32,28 @@ export default function AdminSettingsPage() {
     siteSettings
       ? JSON.parse(JSON.stringify(siteSettings))
       : {
-          brandName: "",
-          founderName: "",
-          founderTitle: "",
-          founderBio: { en: "", ko: "" },
-          founderQualifications: [],
-          licenseNumber: "",
-          experienceYears: "",
-          heroHeadline1: { en: "", ko: "" },
-          heroHeadline2: { en: "", ko: "" },
-          heroSubtitle: { en: "", ko: "" },
-        }
+        brandName: "",
+        founderName: "",
+        founderTitle: "",
+        founderBio: { en: "", ko: "" },
+        founderQualifications: [],
+        licenseNumber: "",
+        experienceYears: "",
+        heroHeadline1: { en: "", ko: "" },
+        heroHeadline2: { en: "", ko: "" },
+        heroSubtitle: { en: "", ko: "" },
+      }
   );
   const [contactForm, setContactForm] = useState(
     contact
       ? JSON.parse(JSON.stringify(contact))
       : {
-          phone: "",
-          whatsapp: "",
-          kakao: "",
-          email: "",
-          address: "",
-        }
+        phone: "",
+        whatsapp: "",
+        kakao: "",
+        email: "",
+        address: "",
+      }
   );
 
   React.useEffect(() => {
@@ -153,8 +153,9 @@ export default function AdminSettingsPage() {
                     founderName: e.target.value,
                   })
                 }
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 required
+                disabled
               />
             </div>
 
@@ -172,8 +173,9 @@ export default function AdminSettingsPage() {
                   })
                 }
                 placeholder="e.g. C-1734"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-[#C8A45D] font-bold focus:border-[#C8A45D] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-[#C8A45D] font-bold focus:border-[#C8A45D] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 required
+                disabled
               />
             </div>
 
