@@ -28,16 +28,37 @@ export async function PATCH(
       );
     }
 
+    const existing = await prisma.inquiry.findFirst({
+      where: {
+        OR: [{ id }, { reference: id }],
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Inquiry record not found." },
+        { status: 404 }
+      );
+    }
+
     const { status, notes } = result.data;
+    const beforeCount = await prisma.inquiry.count();
 
     const updated = await prisma.inquiry.update({
-      where: { id },
+      where: { id: existing.id },
       data: {
         ...(status ? { status } : {}),
         ...(notes !== undefined ? { notes } : {}),
         updatedAt: new Date(),
       },
     });
+
+    const afterCount = await prisma.inquiry.count();
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[INQUIRY UPDATE] id=${existing.id} ref=${existing.reference} route=PATCH /api/admin/inquiries/${id} beforeCount=${beforeCount} afterCount=${afterCount} at ${new Date().toISOString()}`
+      );
+    }
 
     return NextResponse.json({ success: true, inquiry: updated });
   } catch (error) {
@@ -57,9 +78,31 @@ export async function DELETE(
     await requireAdminSession();
     const { id } = await params;
 
-    await prisma.inquiry.delete({
-      where: { id },
+    const existing = await prisma.inquiry.findFirst({
+      where: {
+        OR: [{ id }, { reference: id }],
+      },
     });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Inquiry record not found." },
+        { status: 404 }
+      );
+    }
+
+    const beforeCount = await prisma.inquiry.count();
+
+    await prisma.inquiry.delete({
+      where: { id: existing.id },
+    });
+
+    const afterCount = await prisma.inquiry.count();
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[INQUIRY DELETE] id=${existing.id} ref=${existing.reference} route=DELETE /api/admin/inquiries/${id} beforeCount=${beforeCount} afterCount=${afterCount} at ${new Date().toISOString()}`
+      );
+    }
 
     return NextResponse.json({ success: true, message: "Inquiry deleted" });
   } catch (error) {

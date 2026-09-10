@@ -61,6 +61,8 @@ export async function POST(req: NextRequest) {
     const reference = `LLJ-${new Date().getFullYear()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
     const id = `inq_${crypto.randomUUID()}`;
 
+    const beforeCount = await prisma.inquiry.count();
+
     const newInquiry = await prisma.inquiry.create({
       data: {
         id,
@@ -87,6 +89,13 @@ export async function POST(req: NextRequest) {
         createdAt: true,
       },
     });
+
+    const afterCount = await prisma.inquiry.count();
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[INQUIRY INSERT] id=${newInquiry.id} ref=${newInquiry.reference} route=POST /api/inquiries beforeCount=${beforeCount} afterCount=${afterCount} at ${new Date().toISOString()}`
+      );
+    }
 
     return NextResponse.json({
       success: true,

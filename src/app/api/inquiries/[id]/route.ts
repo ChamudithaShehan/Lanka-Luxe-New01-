@@ -33,13 +33,32 @@ export async function PATCH(
 
     const { status, notes } = validation.data;
 
+    const existing = await prisma.inquiry.findFirst({
+      where: {
+        OR: [{ id }, { reference: id }],
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Inquiry not found." }, { status: 404 });
+    }
+
+    const beforeCount = await prisma.inquiry.count();
+
     const updated = await prisma.inquiry.update({
-      where: { reference: id },
+      where: { id: existing.id },
       data: {
         ...(status && { status }),
         ...(notes !== undefined && { notes: notes ? sanitizeInput(notes) : null }),
       },
     });
+
+    const afterCount = await prisma.inquiry.count();
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[INQUIRY UPDATE] id=${existing.id} ref=${existing.reference} route=PATCH /api/inquiries/${id} beforeCount=${beforeCount} afterCount=${afterCount} at ${new Date().toISOString()}`
+      );
+    }
 
     return NextResponse.json({ success: true, inquiry: updated });
   } catch (error) {
@@ -61,9 +80,29 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid inquiry reference ID." }, { status: 400 });
     }
 
-    await prisma.inquiry.delete({
-      where: { reference: id },
+    const existing = await prisma.inquiry.findFirst({
+      where: {
+        OR: [{ id }, { reference: id }],
+      },
     });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Inquiry not found." }, { status: 404 });
+    }
+
+    const beforeCount = await prisma.inquiry.count();
+
+    await prisma.inquiry.delete({
+      where: { id: existing.id },
+    });
+
+    const afterCount = await prisma.inquiry.count();
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[INQUIRY DELETE] id=${existing.id} ref=${existing.reference} route=DELETE /api/inquiries/${id} beforeCount=${beforeCount} afterCount=${afterCount} at ${new Date().toISOString()}`
+      );
+    }
+
     return NextResponse.json({ success: true, message: "Inquiry removed." });
   } catch (error) {
     console.error("Delete inquiry error:", error);

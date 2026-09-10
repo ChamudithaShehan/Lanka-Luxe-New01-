@@ -126,15 +126,39 @@ async function runAutoSetup() {
     return;
   }
 
-  // Step D: Seed Initial Database Content
+  // Step D: Seed Initial Database Content (Idempotent - only if database is unpopulated)
   try {
-    console.log("🌱 Auto-Setup: Populating initial database seed content into MySQL...");
-    execSync("node prisma/seed.mjs", {
-      cwd: rootDir,
-      stdio: "inherit",
-      env: { ...process.env },
-    });
-    console.log("🎉 Auto-Setup: Database content synchronized successfully!");
+    let toursExist = false;
+    try {
+      const conn = await mariadb.createConnection({
+        host,
+        port,
+        user,
+        password,
+        database: dbName,
+        allowPublicKeyRetrieval: true,
+        connectTimeout: 5000,
+      });
+      const rows = await conn.query("SELECT COUNT(*) as count FROM tour;");
+      if (rows && rows[0] && Number(rows[0].count) > 0) {
+        toursExist = true;
+      }
+      await conn.end();
+    } catch {
+      // Table might not exist or empty
+    }
+
+    if (toursExist) {
+      console.log("ℹ️  Auto-Setup: Database already populated with content. Preserving all existing data (skipping seeding).");
+    } else {
+      console.log("🌱 Auto-Setup: Empty database detected. Populating initial database seed content into MySQL...");
+      execSync("node prisma/seed.mjs", {
+        cwd: rootDir,
+        stdio: "inherit",
+        env: { ...process.env },
+      });
+      console.log("🎉 Auto-Setup: Database content synchronized successfully!");
+    }
   } catch (seedErr) {
     console.error("❌ Auto-Setup: Database seeding error:", seedErr.message || seedErr);
   }

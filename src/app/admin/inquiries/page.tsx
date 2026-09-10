@@ -19,13 +19,21 @@ import {
   X,
   Download,
   Filter,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPagination } from "@/components/admin/AdminPagination";
 
 export default function AdminInquiriesPage() {
-  const { inquiries, addInquiry, updateInquiryStatus, deleteInquiry, contact } =
-    useContentStore();
+  const {
+    inquiries,
+    addInquiry,
+    updateInquiryStatus,
+    deleteInquiry,
+    contact,
+    refreshContent,
+    isLoading,
+  } = useContentStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
@@ -33,6 +41,24 @@ export default function AdminInquiriesPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Always fetch fresh inquiries directly from database on mount
+  React.useEffect(() => {
+    refreshContent();
+  }, [refreshContent]);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshContent();
+      toast.success("Inquiries reloaded directly from database.");
+    } catch {
+      toast.error("Failed to reload inquiries.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   // Reset to page 1 on filter changes
   React.useEffect(() => {
@@ -193,6 +219,20 @@ export default function AdminInquiriesPage() {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={handleManualRefresh}
+            disabled={isRefreshing || isLoading}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs font-semibold border border-[#1B2D4A] transition-colors disabled:opacity-50 cursor-pointer"
+            title="Refresh Inquiries directly from Database"
+          >
+            <RefreshCw
+              className={`w-4 h-4 text-[#C8A45D] ${
+                isRefreshing || isLoading ? "animate-spin" : ""
+              }`}
+            />
+            <span>{isRefreshing || isLoading ? "Reloading..." : "Refresh"}</span>
+          </button>
+
+          <button
             onClick={handleExportCSV}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs font-semibold border border-[#1B2D4A] transition-colors"
           >
@@ -280,7 +320,12 @@ export default function AdminInquiriesPage() {
 
       {/* Inquiries List */}
       <div className="space-y-3">
-        {filteredInquiries.length === 0 ? (
+        {isLoading || isRefreshing ? (
+          <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-12 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-3">
+            <RefreshCw className="w-5 h-5 text-[#C8A45D] animate-spin" />
+            <span>Loading inquiries directly from MySQL database...</span>
+          </div>
+        ) : filteredInquiries.length === 0 ? (
           <div className="bg-[#0B1A30] border border-[#1B2D4A] rounded-2xl p-12 text-center text-slate-400 text-xs">
             No inquiries match your current filters.
           </div>

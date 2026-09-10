@@ -48,8 +48,7 @@ function AdminLoginForm() {
         fromUrl && fromUrl.startsWith("/admin") && fromUrl !== "/admin/login"
           ? fromUrl
           : "/admin";
-      router.push(destination);
-      router.refresh();
+      window.location.href = destination;
     } catch {
       setError(true);
       setLoading(false);

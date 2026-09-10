@@ -874,18 +874,11 @@ async function main() {
   }
   console.log(`✅ ${defaultPosts.length} journal articles seeded.`);
 
-  // 7. Clean up any legacy demo inquiries from development
-  const deletedDemoInquiries = await prisma.inquiry.deleteMany({
-    where: {
-      reference: {
-        in: ["LLJ-2026-1001", "LLJ-2026-1002", "LLJ-2026-1003"],
-      },
-    },
-  });
-  if (deletedDemoInquiries.count > 0) {
-    console.log(`🧹 Cleaned up ${deletedDemoInquiries.count} legacy demo inquiries from database.`);
-  }
-  console.log(`✅ Inquiries verified: pure database pipeline active (0 mock inquiries seeded).`);
+  // 7. Customer Inquiries are strictly preserved
+  // Inquiries represent active customer and user submissions.
+  // Under NO circumstances should seeding delete, overwrite, or mutate inquiry records.
+  const currentInquiryCount = await prisma.inquiry.count();
+  console.log(`✅ Customer Inquiries preserved: ${currentInquiryCount} live records retained in database (seed never touches inquiries).`);
 
   // 8. Seed Site Settings
   await prisma.siteSetting.upsert({
