@@ -124,11 +124,13 @@ export type Destination = {
 };
 
 export type Testimonial = {
+  id?: string;
   quote: Localized;
   name: string;
   country: string;
   trip: string;
   image: string;
+  rating?: number;
 };
 
 export type TeamMember = {

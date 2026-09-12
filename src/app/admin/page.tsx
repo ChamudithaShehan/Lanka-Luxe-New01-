@@ -10,6 +10,7 @@ import {
   MapPin,
   Sparkles,
   BookOpen,
+  MessageSquareQuote,
   ArrowUpRight,
   Plus,
   MessageCircle,
@@ -30,6 +31,7 @@ export default function AdminOverviewPage() {
     destinations,
     experiences,
     posts,
+    testimonials,
     inquiries,
     siteSettings,
     contact,
@@ -83,6 +85,13 @@ export default function AdminOverviewPage() {
       subtitle: "Published travel guides",
       icon: BookOpen,
       href: "/admin/blog",
+    },
+    {
+      title: "Guest Stories",
+      value: testimonials.length,
+      subtitle: "Published guest reviews",
+      icon: MessageSquareQuote,
+      href: "/admin/stories",
     },
   ];
 

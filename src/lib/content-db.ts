@@ -168,7 +168,22 @@ export async function getLiveContent(): Promise<LiveContentData> {
     } else if (s.key === "global_why_us") {
       whyUs = safeJsonParse(s.value, []);
     } else if (s.key === "global_testimonials") {
-      testimonials = safeJsonParse(s.value, []);
+      const rawTestimonials = safeJsonParse(s.value, []);
+      testimonials = Array.isArray(rawTestimonials)
+        ? rawTestimonials
+            .filter((item) => item && typeof item === "object")
+            .map((t: any, idx: number) => ({
+              id: t.id ? String(t.id) : `story_${idx + 1}`,
+              name: t.name || t.author || "Guest",
+              country: t.country || "International",
+              trip: t.trip || t.role || "Bespoke Journey",
+              quote: t.quote || t.text || { en: "", ko: "" },
+              image:
+                t.image ||
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+              rating: typeof t.rating === "number" ? t.rating : 5,
+            }))
+        : [];
     } else if (s.key === "global_team") {
       team = safeJsonParse(s.value, []);
     }

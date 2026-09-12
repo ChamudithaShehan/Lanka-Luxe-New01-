@@ -87,6 +87,9 @@ interface ContentContextType {
   addGalleryItem: (item: GalleryItem) => Promise<{ success: boolean; error?: string }>;
   deleteGalleryItem: (id: string) => Promise<{ success: boolean; error?: string }>;
   reorderGallery: (items: GalleryItem[]) => Promise<{ success: boolean; error?: string }>;
+  saveTestimonial: (testimonial: Testimonial) => Promise<{ success: boolean; error?: string }>;
+  addTestimonial: (testimonial: Testimonial) => Promise<{ success: boolean; error?: string }>;
+  deleteTestimonial: (idOrIndex: string | number) => Promise<{ success: boolean; error?: string }>;
   addInquiry: (inquiry: Omit<Inquiry, "id" | "createdAt" | "status">) => Promise<string>;
   updateInquiryStatus: (id: string, status: Inquiry["status"], notes?: string) => Promise<{ success: boolean; error?: string }>;
   deleteInquiry: (id: string) => Promise<{ success: boolean; error?: string }>;
@@ -592,6 +595,61 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     [refreshContent]
   );
 
+  // Testimonials mutations
+  const saveTestimonial = useCallback(
+    async (testimonial: Testimonial): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const res = await fetch("/api/admin/testimonials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ testimonial }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to save testimonial." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not save story." };
+      }
+    },
+    [refreshContent]
+  );
+
+  const addTestimonial = useCallback(
+    async (testimonial: Testimonial): Promise<{ success: boolean; error?: string }> => {
+      return saveTestimonial(testimonial);
+    },
+    [saveTestimonial]
+  );
+
+  const deleteTestimonial = useCallback(
+    async (idOrIndex: string | number): Promise<{ success: boolean; error?: string }> => {
+      let queryParam = "";
+      if (typeof idOrIndex === "number") {
+        queryParam = `index=${idOrIndex}`;
+      } else {
+        queryParam = `id=${encodeURIComponent(idOrIndex)}`;
+      }
+
+      try {
+        const res = await fetch(`/api/admin/testimonials?${queryParam}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return { success: false, error: data.error || "Failed to delete testimonial." };
+        }
+        await refreshContent();
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: "Database connection failed. Could not delete story." };
+      }
+    },
+    [refreshContent]
+  );
+
   // Inquiries mutations
   const addInquiry = useCallback(
     async (inq: Omit<Inquiry, "id" | "createdAt" | "status">): Promise<string> => {
@@ -688,6 +746,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     addGalleryItem,
     deleteGalleryItem,
     reorderGallery,
+    saveTestimonial,
+    addTestimonial,
+    deleteTestimonial,
     addInquiry,
     updateInquiryStatus,
     deleteInquiry,
