@@ -1,18 +1,18 @@
 import type { Localized } from "@/lib/i18n";
 
 // Static UI Image Assets (Brand Logo & Parallax Layout Assets)
-const sigiriya = "https://i.ibb.co/35FYNgjq/lanka-luxe-sigiriya.jpg";
-const beach = "https://i.ibb.co/prJvzzgt/lanka-luxe-beach.jpg";
+const sigiriya = "/sigiriya.jpg";
+const beach = "/beach.jpg";
 const golf = "https://i.ibb.co/fj3tmjt/lanka-luxe-golf.jpg";
 const golf2 = "https://i.ibb.co/xVC6Wd0/lanka-luxe-golf2.jpg";
 const wildlife = "/hero-elephant.jpg";
 const tea = "https://i.ibb.co/TMd6Zqkz/lanka-luxe-tea.jpg";
 const resort = "https://i.ibb.co/nNWk4GpK/lanka-luxe-resort.jpg";
-const train = "https://i.ibb.co/Pz6kLgJM/lanka-luxe-train.jpg";
+const train = "/nine_arch.jpg";
 const culture = "https://i.ibb.co/rRhsm4Gy/lanka-luxe-culture.jpg";
 const colombo = "https://i.ibb.co/7xYY9m0w/lanka-luxe-colombo.jpg";
 const kandy = "https://i.ibb.co/XBwSsqz/lanka-luxe-kandy.jpg";
-const galle = "https://i.ibb.co/qY3CNC1y/lanka-luxe-galle.jpg";
+const galle = "/galle_fort.jpg";
 const ella = "https://i.ibb.co/xqM0mmhW/lanka-luxe-ella.jpg";
 const honeymoon = "https://i.ibb.co/MDg8WqyS/lanka-luxe-honeymoon.jpg";
 const wellness = "https://i.ibb.co/PGLpPwqb/lanka-luxe-wellness.jpg";
