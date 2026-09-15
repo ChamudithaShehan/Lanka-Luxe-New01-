@@ -49,6 +49,7 @@ export async function getLiveContent(): Promise<LiveContentData> {
     expsDb,
     postsDb,
     galleryDb,
+    testimonialsDb,
     settingsDb,
   ] = await Promise.all([
     prisma.tour.findMany({ orderBy: { createdAt: "asc" } }),
@@ -57,6 +58,7 @@ export async function getLiveContent(): Promise<LiveContentData> {
     prisma.experience.findMany({ orderBy: { createdAt: "asc" } }),
     prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.galleryItem.findMany({ orderBy: { order: "asc" } }),
+    prisma.testimonial.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
     prisma.siteSetting.findMany(),
   ]);
 
@@ -157,7 +159,6 @@ export async function getLiveContent(): Promise<LiveContentData> {
   let siteSettings: SiteSettings | null = null;
   let contactInfo: any = null;
   let whyUs: Feature[] = [];
-  let testimonials: Testimonial[] = [];
   let team: TeamMember[] = [];
 
   for (const s of settingsDb) {
@@ -167,27 +168,23 @@ export async function getLiveContent(): Promise<LiveContentData> {
       contactInfo = safeJsonParse(s.value, null);
     } else if (s.key === "global_why_us") {
       whyUs = safeJsonParse(s.value, []);
-    } else if (s.key === "global_testimonials") {
-      const rawTestimonials = safeJsonParse(s.value, []);
-      testimonials = Array.isArray(rawTestimonials)
-        ? rawTestimonials
-            .filter((item) => item && typeof item === "object")
-            .map((t: any, idx: number) => ({
-              id: t.id ? String(t.id) : `story_${idx + 1}`,
-              name: t.name || t.author || "Guest",
-              country: t.country || "International",
-              trip: t.trip || t.role || "Bespoke Journey",
-              quote: t.quote || t.text || { en: "", ko: "" },
-              image:
-                t.image ||
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-              rating: typeof t.rating === "number" ? t.rating : 5,
-            }))
-        : [];
     } else if (s.key === "global_team") {
       team = safeJsonParse(s.value, []);
     }
   }
+
+  const testimonials: Testimonial[] = testimonialsDb.map((t) => ({
+    id: t.id,
+    name: t.name,
+    country: t.country,
+    trip: t.trip,
+    rating: t.rating,
+    image: t.image,
+    quote: {
+      en: t.quoteEn,
+      ko: t.quoteKo || t.quoteEn,
+    },
+  }));
 
   return {
     dbConnected: true,

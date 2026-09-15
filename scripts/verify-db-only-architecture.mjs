@@ -28,13 +28,14 @@ async function verifyDbOnlyArchitecture() {
   // 1. Verify MySQL is the exclusive data source
   console.log("1. Verifying MySQL Database CMS Tables:");
   try {
-    const [tours, golf, destinations, experiences, posts, gallery, settings, inquiries] = await Promise.all([
+    const [tours, golf, destinations, experiences, posts, gallery, testimonials, settings, inquiries] = await Promise.all([
       prisma.tour.count(),
       prisma.golfCourse.count(),
       prisma.destination.count(),
       prisma.experience.count(),
       prisma.blogPost.count(),
       prisma.galleryItem.count(),
+      prisma.testimonial.count(),
       prisma.siteSetting.count(),
       prisma.inquiry.count(),
     ]);
@@ -45,6 +46,7 @@ async function verifyDbOnlyArchitecture() {
     assert(experiences >= 5, `Experience table populated: ${experiences} records`);
     assert(posts >= 4, `BlogPost table populated: ${posts} records`);
     assert(gallery >= 12, `GalleryItem table populated: ${gallery} records`);
+    assert(testimonials >= 3, `Testimonial table populated: ${testimonials} records`);
     assert(settings >= 1, `SiteSetting table populated: ${settings} records`);
     assert(inquiries >= 0, `Inquiry table active in MySQL: ${inquiries} records`);
   } catch (err) {

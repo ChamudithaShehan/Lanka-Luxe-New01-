@@ -4,36 +4,28 @@ import { requireAdminSession } from "@/lib/auth";
 import type { Testimonial } from "@/data/site";
 import crypto from "crypto";
 
-function parseTestimonials(raw: string | null | undefined): Testimonial[] {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed
-      .filter((item) => item && typeof item === "object")
-      .map((t: any, idx: number) => ({
-        id: t.id ? String(t.id) : `story_${idx + 1}`,
-        name: t.name || t.author || "Guest",
-        country: t.country || "International",
-        trip: t.trip || t.role || "Bespoke Journey",
-        quote: t.quote || t.text || { en: "", ko: "" },
-        image:
-          t.image ||
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-        rating: typeof t.rating === "number" ? t.rating : 5,
-      }));
-  } catch {
-    return [];
-  }
+function formatTestimonial(t: any): Testimonial {
+  return {
+    id: t.id,
+    name: t.name,
+    country: t.country,
+    trip: t.trip,
+    quote: {
+      en: t.quoteEn || "",
+      ko: t.quoteKo || t.quoteEn || "",
+    },
+    image: t.image,
+    rating: t.rating,
+  };
 }
 
 export async function GET(req: NextRequest) {
   try {
     await requireAdminSession();
-    const setting = await prisma.siteSetting.findUnique({
-      where: { key: "global_testimonials" },
+    const rows = await prisma.testimonial.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     });
-    const testimonials = parseTestimonials(setting?.value);
+    const testimonials = rows.map(formatTestimonial);
     return NextResponse.json({ success: true, testimonials });
   } catch (error) {
     console.error("Admin GET testimonials error:", error);
@@ -51,90 +43,104 @@ export async function POST(req: NextRequest) {
 
     // Check if bulk array is provided
     if (Array.isArray(body)) {
-      const sanitized = body.map((item: any, idx: number) => ({
-        id: item.id || `story_${Date.now()}_${idx}`,
-        quote: {
-          en: item.quote?.en || "",
-          ko: item.quote?.ko || "",
-        },
-        name: item.name || "Anonymous Guest",
-        country: item.country || "International",
-        trip: item.trip || "Bespoke Journey",
-        image: item.image || "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg",
-        rating: typeof item.rating === "number" ? item.rating : 5,
-      }));
+      for (let i = 0; i < body.length; i++) {
+        const item = body[i];
+        const id = item.id || `story_${Date.now()}_${i}`;
+        const quoteEn = item.quote?.en || (typeof item.quote === "string" ? item.quote : "");
+        const quoteKo = item.quote?.ko || null;
+        await prisma.testimonial.upsert({
+          where: { id },
+          create: {
+            id,
+            name: item.name || "Anonymous Guest",
+            country: item.country || "International",
+            trip: item.trip || "Bespoke Journey",
+            rating: typeof item.rating === "number" ? item.rating : 5,
+            image: item.image || "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg",
+            quoteEn,
+            quoteKo,
+            order: i + 1,
+          },
+          update: {
+            name: item.name || "Anonymous Guest",
+            country: item.country || "International",
+            trip: item.trip || "Bespoke Journey",
+            rating: typeof item.rating === "number" ? item.rating : 5,
+            image: item.image || "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg",
+            quoteEn,
+            quoteKo,
+            order: i + 1,
+          },
+        });
+      }
 
-      await prisma.siteSetting.upsert({
-        where: { key: "global_testimonials" },
-        create: {
-          id: "setting_global_testimonials",
-          key: "global_testimonials",
-          value: JSON.stringify(sanitized),
-          updatedAt: new Date(),
-        },
-        update: {
-          value: JSON.stringify(sanitized),
-          updatedAt: new Date(),
-        },
+      const all = await prisma.testimonial.findMany({
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       });
-
-      return NextResponse.json({ success: true, testimonials: sanitized });
+      return NextResponse.json({ success: true, testimonials: all.map(formatTestimonial) });
     }
 
     const item = body.testimonial || body;
-    if (!item || !item.name) {
+    if (!item || !item.name?.trim()) {
       return NextResponse.json(
         { error: "Guest name is required" },
         { status: 400 }
       );
     }
 
-    const setting = await prisma.siteSetting.findUnique({
-      where: { key: "global_testimonials" },
-    });
-    const testimonials = parseTestimonials(setting?.value);
+    const quoteEn = item.quote?.en || (typeof item.quote === "string" ? item.quote : "");
+    const quoteKo = item.quote?.ko || null;
+    const name = item.name.trim();
+    const country = item.country?.trim() || "International";
+    const trip = item.trip?.trim() || "Bespoke Journey";
+    const image = item.image?.trim() || "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg";
+    const rating = typeof item.rating === "number" ? item.rating : 5;
 
-    const testimonialId = item.id || `story_${Date.now()}_${crypto.randomUUID().slice(0, 6)}`;
-    const newOrUpdated: Testimonial = {
-      id: testimonialId,
-      quote: {
-        en: item.quote?.en || "",
-        ko: item.quote?.ko || "",
-      },
-      name: item.name.trim(),
-      country: item.country?.trim() || "International",
-      trip: item.trip?.trim() || "Bespoke Journey",
-      image: item.image?.trim() || "https://i.ibb.co/SXBMzRGY/lanka-luxe-admin-default-exp.jpg",
-      rating: typeof item.rating === "number" ? item.rating : 5,
-    };
-
-    const existingIndex = testimonials.findIndex(
-      (t) => (t && t.id === testimonialId) || (t && t.name === newOrUpdated.name && t.trip === newOrUpdated.trip)
-    );
-
-    let updatedList: Testimonial[];
-    if (existingIndex >= 0) {
-      updatedList = [...testimonials];
-      updatedList[existingIndex] = newOrUpdated;
-    } else {
-      updatedList = [newOrUpdated, ...testimonials];
+    let targetId = item.id;
+    if (!targetId) {
+      // Check if existing record with same name and trip exists
+      const existing = await prisma.testimonial.findFirst({
+        where: { name, trip },
+      });
+      if (existing) {
+        targetId = existing.id;
+      } else {
+        targetId = `story_${Date.now()}_${crypto.randomUUID().slice(0, 6)}`;
+      }
     }
 
-    await prisma.siteSetting.upsert({
-      where: { key: "global_testimonials" },
+    const saved = await prisma.testimonial.upsert({
+      where: { id: targetId },
       create: {
-        id: "setting_global_testimonials",
-        key: "global_testimonials",
-        value: JSON.stringify(updatedList),
-        updatedAt: new Date(),
+        id: targetId,
+        name,
+        country,
+        trip,
+        rating,
+        image,
+        quoteEn,
+        quoteKo,
       },
       update: {
-        value: JSON.stringify(updatedList),
-        updatedAt: new Date(),
+        name,
+        country,
+        trip,
+        rating,
+        image,
+        quoteEn,
+        quoteKo,
       },
     });
 
-    return NextResponse.json({ success: true, testimonial: newOrUpdated, testimonials: updatedList });
+    const all = await prisma.testimonial.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+    });
+
+    return NextResponse.json({
+      success: true,
+      testimonial: formatTestimonial(saved),
+      testimonials: all.map(formatTestimonial),
+    });
   } catch (error) {
     console.error("Admin POST testimonial error:", error);
     return NextResponse.json(
@@ -158,34 +164,35 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const setting = await prisma.siteSetting.findUnique({
-      where: { key: "global_testimonials" },
-    });
-    const testimonials = parseTestimonials(setting?.value);
-
-    let updatedList: Testimonial[];
     if (id) {
-      updatedList = testimonials.filter((t) => t && t.id !== id);
-    } else {
-      const idx = parseInt(indexStr!, 10);
-      updatedList = testimonials.filter((_, i) => i !== idx);
+      await prisma.testimonial.delete({
+        where: { id },
+      }).catch((e) => {
+        console.warn("Could not delete testimonial id", id, e?.message);
+      });
+    } else if (indexStr !== null) {
+      const idx = parseInt(indexStr, 10);
+      const all = await prisma.testimonial.findMany({
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      });
+      if (all[idx]) {
+        await prisma.testimonial.delete({
+          where: { id: all[idx].id },
+        }).catch((e) => {
+          console.warn("Could not delete testimonial at index", idx, e?.message);
+        });
+      }
     }
 
-    await prisma.siteSetting.upsert({
-      where: { key: "global_testimonials" },
-      create: {
-        id: "setting_global_testimonials",
-        key: "global_testimonials",
-        value: JSON.stringify(updatedList),
-        updatedAt: new Date(),
-      },
-      update: {
-        value: JSON.stringify(updatedList),
-        updatedAt: new Date(),
-      },
+    const updated = await prisma.testimonial.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     });
 
-    return NextResponse.json({ success: true, message: "Story deleted", testimonials: updatedList });
+    return NextResponse.json({
+      success: true,
+      message: "Story deleted",
+      testimonials: updated.map(formatTestimonial),
+    });
   } catch (error) {
     console.error("Admin DELETE testimonial error:", error);
     return NextResponse.json(

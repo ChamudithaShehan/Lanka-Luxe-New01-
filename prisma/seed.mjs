@@ -899,11 +899,40 @@ async function main() {
     create: { key: "global_why_us", value: JSON.stringify(whyUs) },
   });
 
-  await prisma.siteSetting.upsert({
-    where: { key: "global_testimonials" },
-    update: { value: JSON.stringify(testimonials) },
-    create: { key: "global_testimonials", value: JSON.stringify(testimonials) },
-  });
+  // 8. Seed Testimonials (Guest Stories) in dedicated table
+  const defaultAvatars = [
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+  ];
+  for (let i = 0; i < testimonials.length; i++) {
+    const t = testimonials[i];
+    await prisma.testimonial.upsert({
+      where: { id: t.id },
+      update: {
+        name: t.name || t.author || "Valued Guest",
+        country: t.country || "International",
+        trip: t.trip || t.role || "Bespoke Journey",
+        rating: typeof t.rating === "number" ? t.rating : 5,
+        image: t.image || defaultAvatars[i % defaultAvatars.length],
+        quoteEn: t.quote?.en || t.text?.en || (typeof t.quote === "string" ? t.quote : ""),
+        quoteKo: t.quote?.ko || t.text?.ko || null,
+        order: i + 1,
+      },
+      create: {
+        id: t.id,
+        name: t.name || t.author || "Valued Guest",
+        country: t.country || "International",
+        trip: t.trip || t.role || "Bespoke Journey",
+        rating: typeof t.rating === "number" ? t.rating : 5,
+        image: t.image || defaultAvatars[i % defaultAvatars.length],
+        quoteEn: t.quote?.en || t.text?.en || (typeof t.quote === "string" ? t.quote : ""),
+        quoteKo: t.quote?.ko || t.text?.ko || null,
+        order: i + 1,
+      },
+    });
+  }
+  console.log(`✅ ${testimonials.length} guest stories (testimonials) seeded in dedicated table.`);
 
   const defaultGalleryItems = [
     {

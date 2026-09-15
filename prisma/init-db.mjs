@@ -126,6 +126,49 @@ async function runAutoSetup() {
     return;
   }
 
+  // Step C.1: Auto-migrate existing Testimonials from sitesetting if needed
+  try {
+    const conn = await mariadb.createConnection({
+      host,
+      port,
+      user,
+      password,
+      database: dbName,
+      allowPublicKeyRetrieval: true,
+      connectTimeout: 5000,
+    });
+    const testCountRows = await conn.query("SELECT COUNT(*) as count FROM testimonial;");
+    if (testCountRows && Number(testCountRows[0]?.count) === 0) {
+      const settingRows = await conn.query("SELECT value FROM sitesetting WHERE `key` = 'global_testimonials';");
+      if (settingRows && settingRows[0]?.value) {
+        let parsed = [];
+        try { parsed = JSON.parse(settingRows[0].value); } catch {}
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log(`📦 Auto-Setup: Migrating ${parsed.length} guest stories from sitesetting to testimonial table...`);
+          for (let i = 0; i < parsed.length; i++) {
+            const item = parsed[i];
+            const id = item.id ? String(item.id) : `story_${i + 1}`;
+            const name = item.name || item.author || "Valued Guest";
+            const country = item.country || "International";
+            const trip = item.trip || item.role || "Bespoke Journey";
+            const rating = typeof item.rating === "number" ? item.rating : 5;
+            const image = item.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80";
+            const quoteEn = item.quote?.en || item.text?.en || (typeof item.quote === "string" ? item.quote : "");
+            const quoteKo = item.quote?.ko || item.text?.ko || null;
+            await conn.query(
+              "INSERT INTO testimonial (id, name, country, trip, rating, image, quoteEn, quoteKo, `order`, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE name=VALUES(name);",
+              [id, name, country, trip, rating, image, quoteEn, quoteKo, i + 1]
+            );
+          }
+          console.log("✅ Auto-Setup: Successfully migrated guest stories to testimonial table.");
+        }
+      }
+    }
+    await conn.end();
+  } catch (migErr) {
+    console.warn("⚠️  Auto-Setup: Note on testimonial migration:", migErr.message || migErr);
+  }
+
   // Step D: Seed Initial Database Content (Idempotent - only if database is unpopulated)
   try {
     let toursExist = false;

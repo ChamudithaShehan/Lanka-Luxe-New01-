@@ -66,13 +66,6 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    if (testimonials) {
-      await prisma.siteSetting.upsert({
-        where: { key: "global_testimonials" },
-        update: { value: JSON.stringify(testimonials) },
-        create: { key: "global_testimonials", value: JSON.stringify(testimonials) },
-      });
-    }
 
     if (team) {
       await prisma.siteSetting.upsert({
