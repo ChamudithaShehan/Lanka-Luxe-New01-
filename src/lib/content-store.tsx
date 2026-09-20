@@ -26,6 +26,8 @@ export interface Inquiry {
   name: string;
   email: string;
   phone?: string;
+  whatsapp?: string;
+  kakaoId?: string;
   country?: string;
   dates?: string;
   travelers?: string;

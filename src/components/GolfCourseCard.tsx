@@ -85,6 +85,7 @@ export function GolfCourseCard({ course, className }: GolfCourseCardProps) {
                 openInquiry({
                   tourName: `Golf Round: ${course.name}`,
                   interest: "golf",
+                  isLocked: true,
                 })
               }
               className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#0B1F3A] text-white text-xs font-semibold hover:bg-[#08172b] transition-colors shadow-sm cursor-pointer"

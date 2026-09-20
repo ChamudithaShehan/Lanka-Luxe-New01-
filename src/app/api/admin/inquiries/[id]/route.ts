@@ -8,6 +8,9 @@ const updateInquirySchema = z.object({
     .enum(["new", "in_progress", "contacted", "booked", "archived"])
     .optional(),
   notes: z.string().max(3000).optional(),
+  phone: z.string().max(50).optional(),
+  whatsapp: z.string().max(50).optional(),
+  kakaoId: z.string().max(100).optional(),
 });
 
 export async function PATCH(
@@ -41,7 +44,7 @@ export async function PATCH(
       );
     }
 
-    const { status, notes } = result.data;
+    const { status, notes, phone, whatsapp, kakaoId } = result.data;
     const beforeCount = await prisma.inquiry.count();
 
     const updated = await prisma.inquiry.update({
@@ -49,6 +52,9 @@ export async function PATCH(
       data: {
         ...(status ? { status } : {}),
         ...(notes !== undefined ? { notes } : {}),
+        ...(whatsapp !== undefined ? { whatsapp } : {}),
+        ...(kakaoId !== undefined ? { kakaoId } : {}),
+        ...(phone !== undefined ? { phone } : {}),
         updatedAt: new Date(),
       },
     });

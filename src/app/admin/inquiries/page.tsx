@@ -20,9 +20,50 @@ import {
   Download,
   Filter,
   RefreshCw,
+  Copy,
+  Check,
+  Send,
+  ExternalLink,
+  Eye,
+  Sparkles,
+  Smartphone,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPagination } from "@/components/admin/AdminPagination";
+
+const EMAIL_TEMPLATES = [
+  {
+    id: "bespoke",
+    name: "Bespoke Consultation",
+    getSubject: (inq: Inquiry) =>
+      `Lanka Luxe Journeys — Private Itinerary Consultation for ${inq.name} [Ref: ${inq.reference || inq.id}]`,
+    getMessage: (inq: Inquiry) =>
+      `Thank you for contacting Lanka Luxe Journeys regarding your upcoming journey to Sri Lanka.\n\nI am Iroshan Jayawickrame, founder and licensed senior tourist guide (SLTDA Licence: C-1734). It is our privilege to assist you in designing a seamless and unforgettable private travel experience.\n\nBased on your inquiry for "${inq.tour || inq.interest || "Bespoke Journey"}" (${inq.travelers || "2"} guests${inq.dates ? `, planned for ${inq.dates}` : ""}), our concierge desk is preparing a personalized preliminary itinerary proposal.\n\nTo ensure every detail matches your travel style:\n1. Would you like us to include private chauffeur-driven luxury transport throughout your tour?\n2. Do you have specific preferences for boutique heritage villas or 5-star colonial tea bungalows?\n\nPlease let us know if you would like to arrange a quick WhatsApp consultation or if you prefer receiving our comprehensive itinerary draft directly here.\n\nWarmest regards,\nIroshan Jayawickrame\nFounder & Concierge, Lanka Luxe Journeys`,
+  },
+  {
+    id: "golf",
+    name: "Golf & Scenic Proposal",
+    getSubject: (inq: Inquiry) =>
+      `Lanka Luxe Journeys — Scenic Golf & Leisure Proposal for ${inq.name} [Ref: ${inq.reference || inq.id}]`,
+    getMessage: (inq: Inquiry) =>
+      `Thank you for your inquiry regarding our bespoke Golf Holidays in Sri Lanka.\n\nWe are delighted to craft an exclusive golf and leisure itinerary tailored to your party. We have reserved provisional interest for prime tee times at Victoria Golf Resort (Kandy) and Nuwara Eliya Golf Club, paired with luxury boutique colonial accommodation.\n\nKey inclusions in this journey:\n• Confirmed tee times, caddies, and premium golf carts\n• Private executive luxury transport with dedicated chauffeur guide\n• Handpicked 5-star stays (e.g. Ceylon Tea Trails & Kandy boutique resorts)\n\nPlease review your travel dates (${inq.dates || "Flexible dates"}) and let us know if you have any special golf bag transport requirements or wish to include private scenic helicopter transfers.\n\nWarm regards,\nIroshan Jayawickrame\nLanka Luxe Journeys`,
+  },
+  {
+    id: "availability",
+    name: "Availability & Draft",
+    getSubject: (inq: Inquiry) =>
+      `Lanka Luxe Journeys — Availability & Bespoke Draft for ${inq.name}`,
+    getMessage: (inq: Inquiry) =>
+      `Thank you for your interest in Lanka Luxe Journeys.\n\nWe have verified seasonal availability for your requested travel dates (${inq.dates || "Upcoming Season"}). We would be thrilled to secure private suites and our premier licensed guides for your party of ${inq.travelers || "2"} travelers.\n\nKindly confirm if there are any specific culinary, wellness, or safari highlights you would like us to prioritize in the schedule.\n\nLooking forward to crafting your bespoke Ceylon journey.\n\nWarmest regards,\nIroshan Jayawickrame\nLanka Luxe Journeys`,
+  },
+  {
+    id: "custom",
+    name: "Custom Blank",
+    getSubject: (inq: Inquiry) =>
+      `Lanka Luxe Journeys — Travel Consultation for ${inq.name}`,
+    getMessage: () => ``,
+  },
+];
 
 export default function AdminInquiriesPage() {
   const {
@@ -42,6 +83,15 @@ export default function AdminInquiriesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Email Reply Modal State (SMTP)
+  const [emailModalInquiry, setEmailModalInquiry] = useState<Inquiry | null>(null);
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("bespoke");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [autoUpdateStatus, setAutoUpdateStatus] = useState(true);
+  const [emailPreviewMode, setEmailPreviewMode] = useState(false);
 
   // Always fetch fresh inquiries directly from database on mount
   React.useEffect(() => {
@@ -69,6 +119,8 @@ export default function AdminInquiriesPage() {
   const [newForm, setNewForm] = useState({
     name: "",
     email: "",
+    whatsapp: "",
+    kakaoId: "",
     country: "South Korea",
     dates: "",
     travelers: "2",
@@ -141,6 +193,8 @@ export default function AdminInquiriesPage() {
       setNewForm({
         name: "",
         email: "",
+        whatsapp: "",
+        kakaoId: "",
         country: "South Korea",
         dates: "",
         travelers: "2",
@@ -155,12 +209,115 @@ export default function AdminInquiriesPage() {
     }
   };
 
+  const handleCopyKakao = (kakaoId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!kakaoId) {
+      toast.error("No KakaoTalk ID provided for this lead.");
+      return;
+    }
+    navigator.clipboard.writeText(kakaoId);
+    toast.success(`KakaoTalk ID copied: ${kakaoId}`);
+  };
+
+  const handleOpenWhatsApp = (inq: Inquiry, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const rawNumber = inq.whatsapp || inq.phone || "";
+    const cleanNumber = rawNumber.replace(/\D/g, "");
+    if (!cleanNumber) {
+      toast.error("No WhatsApp or phone number provided for this lead.");
+      return;
+    }
+    const greeting = `Hello ${inq.name}, Iroshan Jayawickrame here from Lanka Luxe Journeys. Thank you for your inquiry regarding ${
+      inq.tour || inq.interest || "a luxury journey to Sri Lanka"
+    }. I would be delighted to assist you with availability and bespoke itinerary planning.`;
+    window.open(
+      `https://wa.me/${cleanNumber}?text=${encodeURIComponent(greeting)}`,
+      "_blank"
+    );
+  };
+
+  const openEmailModal = (inq: Inquiry, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEmailModalInquiry(inq);
+    setSelectedTemplate("bespoke");
+    const tpl = EMAIL_TEMPLATES[0];
+    setEmailSubject(tpl.getSubject(inq));
+    setEmailMessage(tpl.getMessage(inq));
+    setEmailPreviewMode(false);
+    setAutoUpdateStatus(true);
+  };
+
+  const handleSelectTemplate = (templateId: string) => {
+    if (!emailModalInquiry) return;
+    setSelectedTemplate(templateId);
+    const tpl = EMAIL_TEMPLATES.find((t) => t.id === templateId);
+    if (tpl) {
+      setEmailSubject(tpl.getSubject(emailModalInquiry));
+      setEmailMessage(tpl.getMessage(emailModalInquiry));
+    }
+  };
+
+  const handleSendSmtpEmail = async () => {
+    if (!emailModalInquiry) return;
+    if (!emailSubject.trim() || !emailMessage.trim()) {
+      toast.error("Email subject and message body are required.");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    try {
+      const res = await fetch("/api/admin/inquiries/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          inquiryId: emailModalInquiry.id,
+          to: emailModalInquiry.email,
+          toName: emailModalInquiry.name,
+          subject: emailSubject,
+          message: emailMessage,
+          updateStatus: autoUpdateStatus,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        toast.error(data.error || "Failed to send email via SMTP.");
+        return;
+      }
+
+      toast.success(
+        `Bespoke email successfully sent to ${emailModalInquiry.email} via SMTP!`
+      );
+      setEmailModalInquiry(null);
+      await refreshContent();
+
+      if (selectedInquiry && selectedInquiry.id === emailModalInquiry.id) {
+        setSelectedInquiry({
+          ...selectedInquiry,
+          status:
+            autoUpdateStatus && selectedInquiry.status === "new"
+              ? "contacted"
+              : selectedInquiry.status,
+          notes: selectedInquiry.notes
+            ? `${selectedInquiry.notes}\n[SMTP Email Sent]: "${emailSubject}"`
+            : `[SMTP Email Sent]: "${emailSubject}"`,
+        });
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Network error sending email.");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const handleExportCSV = () => {
     const headers = [
       "ID",
       "Date",
       "Name",
       "Email",
+      "WhatsApp",
+      "KakaoTalk",
       "Country",
       "Dates",
       "Travelers",
@@ -176,6 +333,8 @@ export default function AdminInquiriesPage() {
       new Date(i.createdAt).toLocaleDateString(),
       `"${i.name.replace(/"/g, '""')}"`,
       `"${i.email}"`,
+      `"${i.whatsapp || i.phone || ""}"`,
+      `"${i.kakaoId || ""}"`,
       `"${i.country || ""}"`,
       `"${i.dates || ""}"`,
       `"${i.travelers || ""}"`,
@@ -357,6 +516,18 @@ export default function AdminInquiriesPage() {
                       · 📍 {inq.country}
                     </span>
                   )}
+                  {inq.whatsapp && (
+                    <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <MessageCircle className="w-3 h-3 text-emerald-400" />
+                      <span>{inq.whatsapp}</span>
+                    </span>
+                  )}
+                  {inq.kakaoId && (
+                    <span className="inline-flex items-center gap-1 text-[11px] text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                      <span className="font-bold text-[10px]">K</span>
+                      <span>{inq.kakaoId}</span>
+                    </span>
+                  )}
                   <span className="text-[11px] text-slate-500 ml-auto lg:ml-0">
                     {new Date(inq.createdAt).toLocaleDateString("en-GB", {
                       day: "2-digit",
@@ -426,35 +597,55 @@ export default function AdminInquiriesPage() {
                 </select>
 
                 {/* WhatsApp button */}
-                <a
-                  href={`https://wa.me/${contact.whatsapp.replace(
-                    /\D/g,
-                    "",
-                  )}?text=${encodeURIComponent(
-                    `Hello ${inq.name}, Iroshan Jayawickrame here from Lanka Luxe Journeys. Thank you for your inquiry regarding ${
-                      inq.tour || "a luxury journey to Sri Lanka"
-                    }. I would love to assist you with availability and custom itinerary planning.`,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
-                  title="Chat on WhatsApp"
+                <button
+                  type="button"
+                  onClick={(e) => handleOpenWhatsApp(inq, e)}
+                  disabled={!inq.whatsapp && !inq.phone}
+                  className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    inq.whatsapp || inq.phone
+                      ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      : "bg-slate-800/40 text-slate-500 border border-slate-700/30 cursor-not-allowed opacity-50"
+                  }`}
+                  title={
+                    inq.whatsapp || inq.phone
+                      ? `Chat on WhatsApp with ${inq.name} (${inq.whatsapp || inq.phone})`
+                      : "No WhatsApp number provided"
+                  }
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">WhatsApp</span>
-                </a>
+                </button>
 
-                {/* Email button */}
-                <a
-                  href={`mailto:${inq.email}?subject=Lanka Luxe Journeys - Bespoke Itinerary Availability for ${encodeURIComponent(
-                    inq.name,
-                  )}`}
-                  className="p-2 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs border border-[#1B2D4A] flex items-center gap-1.5 transition-colors"
-                  title="Send Email"
+                {/* Kakao button */}
+                <button
+                  type="button"
+                  onClick={(e) => handleCopyKakao(inq.kakaoId || "", e)}
+                  disabled={!inq.kakaoId}
+                  className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    inq.kakaoId
+                      ? "bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/30"
+                      : "bg-slate-800/40 text-slate-500 border border-slate-700/30 cursor-not-allowed opacity-50"
+                  }`}
+                  title={
+                    inq.kakaoId
+                      ? `Copy KakaoTalk ID: ${inq.kakaoId}`
+                      : "No KakaoTalk ID provided"
+                  }
+                >
+                  <span className="font-bold text-xs">K</span>
+                  <span className="hidden sm:inline">Kakao</span>
+                </button>
+
+                {/* Email (SMTP) button */}
+                <button
+                  type="button"
+                  onClick={(e) => openEmailModal(inq, e)}
+                  className="p-2 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs border border-[#1B2D4A] hover:border-[#C8A45D]/40 flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title={`Reply via SMTP Email to ${inq.email}`}
                 >
                   <Mail className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span className="hidden sm:inline">Email</span>
-                </a>
+                  <span className="hidden sm:inline">Email (SMTP)</span>
+                </button>
 
                 {/* Delete button */}
                 <button
@@ -512,12 +703,48 @@ export default function AdminInquiriesPage() {
             </div>
 
             {/* Details Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div className="p-3 rounded-xl bg-[#07111E] border border-[#1B2D4A]">
                 <span className="text-slate-400 block mb-0.5">Email</span>
                 <span className="font-semibold text-white truncate block">
                   {selectedInquiry.email}
                 </span>
+              </div>
+              <div className="p-3 rounded-xl bg-[#07111E] border border-[#1B2D4A]">
+                <span className="text-slate-400 block mb-0.5">WhatsApp</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-emerald-400 truncate block">
+                    {selectedInquiry.whatsapp || selectedInquiry.phone || "Not provided"}
+                  </span>
+                  {(selectedInquiry.whatsapp || selectedInquiry.phone) && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenWhatsApp(selectedInquiry)}
+                      className="p-1 hover:text-emerald-300 text-slate-400 ml-1 cursor-pointer"
+                      title="Open WhatsApp chat"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-[#07111E] border border-[#1B2D4A]">
+                <span className="text-slate-400 block mb-0.5">KakaoTalk ID</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-amber-300 truncate block">
+                    {selectedInquiry.kakaoId || "Not provided"}
+                  </span>
+                  {selectedInquiry.kakaoId && (
+                    <button
+                      type="button"
+                      onClick={() => handleCopyKakao(selectedInquiry.kakaoId || "")}
+                      className="p-1 hover:text-amber-200 text-slate-400 ml-1 cursor-pointer"
+                      title="Copy KakaoTalk ID"
+                    >
+                      <Copy className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-[#07111E] border border-[#1B2D4A]">
                 <span className="text-slate-400 block mb-0.5">Country</span>
@@ -627,31 +854,54 @@ export default function AdminInquiriesPage() {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://wa.me/${contact.whatsapp.replace(
-                    /\D/g,
-                    "",
-                  )}?text=${encodeURIComponent(
-                    `Hello ${selectedInquiry.name}, this is Iroshan from Lanka Luxe Journeys regarding your Sri Lanka travel inquiry.`,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md"
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleOpenWhatsApp(selectedInquiry)}
+                  disabled={!selectedInquiry.whatsapp && !selectedInquiry.phone}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer transition-all ${
+                    selectedInquiry.whatsapp || selectedInquiry.phone
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                      : "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50"
+                  }`}
+                  title={
+                    selectedInquiry.whatsapp || selectedInquiry.phone
+                      ? `Chat with ${selectedInquiry.name} on WhatsApp`
+                      : "No WhatsApp number provided"
+                  }
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>WhatsApp Client</span>
-                </a>
+                </button>
 
-                <a
-                  href={`mailto:${selectedInquiry.email}?subject=Lanka Luxe Journeys - Bespoke Itinerary Availability for ${encodeURIComponent(
-                    selectedInquiry.name,
-                  )}`}
-                  className="px-4 py-2 rounded-xl bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs font-semibold border border-[#1B2D4A] flex items-center gap-1.5"
+                <button
+                  type="button"
+                  onClick={() => handleCopyKakao(selectedInquiry.kakaoId || "")}
+                  disabled={!selectedInquiry.kakaoId}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer transition-all ${
+                    selectedInquiry.kakaoId
+                      ? "bg-amber-500 hover:bg-amber-400 text-[#081426]"
+                      : "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50"
+                  }`}
+                  title={
+                    selectedInquiry.kakaoId
+                      ? `Copy KakaoTalk ID: ${selectedInquiry.kakaoId}`
+                      : "No KakaoTalk ID provided"
+                  }
+                >
+                  <span className="font-bold text-xs">K</span>
+                  <span>Kakao Client</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openEmailModal(selectedInquiry)}
+                  className="px-3.5 py-2 rounded-xl bg-[#12233D] hover:bg-[#1B2D4A] border border-[#C8A45D]/40 text-[#C8A45D] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-md"
+                  title="Compose & Send Email via SMTP"
                 >
                   <Mail className="w-4 h-4 text-[#C8A45D]" />
-                  <span>Email Client</span>
-                </a>
+                  <span>Compose Email (SMTP)</span>
+                </button>
               </div>
             </div>
           </div>
@@ -703,6 +953,37 @@ export default function AdminInquiriesPage() {
                     }
                     className="w-full px-3.5 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
                     required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. +82 10 1234 5678"
+                    value={newForm.whatsapp}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, whatsapp: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    KakaoTalk ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. @user_kakao"
+                    value={newForm.kakaoId}
+                    onChange={(e) =>
+                      setNewForm({ ...newForm, kakaoId: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
                   />
                 </div>
               </div>
@@ -819,6 +1100,204 @@ export default function AdminInquiriesPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* COMPOSE & SEND EMAIL VIA SMTP MODAL */}
+      {emailModalInquiry && (
+        <div className="fixed inset-0 bg-black/85 z-[60] flex items-center justify-center p-4 backdrop-blur-md overflow-y-auto">
+          <div className="bg-[#0B1A30] border border-[#C8A45D]/40 rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-5 shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-[#1B2D4A] pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="p-1.5 rounded-lg bg-[#C8A45D]/10 text-[#C8A45D]">
+                    <Mail className="w-5 h-5" />
+                  </span>
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-white">
+                    Compose & Reply via SMTP
+                  </h2>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Transmitting to: <strong className="text-white">{emailModalInquiry.name}</strong> (<span className="text-[#C8A45D]">{emailModalInquiry.email}</span>) · Ref: {emailModalInquiry.reference || emailModalInquiry.id}
+                </p>
+              </div>
+              <button
+                onClick={() => setEmailModalInquiry(null)}
+                className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-[#12233D] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Template Selector Bar */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300">
+                Luxury Concierge Templates:
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {EMAIL_TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => handleSelectTemplate(tpl.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      selectedTemplate === tpl.id
+                        ? "bg-[#C8A45D] text-[#081426] shadow-md font-bold"
+                        : "bg-[#07111E] text-slate-300 hover:text-white border border-[#1B2D4A]"
+                    }`}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>{tpl.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* View Mode Toggle (Editor vs Live HTML Preview) */}
+            <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEmailPreviewMode(false)}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    !emailPreviewMode
+                      ? "bg-[#12233D] text-[#C8A45D] border border-[#C8A45D]/40"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Edit Message
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEmailPreviewMode(true)}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer ${
+                    emailPreviewMode
+                      ? "bg-[#12233D] text-[#C8A45D] border border-[#C8A45D]/40"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Branded Email Preview</span>
+                </button>
+              </div>
+
+              <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={autoUpdateStatus}
+                  onChange={(e) => setAutoUpdateStatus(e.target.checked)}
+                  className="rounded border-[#1B2D4A] text-[#C8A45D] focus:ring-[#C8A45D]"
+                />
+                <span>Set status to "Contacted" on send</span>
+              </label>
+            </div>
+
+            {/* Editor vs Preview Mode */}
+            {!emailPreviewMode ? (
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Subject Line:
+                  </label>
+                  <input
+                    type="text"
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white focus:border-[#C8A45D] outline-none"
+                    placeholder="Subject..."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Message Body (Transmitted with Lanka Luxe signature footer):
+                  </label>
+                  <textarea
+                    rows={9}
+                    value={emailMessage}
+                    onChange={(e) => setEmailMessage(e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-xl bg-[#07111E] border border-[#1B2D4A] text-xs text-white leading-relaxed focus:border-[#C8A45D] outline-none font-sans"
+                    placeholder="Write your personal consultation reply..."
+                  />
+                </div>
+              </div>
+            ) : (
+              /* Live Preview */
+              <div className="rounded-2xl border border-[#1B2D4A] bg-slate-950/60 p-4 max-h-[380px] overflow-y-auto space-y-4">
+                <div className="bg-white rounded-xl overflow-hidden shadow-lg text-slate-800 p-6 space-y-4 max-w-xl mx-auto border border-slate-200">
+                  {/* Mock Email Header */}
+                  <div className="bg-[#081426] -m-6 mb-4 p-5 text-center border-b-2 border-[#C8A45D]">
+                    <span className="text-[10px] tracking-widest text-[#C8A45D] uppercase font-bold block mb-1">
+                      ✦ BESPOKE PRIVATE JOURNEYS · SRI LANKA ✦
+                    </span>
+                    <h3 className="font-serif text-lg text-white font-bold tracking-wide">
+                      LANKA LUXE JOURNEYS
+                    </h3>
+                  </div>
+
+                  <p className="font-serif text-sm font-bold text-[#081426]">
+                    Dear {emailModalInquiry.name},
+                  </p>
+
+                  <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
+                    {emailMessage || "Your message body will appear here..."}
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200 text-xs">
+                    <p className="font-serif font-bold text-[#081426]">Warmest regards,</p>
+                    <p className="font-bold text-[#C8A45D]">Iroshan Jayawickrame</p>
+                    <p className="text-[11px] text-slate-500">
+                      Founder & Senior Private Concierge · SLTDA Licence C-1734
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#1B2D4A]">
+              <a
+                href={`mailto:${emailModalInquiry.email}?subject=${encodeURIComponent(
+                  emailSubject
+                )}&body=${encodeURIComponent(emailMessage)}`}
+                className="text-xs text-slate-400 hover:text-slate-200 underline"
+                title="Fallback to local desktop mail client"
+              >
+                Or open in local desktop mail client (mailto)
+              </a>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEmailModalInquiry(null)}
+                  disabled={isSendingEmail}
+                  className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#12233D] text-slate-300 hover:bg-[#1B2D4A] transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSendSmtpEmail}
+                  disabled={isSendingEmail}
+                  className="px-6 py-2.5 text-xs font-bold rounded-xl bg-[#C8A45D] hover:bg-[#b5924d] text-[#081426] shadow-[0_4px_16px_rgba(200,164,93,0.3)] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSendingEmail ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Transmitting via SMTP...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Email via SMTP</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

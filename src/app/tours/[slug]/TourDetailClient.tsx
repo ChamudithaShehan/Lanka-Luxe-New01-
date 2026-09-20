@@ -184,6 +184,7 @@ export function TourDetailClient() {
                     openInquiry({
                       tourName: tl(tour.name),
                       interest: tour.category.toLowerCase(),
+                      isLocked: true,
                     })
                   }
                   withArrow
@@ -356,6 +357,7 @@ export function TourDetailClient() {
                   openInquiry({
                     tourName: tl(tour.name),
                     interest: tour.category.toLowerCase(),
+                    isLocked: true,
                   })
                 }
               >

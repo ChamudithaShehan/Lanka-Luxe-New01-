@@ -106,7 +106,9 @@ model Inquiry {
   reference  String   @unique(map: "Inquiry_reference_key")
   name       String
   email      String
-  phone      String
+  phone      String   @default("")
+  whatsapp   String?
+  kakaoId    String?
   country    String?
   tourSlug   String?
   travelers  String?

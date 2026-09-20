@@ -9,6 +9,9 @@ const inquirySubmissionSchema = z.object({
   name: z.string().min(2, "Name is required (minimum 2 characters)").max(100).trim(),
   email: z.string().email("Valid email address is required").max(150).trim().toLowerCase(),
   phone: z.string().max(50).optional().default(""),
+  whatsapp: z.string().max(50).optional().default(""),
+  kakao: z.string().max(100).optional().default(""),
+  kakaoId: z.string().max(100).optional().default(""),
   country: z.string().max(100).optional().default(""),
   dates: z.string().max(100).optional().default(""),
   travelers: z.string().max(50).optional().default("2"),
@@ -63,13 +66,18 @@ export async function POST(req: NextRequest) {
 
     const beforeCount = await prisma.inquiry.count();
 
+    const whatsappValue = (body.whatsapp || body.phone || "").trim();
+    const kakaoValue = (body.kakaoId || body.kakao || "").trim();
+
     const newInquiry = await prisma.inquiry.create({
       data: {
         id,
         reference,
         name: sanitizeInput(body.name),
         email: sanitizeInput(body.email).toLowerCase(),
-        phone: sanitizeInput(body.phone || body.country || ""),
+        phone: sanitizeInput(whatsappValue || body.country || ""),
+        whatsapp: whatsappValue ? sanitizeInput(whatsappValue) : null,
+        kakaoId: kakaoValue ? sanitizeInput(kakaoValue) : null,
         country: body.country ? sanitizeInput(body.country) : null,
         tourSlug: sanitizeInput(body.tour || body.interest || ""),
         travelers: body.travelers ? sanitizeInput(body.travelers) : "2",

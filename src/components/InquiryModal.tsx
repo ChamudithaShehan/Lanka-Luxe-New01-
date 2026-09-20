@@ -60,8 +60,10 @@ export function InquiryModal() {
             </button>
 
             <InquiryForm
+              key={`${options.tourName || "general"}_${options.isLocked ? "locked" : "unlocked"}`}
               initialTour={options.tourName}
               initialInterest={options.interest}
+              isLocked={options.isLocked ?? Boolean(options.tourName)}
               onSuccess={() => {
                 // Keep open to show success or let user dismiss
               }}

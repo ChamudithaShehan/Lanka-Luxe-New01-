@@ -268,30 +268,47 @@ export default function AdminOverviewPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0">
-                    <a
-                      href={`https://wa.me/${(contact?.whatsapp || "").replace(
-                        /\D/g,
-                        "",
-                      )}?text=${encodeURIComponent(
-                        `Hello ${inq.name}, this is Iroshan from Lanka Luxe Journeys regarding your travel inquiry.`,
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
-                      title="Contact on WhatsApp"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">WhatsApp</span>
-                    </a>
+                    {(inq.whatsapp || inq.phone) && (
+                      <a
+                        href={`https://wa.me/${(inq.whatsapp || inq.phone || "").replace(
+                          /\D/g,
+                          "",
+                        )}?text=${encodeURIComponent(
+                          `Hello ${inq.name}, Iroshan Jayawickrame here from Lanka Luxe Journeys regarding your Sri Lanka travel inquiry.`,
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
+                        title={`Contact ${inq.name} on WhatsApp (${inq.whatsapp || inq.phone})`}
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">WhatsApp</span>
+                      </a>
+                    )}
 
-                    <a
-                      href={`mailto:${inq.email}?subject=Lanka Luxe Journeys - Your Bespoke Sri Lanka Itinerary`}
+                    {inq.kakaoId && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(inq.kakaoId || "");
+                          toast.success(`KakaoTalk ID copied: ${inq.kakaoId}`);
+                        }}
+                        className="p-2 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 text-xs font-semibold border border-amber-400/30 flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title={`Copy KakaoTalk ID: ${inq.kakaoId}`}
+                      >
+                        <span className="font-bold text-xs">K</span>
+                        <span className="hidden sm:inline">Kakao</span>
+                      </button>
+                    )}
+
+                    <Link
+                      href="/admin/inquiries"
                       className="p-2 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs border border-[#1B2D4A] flex items-center gap-1.5 transition-colors"
-                      title="Send Email"
+                      title="Reply via SMTP Email in CRM"
                     >
                       <Mail className="w-3.5 h-3.5 text-[#C8A45D]" />
-                      <span className="hidden sm:inline">Email</span>
-                    </a>
+                      <span className="hidden sm:inline">Reply (CRM)</span>
+                    </Link>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
@@ -201,7 +202,9 @@ export default function ContactPage() {
           {/* Inquiry Form (Right 7 Cols) */}
           <div className="lg:col-span-7">
             <Reveal variant="fade-up">
-              <InquiryForm variant="light" />
+              <Suspense fallback={<InquiryForm variant="light" />}>
+                <ContactInquiryForm />
+              </Suspense>
             </Reveal>
           </div>
         </div>
@@ -272,5 +275,17 @@ export default function ContactPage() {
         </Reveal>
       </section>
     </div>
+  );
+}
+
+function ContactInquiryForm() {
+  const searchParams = useSearchParams();
+  const tour = searchParams.get("tour") || searchParams.get("package") || undefined;
+  return (
+    <InquiryForm
+      variant="light"
+      initialTour={tour}
+      isLocked={Boolean(tour)}
+    />
   );
 }

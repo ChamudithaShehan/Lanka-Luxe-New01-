@@ -2,9 +2,10 @@
 
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 
-interface InquiryOptions {
+export interface InquiryOptions {
   tourName?: string;
   interest?: string;
+  isLocked?: boolean;
 }
 
 interface InquiryContextType {
@@ -21,7 +22,11 @@ export function InquiryProvider({ children }: { children: ReactNode }) {
   const [options, setOptions] = useState<InquiryOptions>({});
 
   const openInquiry = useCallback((opts?: InquiryOptions) => {
-    setOptions(opts || {});
+    const finalOpts = opts ? { ...opts } : {};
+    if (finalOpts.tourName && finalOpts.isLocked === undefined) {
+      finalOpts.isLocked = true;
+    }
+    setOptions(finalOpts);
     setIsOpen(true);
   }, []);
 

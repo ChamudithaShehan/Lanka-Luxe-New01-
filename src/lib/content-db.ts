@@ -73,6 +73,7 @@ export async function getLiveContent(): Promise<LiveContentData> {
       (t.nights ? t.nights + 1 : 1);
 
     return {
+      id: t.id,
       slug: t.slug,
       name: { en: t.nameEn, ko: t.nameKo || t.nameEn },
       category: t.category,

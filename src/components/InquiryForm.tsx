@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useContentStore } from "@/lib/content-store";
 import { LuxuryButton } from "./LuxuryButton";
-import { CheckCircle2, Sparkles, Send } from "lucide-react";
+import { CheckCircle2, Sparkles, Send, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface InquiryFormProps {
   initialTour?: string | undefined;
   initialInterest?: string | undefined;
+  isLocked?: boolean | undefined;
   className?: string | undefined;
   onSuccess?: (() => void) | undefined;
   variant?: "dark" | "light" | undefined;
@@ -18,16 +19,19 @@ interface InquiryFormProps {
 export function InquiryForm({
   initialTour,
   initialInterest,
+  isLocked = Boolean(initialTour),
   className,
   onSuccess,
   variant = "light",
 }: InquiryFormProps) {
   const { t, lang } = useI18n();
-  const { addInquiry, contact } = useContentStore();
+  const { addInquiry, contact, tours } = useContentStore();
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    whatsapp: "",
+    kakao: "",
     country: "",
     dates: "",
     travelers: "2",
@@ -35,10 +39,27 @@ export function InquiryForm({
     tour: initialTour || "",
     budget: "",
     message: initialTour
-      ? `I am interested in learning more and requesting availability for: ${initialTour}.`
+      ? (lang === "ko"
+          ? `${initialTour} 일정에 관한 상세 안내 및 견적, 객실 예약 가능 여부를 문의합니다.`
+          : `I am interested in learning more and requesting availability for: ${initialTour}.`)
       : "",
     website: "", // Honeypot field for bot spam detection
   });
+
+  useEffect(() => {
+    if (initialTour) {
+      setFormData((prev) => ({
+        ...prev,
+        tour: initialTour,
+        interest: initialInterest || prev.interest,
+        message: prev.message || (
+          lang === "ko"
+            ? `${initialTour} 일정에 관한 상세 안내 및 견적, 객실 예약 가능 여부를 문의합니다.`
+            : `I am interested in learning more and requesting availability for: ${initialTour}.`
+        ),
+      }));
+    }
+  }, [initialTour, initialInterest, lang]);
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success">(
     "idle",
@@ -50,10 +71,15 @@ export function InquiryForm({
 
     setStatus("submitting");
     try {
+      const submissionData = {
+        ...formData,
+        tour: (isLocked && initialTour) ? initialTour : formData.tour,
+      };
+
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       const data = await res.json();
@@ -198,6 +224,50 @@ export function InquiryForm({
         </div>
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+        <div>
+          <label className={labelStyles}>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+              {t("form.whatsapp")}{" "}
+              <span className="text-[10px] font-normal lowercase tracking-normal opacity-70">
+                {t("form.optional")}
+              </span>
+            </span>
+          </label>
+          <input
+            type="tel"
+            placeholder={t("form.whatsappPlaceholder")}
+            value={formData.whatsapp}
+            onChange={(e) =>
+              setFormData({ ...formData, whatsapp: e.target.value })
+            }
+            className={inputStyles}
+          />
+        </div>
+
+        <div>
+          <label className={labelStyles}>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
+              {t("form.kakao")}{" "}
+              <span className="text-[10px] font-normal lowercase tracking-normal opacity-70">
+                {t("form.optional")}
+              </span>
+            </span>
+          </label>
+          <input
+            type="text"
+            placeholder={t("form.kakaoPlaceholder")}
+            value={formData.kakao}
+            onChange={(e) =>
+              setFormData({ ...formData, kakao: e.target.value })
+            }
+            className={inputStyles}
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
         <div>
           <label className={labelStyles}>{t("form.country")}</label>
@@ -265,6 +335,89 @@ export function InquiryForm({
         </div>
       </div>
 
+      {/* Package Selection */}
+      {isLocked && (formData.tour || initialTour) ? (
+        <div
+          className={`mb-5 p-4 rounded-2xl border transition-all ${
+            isDark
+              ? "bg-navy/90 border-gold/40 shadow-[0_4px_20px_rgba(200,164,93,0.1)]"
+              : "bg-gradient-to-r from-[#C8A45D]/15 via-[#C8A45D]/10 to-amber-50/50 border-[#C8A45D]/30 shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-md bg-[#C8A45D]/20 text-[#C8A45D]">
+                <Lock className="w-3.5 h-3.5" />
+              </span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#C8A45D]">
+                {t("form.packageFixed")}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-[#C8A45D]/20 text-[#C8A45D] border border-[#C8A45D]/30 uppercase tracking-wider">
+              {lang === "ko" ? "선택 완료 · 변경 불가" : "Fixed Itinerary"}
+            </span>
+          </div>
+          <div
+            className={`text-base sm:text-lg font-bold mb-1 ${
+              isDark ? "text-white" : "text-[#081A33]"
+            }`}
+          >
+            {formData.tour || initialTour}
+          </div>
+          <p
+            className={`text-[11px] leading-normal ${
+              isDark ? "text-mist/70" : "text-slate-500"
+            }`}
+          >
+            {t("form.packageFixedHint")}
+          </p>
+        </div>
+      ) : (
+        <div className="mb-5">
+          <label className={labelStyles}>
+            {t("form.package")}{" "}
+            <span className="text-[10px] font-normal lowercase tracking-normal opacity-70">
+              {t("form.optional")}
+            </span>
+          </label>
+          <select
+            value={formData.tour}
+            onChange={(e) => {
+              const selectedTourName = e.target.value;
+              setFormData((prev) => ({
+                ...prev,
+                tour: selectedTourName,
+                message:
+                  selectedTourName && !prev.message
+                    ? lang === "ko"
+                      ? `${selectedTourName} 일정에 관한 상세 안내 및 견적, 객실 예약 가능 여부를 문의합니다.`
+                      : `I am interested in learning more and requesting availability for: ${selectedTourName}.`
+                    : prev.message,
+              }));
+            }}
+            className={inputStyles}
+          >
+            <option key="bespoke-custom-option" value="">
+              {t("form.bespokeCustom")}
+            </option>
+            {tours.map((tourItem, index) => {
+              const name =
+                typeof tourItem.name === "object"
+                  ? lang === "ko" && tourItem.name.ko
+                    ? tourItem.name.ko
+                    : tourItem.name.en
+                  : tourItem.name;
+              const uniqueKey = tourItem.id || tourItem.slug || `tour-item-${index}`;
+              return (
+                <option key={uniqueKey} value={name}>
+                  {name} ({tourItem.days} {lang === "ko" ? "일" : "Days"})
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
         <div>
           <label className={labelStyles}>{t("form.interest")}</label>
@@ -298,22 +451,6 @@ export function InquiryForm({
           </select>
         </div>
       </div>
-
-      {formData.tour && (
-        <div className="mb-5 p-3 rounded-xl bg-[#C8A45D]/10 border border-[#C8A45D]/20 text-xs text-[#C8A45D] flex items-center justify-between">
-          <span>
-            {lang === "ko" ? "선택한 일정:" : "Selected Journey:"}{" "}
-            <strong>{formData.tour}</strong>
-          </span>
-          <button
-            type="button"
-            onClick={() => setFormData({ ...formData, tour: "" })}
-            className="text-slate-400 hover:text-slate-700 underline ml-2 text-xs cursor-pointer"
-          >
-            {lang === "ko" ? "취소" : "Clear"}
-          </button>
-        </div>
-      )}
 
       <div className="mb-6">
         <label className={labelStyles}>{t("form.message")}</label>

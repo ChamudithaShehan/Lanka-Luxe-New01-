@@ -161,6 +161,7 @@ export function DestinationDetailClient() {
                   openInquiry({
                     tourName: `Custom Trip including ${tl(dest.name)}`,
                     interest: "custom",
+                    isLocked: true,
                   })
                 }
                 withArrow

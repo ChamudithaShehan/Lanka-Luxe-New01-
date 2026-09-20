@@ -104,6 +104,7 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                   openInquiry({
                     tourName: tl(tour.name),
                     interest: tour.category.toLowerCase(),
+                    isLocked: true,
                   })
                 }
                 className="text-xs font-semibold text-slate-600 hover:text-[#C8A45D] transition-colors uppercase tracking-wider"
