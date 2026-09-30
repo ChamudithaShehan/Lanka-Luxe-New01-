@@ -14,7 +14,6 @@ import {
   ArrowUpRight,
   Plus,
   MessageCircle,
-  Mail,
   Clock,
   CheckCircle2,
   TrendingUp,
@@ -304,10 +303,10 @@ export default function AdminOverviewPage() {
                     <Link
                       href="/admin/inquiries"
                       className="p-2 rounded-lg bg-[#12233D] hover:bg-[#1B2D4A] text-slate-200 text-xs border border-[#1B2D4A] flex items-center gap-1.5 transition-colors"
-                      title="Reply via SMTP Email in CRM"
+                      title="View inquiry details in CRM"
                     >
-                      <Mail className="w-3.5 h-3.5 text-[#C8A45D]" />
-                      <span className="hidden sm:inline">Reply (CRM)</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-[#C8A45D]" />
+                      <span className="hidden sm:inline">Details</span>
                     </Link>
                   </div>
                 </div>

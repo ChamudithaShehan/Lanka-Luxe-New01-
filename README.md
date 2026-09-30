@@ -20,9 +20,8 @@ Founded by **Iroshan Jayawickrame**, a licensed specialist with over 10 years of
 - **Cinematic Editorial Design:** Deep luxury navy (`#07111E`) and rich gold (`#C8A45D`) palette, editorial typography, floating layouts, and smooth micro-animations powered by `motion/react`.
 - **Championship Golf Escapes:** Specialized itineraries covering Sri Lanka's premier courses (Royal Colombo, Victoria Golf Resort, Nuwara Eliya Golf Club, Shangri-La Hambantota).
 - **Interactive Island Map & Curated Guides:** Visual travel planner with map coordinates, stay durations, and highlights.
-- **Omnichannel Inquiries CRM & Package Locking:** Multi-step booking consultation form capturing Phone, WhatsApp, and KakaoTalk ID handles. Clicking "Plan this Journey" on any package strictly pre-selects and locks that itinerary (`🔒 Fixed Itinerary`), preventing accidental changes or deselecting. Admins can directly reply from the dashboard via WhatsApp click-to-chat, KakaoTalk deep links, or an interactive luxury SMTP email composer with pre-built templates.
-- **Built-in SMTP Email Engine:** Built-in email delivery powered by Nodemailer with live database/environment configuration, handshake connectivity testing, and branded luxury HTML templates.
-- **Administrative Atelier:** Full-featured dashboard for real-time CRUD management of tours, golf packages, destinations, experiences, journal articles, founder credentials, SMTP email server settings, and customer leads.
+- **Omnichannel Inquiries CRM & Package Locking:** Multi-step booking consultation form capturing Phone, WhatsApp, and KakaoTalk ID handles. Clicking "Plan this Journey" on any package strictly pre-selects and locks that itinerary (`🔒 Fixed Itinerary`), preventing accidental changes or deselecting. Admins can directly communicate from the dashboard via WhatsApp click-to-chat and KakaoTalk deep links.
+- **Administrative Atelier:** Full-featured dashboard for real-time CRUD management of tours, golf packages, destinations, experiences, journal articles, founder credentials, and customer leads.
 - **Distributed Rate Limiting:** Production sliding-window rate limiting via Upstash Redis with conservative in-memory fallback.
 
 ---
@@ -43,7 +42,7 @@ The platform operates on a strict **Database-Only Architecture**:
 
 ---
 
-## 📬 Omnichannel Communication & SMTP Email Engine
+## 📬 Omnichannel Communication & Inquiries CRM
 
 The platform features an integrated omnichannel lead management pipeline designed for international and Korean clientele:
 
@@ -60,15 +59,7 @@ The platform features an integrated omnichannel lead management pipeline designe
 From the Admin Inquiries Atelier ([`/admin/inquiries`](src/app/admin/inquiries/page.tsx)), admins can respond with a single click:
 - **WhatsApp Direct Chat:** Generates a sanitized `https://wa.me/<number>` link pre-loaded with a personalized Ceylon concierge greeting.
 - **KakaoTalk Interaction:** One-click ID copier with visual confirmation feedback and direct `kakaotalk://talk` app launch capability.
-- **Interactive SMTP Email Modal:** Rich luxury email composer pre-populated with client details:
-  - **Curated Templates:** Switch between *Bespoke Journey Consultation*, *Ceylon Championship Golf Proposal*, or *Availability & Villa Confirmation*.
-  - **Live HTML Preview:** Toggle between editor and branded luxury email preview.
-  - **Audit Logging:** Automatically logs sent correspondence into internal inquiry notes and transitions lead status to `"contacted"`.
-
-### 3. SMTP Email Configuration & Diagnostic Handshake
-Configure email server credentials either through the **Admin Settings Panel** ([`/admin/settings`](src/app/admin/settings/page.tsx)) or `.env`:
-- Supports custom SMTP Host, Port (587 / 465 / 25), SSL/TLS security toggle, User, App Password, and Sender Email.
-- **Test Connection Tool:** Executes an instant live SMTP handshake (`/api/admin/settings/test-smtp`) with diagnostic server response feedback.
+- **Lead Status & Notes:** Transition lead statuses (`new`, `in_progress`, `contacted`, `booked`, `archived`) and maintain detailed concierge notes.
 
 ---
 
@@ -88,18 +79,10 @@ npm install
 ```
 
 ### 3. Configure Environment Variables
-Update `.env` with your MySQL and optional SMTP credentials (or let it auto-create from `.env.example` on first run):
+Update `.env` with your MySQL credentials (or let it auto-create from `.env.example` on first run):
 ```env
 # Database
 DATABASE_URL="mysql://root:yourpassword@localhost:3306/lanka_luxe_db"
-
-# SMTP Email Service (Optional: can also be configured via Admin Settings)
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT="587"
-SMTP_SECURE="false"
-SMTP_USER="your-email@gmail.com"
-SMTP_PASS="your-app-password"
-SMTP_FROM="Lanka Luxe Concierge <concierge@lankaluxe.com>"
 ```
 
 ### 4. Run the Application
@@ -131,7 +114,7 @@ npm run dev
 | **Zod Schema Validation** | All inbound API payloads are strictly validated against strong Zod schemas with length bounds, email format checks, and status enum guards. |
 | **Distributed Rate Limiting** | Multi-instance sliding window rate limiting via Upstash Redis + in-memory fallback on `/api/auth/login`, `/api/inquiries`, and `/api/upload`. |
 | **SSRF & Magic-Byte Defense** | Image uploads strictly validate JPEG, PNG, and WebP magic bytes, cap files at 5MB, require HTTPS, and reject loopback, link-local, and private IP CIDRs. |
-| **Credential Isolation** | All database & SMTP secrets (`DATABASE_URL`, `JWT_SECRET`, `SMTP_PASS`) remain strictly server-side. `NEXT_PUBLIC_APP_URL` is the only exposed public variable. |
+| **Credential Isolation** | All server-side secrets (`DATABASE_URL`, `JWT_SECRET`) remain strictly protected. `NEXT_PUBLIC_APP_URL` is the only exposed public variable. |
 
 ---
 
@@ -144,7 +127,6 @@ npm run dev
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) |
 | **Animation** | Motion (`motion/react`) |
 | **Database & ORM** | MySQL + [Prisma ORM 7.10](https://www.prisma.io/) (`@prisma/adapter-mariadb`) |
-| **Email Service** | [Nodemailer](https://nodemailer.com/) + Custom Luxury HTML Templates |
 | **Distributed Cache / Rate Limiting** | [Upstash Redis](https://upstash.com/) (`@upstash/ratelimit`, `@upstash/redis`) |
 | **Validation** | [Zod 3.24](https://zod.dev/) |
 | **Authentication** | `jose` (Edge JWT) + `bcryptjs` + HttpOnly cookies |
@@ -167,9 +149,9 @@ lanka-luxe-journeys/
 │   │   │   ├── destinations/  # Destinations & map manager
 │   │   │   ├── experiences/   # Signature experiences editor
 │   │   │   ├── golf/          # Golf packages manager
-│   │   │   ├── inquiries/     # Lead CRM, WhatsApp/Kakao actions & SMTP modal
+│   │   │   ├── inquiries/     # Lead CRM, WhatsApp/Kakao actions
 │   │   │   ├── login/         # Secure admin login portal
-│   │   │   ├── settings/      # Site settings, contact info, SMTP server setup
+│   │   │   ├── settings/      # Site settings & contact info
 │   │   │   ├── tours/         # Bespoke tour itinerary builder
 │   │   │   └── page.tsx       # Admin overview metrics & lead preview
 │   │   ├── api/               # REST API route handlers
@@ -178,8 +160,8 @@ lanka-luxe-journeys/
 │   │   │   ├── inquiries/     # Lead submission & CRM APIs
 │   │   │   ├── upload/        # Hardened SSRF-safe image upload API
 │   │   │   └── admin/         # Protected CRUD & administrative APIs
-│   │   │       ├── inquiries/ # Lead management & /reply SMTP route
-│   │   │       └── settings/  # Settings manager & /test-smtp route
+│   │   │       ├── inquiries/ # Lead management APIs
+│   │   │       └── settings/  # Settings manager API
 │   │   ├── blog/              # Public journal & articles
 │   │   ├── contact/           # Public contact page & consultation form
 │   │   ├── destinations/      # Public destination guides & dynamic routes
@@ -195,7 +177,6 @@ lanka-luxe-journeys/
 │   │   ├── content-db.ts      # Server-side live database query helpers
 │   │   ├── content-store.tsx  # React state store with live DB sync
 │   │   ├── i18n.tsx           # Bilingual context provider (EN / KO)
-│   │   ├── mailer.ts          # SMTP transporter, luxury email templates & tester
 │   │   ├── prisma.ts          # Singleton PrismaClient instance with driver adapter
 │   │   └── rate-limit.ts      # Distributed Upstash Redis rate limiter
 │   └── middleware.ts          # Server-side Next.js route guard
