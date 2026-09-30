@@ -64,22 +64,22 @@ export default function ContactPage() {
     {
       q:
         lang === "ko"
-          ? "전용 기사 및 차량은 어떤 등급으로 배정되나요?"
-          : "What vehicles and chauffeur-guides are provided?",
+          ? "전용 기사 및 차량은 어떻게 준비되나요?"
+          : "What vehicles and private transportation are arranged?",
       a:
         lang === "ko"
-          ? "신형 메르세데스-벤츠 E/V 클래스 또는 토요타 알파드, 프리미엄 하이에이스 밴이 배정됩니다. 전담 기사는 다년간의 VIP 의전 경험과 우수한 영어를 구사하며, 요청 시 한국어 통역 가이드 동행도 가능합니다."
-          : "All transfers are carried out in modern luxury fleets — Mercedes V-Class, Toyota Alphard or high-roof executive coaches with air conditioning, onboard Wi-Fi, and certified English/Korean-speaking chauffeur-guides.",
+          ? "고객님의 여행 일정과 인원수, 편의 요구에 맞춰 쾌적하고 안전한 전용 차량(세단, 프리미엄 밴, 미니코치)과 숙련된 기사를 배차합니다. SLTDA 공인 가이드(C-1734)로서 여행 전 일정 동안 편안하고 안전한 이동을 보장합니다."
+          : "Private transportation can be arranged according to your itinerary, group size and comfort requirements using clean, air-conditioned vehicles and experienced local drivers.",
     },
     {
       q:
         lang === "ko"
-          ? "한국어 상담 및 현지 한국어 지원이 가능한가요?"
-          : "Is Korean language assistance available?",
+          ? "한국어 상담 및 현지 지원이 가능한가요?"
+          : "Is English and Korean language support available?",
       a:
         lang === "ko"
-          ? "네, Lanka Luxe Journeys는 10년 이상의 경험을 갖춘 창립자 이로샨(Iroshan, SLTDA 라이선스 C-1734) 및 전담 코디네이터가 영어와 한국어로 원활하게 소통하며 24시간 실시간 맞춤 케어 서비스를 제공합니다. 카카오톡 및 WhatsApp, 전화로 언제든 편안하게 상담받으실 수 있습니다."
-          : "Yes. Lanka Luxe Journeys founder Iroshan Jayawickrame and our dedicated coordinators personally communicate in both Korean and English, ensuring seamless communication and 24/7 on-the-ground support.",
+          ? "네, Lanka Luxe Journeys는 창립자이자 SLTDA 공인 가이드(C-1734)인 이로샨 자야위크라마(Iroshan Jayawickrame)가 직접 관리합니다. 영어와 한국어로 소통하며, 여행 상담부터 일정 조율, 현지 맞춤 지원까지 편안하게 소통하실 수 있습니다."
+          : "Yes. I communicate personally in English and Korean, helping Korean and international guests enjoy a smoother and more comfortable journey in Sri Lanka.",
     },
   ];
 
@@ -97,13 +97,21 @@ export default function ContactPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
-            Begin Planning Your <span className="text-[#C8A45D]">Journey.</span>
+            {lang === "ko" ? (
+              <>
+                스리랑카 맞춤 여행 문의 · <span className="text-[#C8A45D]">Plan Your Journey</span>
+              </>
+            ) : (
+              <>
+                Let's Plan Your <span className="text-[#C8A45D]">Sri Lankan Journey.</span>
+              </>
+            )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
             {lang === "ko"
-              ? "특별한 스리랑카 여행에 관한 모든 질문을 환영합니다. 전담 여행 디자이너가 24시간 이내에 맞춤 답변과 제안서를 전달해 드립니다."
-              : "Tell us about the trip you envision. A dedicated journey designer in Colombo will reply with a thoughtful itinerary outline within 24 hours."}
+              ? "원하시는 여행 일정과 관심사, 선호하는 여행 스타일을 알려주세요. 문의 내용을 직접 검토한 후 가능한 한 신속하게 맞춤 제안을 드리겠습니다."
+              : "Tell me about your travel dates, interests and preferred style of travel. I will personally review your request and prepare a tailored recommendation for your journey. Your enquiry will be personally reviewed and we will respond as soon as possible."}
           </p>
         </Reveal>
       </section>
@@ -115,12 +123,12 @@ export default function ContactPage() {
           <div className="lg:col-span-5 space-y-6">
             <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] space-y-6">
               <h2 className="text-2xl font-bold text-[#081A33] mb-2">
-                {lang === "ko" ? "컨시어지 연락처" : "Direct Concierge Access"}
+                {lang === "ko" ? "직접 문의 및 상담" : "Personal Travel Support"}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? "긴급 문의나 빠른 상담은 WhatsApp 또는 카카오톡으로 실시간 연락이 가능합니다."
-                  : "For immediate assistance, reach our Colombo concierge team directly via WhatsApp, KakaoTalk or phone."}
+                  ? "빠른 상담이나 직접 문의는 WhatsApp 또는 카카오톡으로 언제든 편하게 연락 주실 수 있습니다."
+                  : "Reach out directly via WhatsApp or KakaoTalk for personalized travel consultation and local advice."}
               </p>
 
               <div className="space-y-4 pt-2 text-xs">
@@ -136,7 +144,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="font-bold text-[#081A33] group-hover:text-[#25D366] transition-colors">
-                      WhatsApp Direct Chat
+                      Contact Us · WhatsApp
                     </div>
                     <div className="text-slate-500">{safeContact.phone}</div>
                   </div>
@@ -148,7 +156,7 @@ export default function ContactPage() {
                     K
                   </div>
                   <div>
-                    <div className="font-bold text-[#081A33]">KakaoTalk (한국어 상담)</div>
+                    <div className="font-bold text-[#081A33]">문의하기 · KakaoTalk</div>
                     <div className="text-slate-500">ID: <strong className="text-[#081A33]">{safeContact.kakao}</strong></div>
                   </div>
                 </div>

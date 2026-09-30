@@ -111,26 +111,26 @@ export function BlogDetailClient() {
 
           <p>
             {lang === "ko"
-              ? "가장 중요한 것은 '이동의 질'입니다. 뻔한 관광 버스가 아닌 전용 기사가 운전하는 프리미엄 차량으로 이동할 때, 이동 시간 자체가 그림 같은 차밭과 폭포를 감상하는 여유로운 힐링의 시간이 됩니다."
-              : "The difference between an ordinary journey and an extraordinary one lies in pacing and private access. Having a dedicated chauffeur-guide who knows when the elephant herds gather at Minneriya or how to secure dawn entry at Sigiriya transforms the entire experience."}
+              ? "가장 중요한 것은 '이동의 질'입니다. 뻔한 관광 버스가 아닌 전용 기사가 운전하는 편안한 차량으로 이동할 때, 이동 시간 자체가 그림 같은 차밭과 폭포를 감상하는 여유로운 힐링의 시간이 됩니다."
+              : "The difference between an ordinary journey and an extraordinary one lies in pacing and authentic local guidance. Having an experienced local guide who knows the landscape and culture transforms the entire experience."}
           </p>
 
           <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs my-8">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#C8A45D] mb-2">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{lang === "ko" ? "아틀리에 팁" : "Atelier Recommendation"}</span>
+              <span>{lang === "ko" ? "여행 팁" : "Travel Insight"}</span>
             </div>
             <p className="text-sm text-slate-700 font-normal">
               {lang === "ko"
                 ? "골프와 럭셔리 휴양을 함께 계획하신다면 최소 9~10일 일정을 추천드리며, 빅토리아 골프 리조트와 남부 샹그릴라 코스를 묶는 것이 가장 만족도가 높습니다."
-                : "For golf itineraries, we recommend a minimum of 9 to 10 days to comfortably combine Victoria Golf Resort in Digana with the coastal Shangri-La Hambantota links and a safari detour."}
+                : "For golf itineraries, we recommend a minimum of 9 to 10 days to comfortably combine Victoria Golf Resort in Digana with the coastal Shangri-La Hambantota links and scenic sightseeing."}
             </p>
           </div>
 
           <p>
             {lang === "ko"
-              ? "스리랑카 럭셔리 여행에 대해 궁금한 점이 있으시다면 언제든 콜롬보 현지 팀에 문의해 주세요. 고객님의 일정에 맞춘 상세한 조언을 드립니다."
-              : "Our Colombo team is always on hand to assist with route planning, private helicopter charters, and tee time reservations across the island."}
+              ? "스리랑카 프라이빗 여행에 대해 궁금한 점이 있으시다면 언제든 문의해 주세요. 고객님의 일정과 취향에 맞춘 상세한 조언을 드립니다."
+              : "Tell me about your travel dates, interests and preferred style of travel. I will personally review your request and prepare a tailored recommendation for your journey."}
           </p>
         </div>
 
@@ -141,10 +141,10 @@ export function BlogDetailClient() {
               Written by
             </span>
             <div className="text-xl font-bold text-[#081A33]">
-              The Curators of Lanka Luxe Journeys
+              Iroshan Jayawickrame
             </div>
             <div className="text-xs text-slate-400">
-              Private Travel Atelier • Colombo, Sri Lanka
+              Founder & Licensed Guide (SLTDA C-1734) · Lanka Luxe Journeys
             </div>
           </div>
 

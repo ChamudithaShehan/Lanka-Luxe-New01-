@@ -101,19 +101,19 @@ export default function ToursPage() {
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-4">
             {lang === "ko" ? (
               <>
-                시그니처 <span className="text-[#C8A45D]">럭셔리 여정</span>
+                프라이빗 스리랑카 <span className="text-[#C8A45D]">맞춤 여정 컬렉션</span>
               </>
             ) : (
               <>
-                Signature Luxury <span className="text-[#C8A45D]">Journeys.</span>
+                A Collection of <span className="text-[#C8A45D]">Private Sri Lankan Journeys.</span>
               </>
             )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-2xl leading-relaxed mb-8">
             {lang === "ko"
-              ? "스리랑카 전역을 잇는 9가지 시그니처 럭셔리 일정입니다. 모든 일정은 고객님의 희망에 따라 자유롭게 변경 가능합니다."
-              : "Nine private routes spanning colonial tea estates, championship links, leopard reserves and coastal ramparts. Fully bespoke and customizable."}
+              ? "문화유산과 야생 사파리부터 골프, 웰니스, 아름다운 해안까지 — 정성껏 설계된 프라이빗 맞춤 일정을 통해 스리랑카를 탐험해 보세요."
+              : "From cultural heritage and wildlife to golf, wellness and the coast, explore Sri Lanka through thoughtfully designed private itineraries."}
           </p>
 
           {/* Search & Filter Bar */}

@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 export interface LuxuryButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "gold" | "pill" | "outline" | "ghost" | "dark" | "secondary";
+  variant?: "gold" | "pill" | "outline" | "outline-light" | "ghost" | "dark" | "secondary";
   size?: "sm" | "md" | "lg";
   href?: string;
   withArrow?: boolean;
@@ -42,6 +42,8 @@ export const LuxuryButton = forwardRef<HTMLButtonElement, LuxuryButtonProps>(
       dark: "bg-navy text-white hover:bg-navy-2 shadow-sm hover:shadow-md active:translate-y-px font-medium",
       outline:
         "border border-slate-300 hover:border-navy text-navy hover:bg-slate-50 active:translate-y-px font-medium",
+      "outline-light":
+        "border border-white/60 hover:border-white text-white hover:bg-white/10 active:translate-y-px font-medium shadow-sm",
       ghost: "text-[#0B1F3A] hover:text-[#C8A45D] hover:bg-slate-100 active:translate-y-px",
       secondary:
         "bg-slate-100 text-slate-800 hover:bg-slate-200 active:translate-y-px font-medium",

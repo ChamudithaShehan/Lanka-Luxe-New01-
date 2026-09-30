@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://lankaluxe.com/sitemap.xml
+Sitemap: https://lankaluxejourneys.com/sitemap.xml

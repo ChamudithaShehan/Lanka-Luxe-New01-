@@ -65,19 +65,19 @@ export default function BlogPage() {
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
             {lang === "ko" ? (
               <>
-                란카 럭스 <span className="text-[#C8A45D]">공식 저널</span>
+                스리랑카 여행 저널 · <span className="text-[#C8A45D]">Sri Lanka Travel Journal</span>
               </>
             ) : (
               <>
-                The Lanka Luxe <span className="text-[#C8A45D]">Journal.</span>
+                Sri Lanka <span className="text-[#C8A45D]">Travel Journal.</span>
               </>
             )}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed">
             {lang === "ko"
-              ? "스리랑카 5대 골프장 공략법, 한국인 여행자를 위한 실전 팁, 야생 사파리 이야기 등 현지 아틀리에가 전하는 칼럼입니다."
-              : "Occasional dispatches, course guides, tea country histories and practical notes for discerning travellers."}
+              ? "스리랑카를 더욱 깊이 발견할 수 있도록 돕는 여행 가이드, 문화적 통찰과 실용적인 여행 정보."
+              : "Travel guides, cultural insights and practical information to help you discover Sri Lanka."}
           </p>
         </Reveal>
       </section>

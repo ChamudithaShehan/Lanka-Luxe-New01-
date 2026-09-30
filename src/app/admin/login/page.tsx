@@ -64,7 +64,7 @@ function AdminLoginForm() {
           <Lock className="w-6 h-6" />
         </div>
         <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Lanka Luxe Atelier
+          Lanka Luxe Journeys
         </h1>
         <p className="text-xs uppercase tracking-[0.2em] text-[#C8A45D] font-medium">
           Administrative Management System

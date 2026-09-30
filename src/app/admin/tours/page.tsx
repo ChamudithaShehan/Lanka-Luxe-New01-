@@ -104,10 +104,10 @@ export default function AdminToursPage() {
         },
       ],
       included: [
-        "Private chauffeur-guide and luxury vehicle throughout",
+        "Private transportation and experienced guidance throughout",
         "5-Star luxury accommodation with daily breakfast",
         "All entrance fees and private permits",
-        "24/7 bilingual concierge in English and Korean",
+        "Personal travel support in English and Korean",
       ],
       excluded: [
         "International flights",
@@ -115,8 +115,8 @@ export default function AdminToursPage() {
         "Alcoholic beverages during meals",
       ],
       hotels: ["Galle Face Hotel", "Ceylon Tea Trails", "Amangalla"],
-      transport: "Mercedes-Benz / Toyota Alphard Luxury Chauffeur Fleet",
-      optional: ["Helicopter transfers", "Hot air balloon flight"],
+      transport: "Air-Conditioned Private Vehicle (Sedan / Premium Van / Coach)",
+      optional: ["Scenic train journey", "Hot air balloon flight"],
     };
 
     setEditingTour(newTour);

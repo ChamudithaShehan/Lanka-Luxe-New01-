@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { type Tour } from "@/data/site";
 import { useI18n, getCategoryLabel } from "@/lib/i18n";
-import { Calendar, MapPin, Star, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import { useInquiry } from "@/lib/inquiry-context";
 
 interface TourCardProps {
@@ -70,12 +70,8 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
                 </div>
               </div>
 
-              {/* Star Rating Badge & Price */}
+              {/* Price */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF9F1C] text-white text-xs font-bold shadow-sm">
-                  <Star className="w-3 h-3 fill-white" />
-                  <span>4.9</span>
-                </div>
                 <div className="text-right">
                   <span className="text-xl font-bold text-[#081A33]">
                     {tour.price}
@@ -170,12 +166,6 @@ export function TourCard({ tour, className, variant = "default" }: TourCardProps
               <span>
                 {lang === "ko" ? `${tour.days}일 ${tour.days - 1}박` : `${tour.days} Days - ${tour.days - 1} Nights`}
               </span>
-            </div>
-
-            {/* Rating */}
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FF9F1C] text-white text-[0.6875rem] font-bold shadow-xs">
-              <Star className="w-2.5 h-2.5 fill-white" />
-              <span>4.9</span>
             </div>
           </div>
 

@@ -245,34 +245,35 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Company Description & Trust Badge */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 mb-10 border-b border-white/10 text-left">
-            <div className="md:col-span-4 flex items-center gap-4">
+            <div className="md:col-span-5 flex items-center gap-4">
               <img src={img.logo} alt="Lanka Luxe Journeys Logo" className="h-16 w-auto object-contain bg-white/95 rounded-2xl p-2 shadow-lg" />
               <div>
                 <h3 className="font-display text-xl font-bold text-white tracking-wide">Lanka Luxe Journeys</h3>
-                <p className="text-xs text-[#C8A45D] font-medium tracking-wider uppercase mt-0.5">
-                  {lang === "ko" ? "스리랑카 큐레이티드 럭셔리 여행" : "Curated Luxury Experiences in Sri Lanka"}
+                <p className="text-xs text-[#C8A45D] font-medium tracking-wider mt-0.5">
+                  {lang === "ko" ? "정성을 다해 설계하는 프라이빗 스리랑카 여행" : "Private Sri Lankan Journeys, Personally Crafted"}
                 </p>
-                <div className="text-[11px] text-mist/70 mt-1">
-                  {lang === "ko" ? "스리랑카 관광청(SLTDA) 공인 가이드 라이선스: " : "SLTDA Registered Guide Licence: "}
-                  <strong className="text-white">{siteSettings?.licenseNumber || "C-1734"}</strong>
+                <div className="text-[11px] text-mist/80 mt-1 leading-relaxed">
+                  {lang === "ko"
+                    ? "창립자: 이로샨 자야위크라마 · SLTDA 공인 가이드 C-1734 · 10년 이상의 스리랑카 관광 전문성"
+                    : "Founded by Iroshan Jayawickrame · SLTDA Registered Guide C-1734 · 10+ Years in Sri Lankan Tourism"}
                 </div>
               </div>
             </div>
 
-            <div className="md:col-span-8">
+            <div className="md:col-span-7">
               <p className="text-xs sm:text-sm text-mist/80 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? siteSettings?.founderBio?.ko || "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다."
-                  : siteSettings?.founderBio?.en || "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry."}
+                  ? "Diploma in Archaeology & Culture Tourism – Postgraduate Institute of Archaeology, University of Kelaniya. 한국어 및 영어 직접 소통과 편안한 전용 차량으로 품격 있는 스리랑카 여행을 완성합니다."
+                  : "Diploma in Archaeology & Culture Tourism – Postgraduate Institute of Archaeology, University of Kelaniya. Personally managed private journeys with English and Korean communication, private comfortable transportation, and authentic local guidance."}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-xs text-mist/70 text-center lg:text-left order-3 lg:order-1 flex items-center flex-wrap justify-center lg:justify-start gap-2" suppressHydrationWarning>
-              <span>© {new Date().getFullYear()} {siteSettings?.brandName || "Lanka Luxe Journeys"}. All Rights Reserved. · Founder: {siteSettings?.founderName || "Iroshan Jayawickrame"} (SLTDA {siteSettings?.licenseNumber || "C-1734"})</span>
+              <span>© {new Date().getFullYear()} Lanka Luxe Journeys. All Rights Reserved. · Founder: Iroshan Jayawickrame (SLTDA C-1734)</span>
               <span>· Developed by <a href="https://braintisa.com/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-mist transition-colors font-medium">Brain<span className="text-gold">t</span>isa</a></span>
-              <Link href="/admin" className="text-mist/30 hover:text-gold transition-colors inline-flex items-center" title="Admin Atelier">
+              <Link href="/admin" className="text-mist/30 hover:text-gold transition-colors inline-flex items-center" title="Admin Portal">
                 <Lock className="w-3 h-3" />
               </Link>
             </div>

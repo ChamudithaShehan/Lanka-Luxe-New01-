@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { type Destination } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
-import { MapPin, ArrowRight, Clock, Star } from "lucide-react";
+import { MapPin, ArrowRight, Clock } from "lucide-react";
 
 interface DestinationCardProps {
   destination: Destination;
@@ -34,12 +34,6 @@ export function DestinationCard({ destination, className }: DestinationCardProps
           </span>
         </div>
 
-        <div className="absolute top-4 right-4">
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF9F1C] text-white text-xs font-bold shadow-sm">
-            <Star className="w-3 h-3 fill-white" />
-            <span>4.9</span>
-          </div>
-        </div>
       </div>
 
       {/* Body */}

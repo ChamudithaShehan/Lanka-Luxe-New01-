@@ -63,8 +63,8 @@ export default function ExperiencesPage() {
 
           <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
             {lang === "ko"
-              ? "프라이빗 야생 사파리부터 고산지대 기차 여행, 차밭 방갈로와 바다 위 아유르베다까지 — 잊지 못할 스리랑카만의 순간들을 만듭니다."
-              : "Private naturalists in the leopard reserves, reserved observation carriages through cloud forests, and dinner served alone on candlelit beaches."}
+              ? "프라이빗 야생 사파리부터 고산지대 기차 여행, 차밭 힐스, 아름다운 해안 휴양과 웰니스 힐링까지 — 스리랑카 전역에서 정성껏 엄선한 특별한 경험들을 만나보세요."
+              : "Private wildlife safaris, scenic hill-country railways, authentic coastal retreats, tea plantations and rejuvenating wellness — thoughtfully selected experiences across Sri Lanka."}
           </p>
 
           {/* Search Box */}
@@ -230,8 +230,8 @@ export default function ExperiencesPage() {
           </h2>
           <p className="text-sm sm:text-base text-slate-500 font-normal mb-8 max-w-lg mx-auto leading-relaxed">
             {lang === "ko"
-              ? "골프와 야생 사파리, 웰니스 스파를 한 여정에 담아 최적의 동선으로 연결해 드립니다."
-              : "We seamlessly weave helicopter transfers, private game drives and luxury villa stays into a harmonious rhythm."}
+              ? "원하시는 여행 일정과 체험, 선호하는 여행 스타일을 알려주세요. 고객님의 취향에 맞춰 최적의 동선과 맞춤 제안을 준비해 드립니다."
+              : "Tell me about your travel dates, preferred experiences and style of travel. I will personally prepare a tailored recommendation for your journey."}
           </p>
           <LuxuryButton
             variant="pill"

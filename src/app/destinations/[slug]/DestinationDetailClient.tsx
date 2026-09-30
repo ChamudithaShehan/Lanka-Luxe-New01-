@@ -105,7 +105,7 @@ export function DestinationDetailClient() {
           <div className="lg:col-span-8 space-y-8">
             <div className="p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
               <h2 className="text-2xl font-bold text-[#081A33] mb-4">
-                {lang === "ko" ? "지역 소개" : "Atelier Overview"}
+                {lang === "ko" ? "지역 소개" : "Destination Overview"}
               </h2>
               <p className="text-base text-slate-600 leading-relaxed mb-4">
                 {tl(dest.short)}

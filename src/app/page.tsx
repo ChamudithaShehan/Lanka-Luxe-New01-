@@ -34,8 +34,15 @@ import {
   Globe2,
   Users,
   Building2,
+  MessageSquare,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
+
+const KakaoIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M12 3c-5.52 0-10 3.51-10 7.84 0 2.77 1.76 5.2 4.43 6.64-.17.65-.63 2.37-.67 2.53-.05.18.06.18.15.12.11-.08 1.83-1.22 2.6-1.74 1.12.31 2.3.49 3.49.49 5.52 0 10-3.51 10-7.84C22 6.51 17.52 3 12 3z" />
+  </svg>
+);
 
 export default function HomePage() {
   const { t, tl, lang } = useI18n();
@@ -48,6 +55,7 @@ export default function HomePage() {
     whyUs,
     testimonials,
     siteSettings,
+    contact,
   } = useContentStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -86,6 +94,57 @@ export default function HomePage() {
       );
 
   const featuredTour = tours[0];
+
+  const activeWhyUs = whyUs.length > 0 ? whyUs : [
+    {
+      no: "01",
+      title: { en: "Personalized & Tailor-Made Journeys", ko: "맞춤형 프라이빗 여정" },
+      text: {
+        en: "Every journey is carefully planned around your interests, pace and travel style.",
+        ko: "정해진 패키지가 아닌, 고객의 관심사와 여행 속도, 스타일에 맞춰 처음부터 정성껏 설계합니다.",
+      },
+    },
+    {
+      no: "02",
+      title: { en: "10+ Years in Sri Lankan Tourism", ko: "10년 이상의 스리랑카 관광 전문성" },
+      text: {
+        en: "10+ years of professional experience welcoming international travellers to Sri Lanka.",
+        ko: "10년 이상의 전문적인 필드 경험으로 스리랑카에서 가장 신뢰할 수 있는 여정을 안내합니다.",
+      },
+    },
+    {
+      no: "03",
+      title: { en: "Golf Travel in Sri Lanka", ko: "스리랑카 골프 여행" },
+      text: {
+        en: "Discover Sri Lanka through a unique combination of golf, scenery, culture and hospitality. We arrange private golf journeys for Korean and international travellers.",
+        ko: "골프, 천혜의 자연경관, 유구한 문화와 환대의 조화. 한국인 및 글로벌 고객을 위한 골프장 예약 및 맞춤 여정을 조율합니다.",
+      },
+    },
+    {
+      no: "04",
+      title: { en: "Carefully Selected Experiences & Services", ko: "엄선된 특별한 경험 & 서비스" },
+      text: {
+        en: "We work with carefully selected hotels, transportation providers and local experiences to create comfortable and memorable journeys.",
+        ko: "엄선된 호텔, 신뢰할 수 있는 운송 파트너 및 로컬 체험과 협력하여 편안하고 기억에 남는 여정을 만듭니다.",
+      },
+    },
+    {
+      no: "05",
+      title: { en: "Registered Sri Lankan Tourism Professional", ko: "스리랑카 관광청 공식 등록 전문가" },
+      text: {
+        en: "SLTDA Registered Guide – C-1734. Private transportation can be arranged according to your itinerary, group size and comfort requirements.",
+        ko: "SLTDA 공인 가이드 – C-1734. 여행 일정, 인원 및 편안함 요구사항에 맞추어 프라이빗 전용 차량을 조율해 드립니다.",
+      },
+    },
+    {
+      no: "06",
+      title: { en: "English & Korean Support", ko: "영어 & 한국어 소통 지원" },
+      text: {
+        en: "I communicate personally in English and Korean, helping Korean and international guests enjoy a smoother and more comfortable journey in Sri Lanka.",
+        ko: "영어와 한국어로 직접 소통하여 한국인 및 글로벌 고객님들이 스리랑카에서 더욱 원활하고 편안한 여행을 누리실 수 있도록 돕습니다.",
+      },
+    },
+  ];
 
   return (
     <div className="relative min-h-screen bg-[#F9FAFB] text-slate-800 selection:bg-[#C8A45D] selection:text-white">
@@ -165,7 +224,7 @@ export default function HomePage() {
               <Reveal variant="fade-up" delay={0.05}>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#C8A45D]">
-                    {lang === "ko" ? "스리랑카 럭셔리 여행 아틀리에" : "LANKA LUXE ATELIER"}
+                    {lang === "ko" ? "스리랑카 프라이빗 여행" : "LANKA LUXE JOURNEYS"}
                   </span>
                   <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60">
                     <Compass className="w-3.5 h-3.5 animate-spin-slow" />
@@ -177,8 +236,8 @@ export default function HomePage() {
               <Reveal variant="fade-up" delay={0.15}>
                 <h1 className="text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight">
                   {lang === "ko" ? "스리랑카를 발견하다" : "DISCOVER SRI LANKA"} <br />
-                  <span className="text-[#C8A45D] font-normal italic font-sans lowercase">
-                    {lang === "ko" ? "현지 전문가와 함께." : "with a local expert."}
+                  <span className="text-[#C8A45D] font-normal font-sans">
+                    {lang === "ko" ? "현지 전문가와 함께" : "WITH A LOCAL EXPERT"}
                   </span>
                 </h1>
               </Reveal>
@@ -187,48 +246,73 @@ export default function HomePage() {
               <Reveal variant="fade-up" delay={0.25}>
                 <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-md">
                   {lang === "ko"
-                    ? "나만을 위해 섬세하게 설계된 프라이빗 럭셔리 여정, 진정한 스리랑카를 현지 전문가와 함께 경험하세요."
-                    : "Private journeys, authentic experiences and luxury travel, personally crafted around you."}
+                    ? "나만을 위해 세심하게 설계된 프라이빗 맞춤 여정, 진정한 로컬 경험과 정성껏 기획된 여행."
+                    : "Private journeys, authentic experiences and thoughtfully crafted travel, personally designed around you."}
                 </p>
               </Reveal>
 
-              {/* Action Button Matching Reference */}
+              {/* Action Buttons & Direct Messaging */}
               <Reveal variant="fade-up" delay={0.35}>
-                <div className="pt-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                  <Link
-                    href="/tours"
-                    className="inline-flex items-center justify-between sm:justify-start gap-4 pl-6 pr-2 py-2 rounded-full bg-white text-[#081A33] font-semibold text-sm hover:bg-slate-100 hover:shadow-xl transition-all duration-300 shadow-md group cursor-pointer w-fit"
-                  >
-                    <span>{lang === "ko" ? "투어 둘러보기" : "View tours"}</span>
-                    <span className="w-10 h-10 rounded-full bg-[#0B1F3A] text-white flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
-                      <ArrowRight className="w-5 h-5" />
-                    </span>
-                  </Link>
+                <div className="pt-4 flex flex-col gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/tours"
+                      className="inline-flex items-center justify-between sm:justify-start gap-4 pl-6 pr-2 py-2 rounded-full bg-white text-[#081A33] font-semibold text-sm hover:bg-slate-100 hover:shadow-xl transition-all duration-300 shadow-md group cursor-pointer w-fit"
+                    >
+                      <span>{lang === "ko" ? "투어 둘러보기" : "View tours"}</span>
+                      <span className="w-10 h-10 rounded-full bg-[#0B1F3A] text-white flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shrink-0">
+                        <ArrowRight className="w-5 h-5" />
+                      </span>
+                    </Link>
 
-                  <button
-                    type="button"
-                    onClick={() => openInquiry()}
-                    className="text-xs font-semibold text-slate-300 hover:text-white uppercase tracking-wider underline cursor-pointer hidden sm:block"
-                  >
-                    {lang === "ko" ? "맞춤 일정 상담" : "Plan Bespoke Trip"}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => openInquiry()}
+                      className="px-5 py-2.5 rounded-full border border-white/20 text-xs font-semibold text-white hover:bg-white/10 uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      {lang === "ko" ? "맞춤 일정 상담" : "Plan Your Journey"}
+                    </button>
+                  </div>
+
+                  {/* Direct WhatsApp & KakaoTalk Quick Links */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <a
+                      href={`https://pf.kakao.com/${(contact?.kakao || "@lankaluxe").replace("@", "_")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEE500] text-[#381E1F] font-bold text-xs hover:bg-[#ebd400] transition-colors shadow-sm"
+                    >
+                      <KakaoIcon className="w-3.5 h-3.5" />
+                      <span>{lang === "ko" ? "문의하기 · KakaoTalk" : "KakaoTalk · 문의하기"}</span>
+                    </a>
+
+                    <a
+                      href={`https://wa.me/${contact?.whatsapp || "94771234567"}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#25D366] text-white font-bold text-xs hover:bg-[#20ba59] transition-colors shadow-sm"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-white" />
+                      <span>Contact Us · WhatsApp</span>
+                    </a>
+                  </div>
                 </div>
               </Reveal>
 
-              {/* Korean Traveler Trust Banner */}
+              {/* Personal Travel Support Trust Banner */}
               <Reveal variant="fade-up" delay={0.45}>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hidden sm:flex items-center gap-3 max-w-md text-xs text-slate-300">
+                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center gap-3 max-w-md text-xs text-slate-300">
                   <div className="w-7 h-7 rounded-full bg-[#C8A45D]/20 text-[#C8A45D] flex items-center justify-center font-bold text-xs shrink-0">
-                    VIP
+                    <ShieldCheck className="w-4 h-4" />
                   </div>
-                  <div>
+                  <div className="leading-snug">
                     {lang === "ko" ? (
                       <span>
-                        <strong>한국어 1:1 컨시어지</strong> · 전담 의전 기사 & 24시간 실시간 지원
+                        <strong>개인 맞춤 여행 지원</strong> · 전용 차량 · 현지 전문성
                       </span>
                     ) : (
                       <span>
-                        <strong>Dedicated Concierge</strong> · Private luxury chauffeur & 24/7 on-trip care
+                        Personal Travel Support · Private Transportation · Local Expertise
                       </span>
                     )}
                   </div>
@@ -428,7 +512,7 @@ export default function HomePage() {
                     <Globe2 className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">
-                    {lang === "ko" ? "글로벌 여행지" : "Global Destinations"}
+                    {lang === "ko" ? "스리랑카 전문성" : "Sri Lanka Expertise"}
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
@@ -444,7 +528,7 @@ export default function HomePage() {
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">
-                    {lang === "ko" ? "안전한 여정" : "Safe Travels"}
+                    {lang === "ko" ? "신뢰할 수 있는 현지 가이드" : "Trusted Local Guidance"}
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
@@ -452,26 +536,24 @@ export default function HomePage() {
                     <Building2 className="w-5 h-5" />
                   </div>
                   <span className="text-sm font-semibold text-[#081A33]">
-                    {lang === "ko" ? "럭셔리 숙소" : "Luxury Lodging"}
+                    {lang === "ko" ? "엄선된 숙소" : "Carefully Selected Stays"}
                   </span>
                 </div>
               </div>
 
               {/* Stats & Button Row */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-10 pt-4">
-                {/* Avatars & Stat */}
-                <div className="flex items-center gap-4">
-                  <div className="flex -space-x-3 shrink-0">
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-30" src="https://i.ibb.co/PGpyrxvT/lanka-luxe-avatar-1.jpg" alt="Reviewer" />
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-20" src="https://i.ibb.co/VcyGVDc6/lanka-luxe-avatar-2.jpg" alt="Reviewer" />
-                    <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-sm relative z-10" src="https://i.ibb.co/YTwxXM7C/lanka-luxe-avatar-3.jpg" alt="Reviewer" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-8 pt-4">
+                {/* Official Licensing Credential Badge */}
+                <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#C8A45D]/15 text-[#C8A45D] flex items-center justify-center shrink-0">
+                    <Award className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-[#081A33] leading-none flex items-baseline gap-1">
-                      <Counter value={9500} />+
+                    <div className="text-sm font-bold text-[#081A33] leading-snug">
+                      SLTDA Registered Guide (C-1734)
                     </div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mt-1.5">
-                      {lang === "ko" ? "만족 후기" : "Positive Reviews"}
+                    <div className="text-[11px] font-medium text-slate-500 mt-0.5">
+                      {lang === "ko" ? "10년+ 스리랑카 관광 전문성" : "10+ Years in Sri Lankan Tourism"}
                     </div>
                   </div>
                 </div>
@@ -518,13 +600,13 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/80 via-transparent to-transparent opacity-80" />
                   <div className="absolute bottom-6 left-6 right-6 text-white p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
                     <p className="text-xs font-semibold text-[#C8A45D] uppercase tracking-widest mb-1">
-                      {lang === "ko" ? "창립자 & SLTDA 공인 가이드" : "Founder & Licensed Guide"}
+                      {lang === "ko" ? "창립자 & 공인 가이드" : "Founder & Licensed Guide"}
                     </p>
                     <h4 className="text-lg font-bold font-display text-white">
                       Iroshan Jayawickrame
                     </h4>
-                    <p className="text-xs text-slate-300">
-                      10+ Years Experience · SLTDA Licence: C-1734 · Archaeology (Univ. of Kelaniya)
+                    <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                      10+ Years in Sri Lankan Tourism · SLTDA Registered Guide C-1734 · Diploma in Archaeology & Culture Tourism
                     </p>
                   </div>
                 </motion.div>
@@ -544,13 +626,13 @@ export default function HomePage() {
                 </h2>
                 <p className="text-base text-slate-600 leading-relaxed pt-2">
                   {lang === "ko"
-                    ? "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 럭셔리 여행사입니다. 편안함과 진정한 경험, 세심한 1:1 서비스를 소중히 여기는 여행자를 위한 프라이빗 맞춤 여행을 전문으로 합니다."
-                    : "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry. We specialize in private, tailor-made journeys for travelers who value comfort, authentic experiences and personal service."}
+                    ? "Lanka Luxe Journeys는 10년 이상의 스리랑카 관광 업계 경력을 가진 공인 전문 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 현지 프라이빗 여행사입니다. 고고학 & 문화관광 디플로마(Diploma in Archaeology & Culture Tourism)와 해외 여행자들을 안내해 온 전문 경험을 바탕으로, 이로샨은 풍부한 현지 지식, 문화적 이해, 그리고 세심한 1:1 맞춤 서비스를 결합하여 스리랑카 전역에서 의미 있는 여정을 선사합니다. 문화유산과 야생 사파리부터 고산지대 차밭, 해변, 골프 및 웰니스까지, 모든 여정은 고객님의 관심사, 여행 속도와 스타일에 맞춰 정성껏 설계됩니다."
+                    : "Lanka Luxe Journeys is a Sri Lanka-based private travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in Sri Lankan tourism. With a Diploma in Archaeology & Culture Tourism and professional experience guiding international travellers, Iroshan brings together local knowledge, cultural understanding and personal service to create meaningful journeys across Sri Lanka. From heritage and wildlife to tea country, beaches, golf and wellness, each journey is thoughtfully designed around your interests, pace and travel style."}
                 </p>
 
                 {/* 6 Key Highlights Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                  {whyUs.map((item) => (
+                  {activeWhyUs.map((item) => (
                     <div
                       key={item.no}
                       className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-start gap-3"
@@ -707,18 +789,18 @@ export default function HomePage() {
           title={
             lang === "ko" ? (
               <>
-                엄선된 <span className="text-[#C8A45D]">시그니처 여정</span>
+                엄선된 <span className="text-[#C8A45D]">프라이빗 스리랑카 여정</span>
               </>
             ) : (
               <>
-                Curated <span className="text-[#C8A45D]">Journeys</span>
+                A Collection of <span className="text-[#C8A45D]">Private Sri Lankan Journeys</span>
               </>
             )
           }
           subtitle={
             lang === "ko"
-              ? "엄선된 8가지 럭셔리 여정 — 전 일정 프라이빗 차량, 5성급 숙소, 24시간 한국어 컨시어지가 함께합니다."
-              : "Eight private luxury itineraries crafted around heritage villas, tea planter estates, wildlife reserves and championship fairways."
+              ? "문화유산과 야생 사파리부터 골프, 웰니스와 아름다운 해변까지, 세심하게 기획된 프라이빗 일정으로 스리랑카를 탐험하세요."
+              : "From cultural heritage and wildlife to golf, wellness and the coast, explore Sri Lanka through thoughtfully designed private itineraries."
           }
         />
 
@@ -774,33 +856,35 @@ export default function HomePage() {
             <div className="lg:col-span-7 space-y-6 text-left">
               <Reveal variant="slide-left" once={false}>
                 <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
-                  {t("golf.eyebrow")}
+                  {lang === "ko" ? "스리랑카 골프 여행" : "Golf Travel in Sri Lanka"}
                 </span>
 
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#081A33] leading-tight">
                   {lang === "ko" ? (
                     <>
-                      세상에서 가장 아름다운{" "}
-                      <span className="text-[#C8A45D]">골프 코스를 만나다.</span>
+                      골프, 자연과 문화가 어우러진{" "}
+                      <span className="text-[#C8A45D]">스리랑카 여정.</span>
                     </>
                   ) : (
                     <>
-                      Play the World's Most Scenic{" "}
-                      <span className="text-[#C8A45D]">Golf Journey.</span>
+                      Discover Sri Lanka Through{" "}
+                      <span className="text-[#C8A45D]">Golf, Scenery & Culture.</span>
                     </>
                   )}
                 </h2>
 
                 <p className="text-base text-slate-600 leading-relaxed">
-                  {t("golf.text")}
+                  {lang === "ko"
+                    ? "골프, 천혜의 자연경관, 유구한 문화와 따뜻한 환대의 조화 속에서 스리랑카를 발견하세요. 한국인 및 글로벌 여행객을 위한 프라이빗 골프 여정을 제공하며, 선호하시는 일정에 맞춘 골프장 예약, 안락한 숙소, 전용 차량 및 관광 일정을 조율해 드립니다."
+                    : "Discover Sri Lanka through a unique combination of golf, scenery, culture and hospitality. We arrange private golf journeys for Korean and international travellers, including golf-course reservations, accommodation, transportation and sightseeing according to your preferences."}
                 </p>
 
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-[#C8A45D] shrink-0" />
                   <span>
                     {lang === "ko"
-                      ? "한국 골프 여행객을 위한 테일러메이드/캘러웨이 최신 클럽 렌탈, 티타임 사전 확정, 전용 밴 차량 제공"
-                      : "Confirmed tee times, premium rental sets, dedicated caddies, and Korean/English concierge on the ground."}
+                      ? "골프장 예약, 교통편 및 여행 지원은 고객님의 일정과 선호도에 맞춰 조율해 드립니다. 한국어 및 영어 소통 가능."
+                      : "Golf-course reservations, transportation and travel support can be arranged according to your itinerary and preferences. Korean and English communication available."}
                   </span>
                 </div>
 
@@ -872,6 +956,107 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 6. KOREAN-FRIENDLY SRI LANKA TRAVEL SECTION */}
+      <section className="py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="p-8 sm:p-12 lg:p-16 rounded-[2.5rem] bg-[#0B1A30] text-white shadow-2xl relative overflow-hidden">
+            {/* Ambient Lighting */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#C8A45D]/10 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-sky-500/10 rounded-full blur-[90px] pointer-events-none" />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div className="lg:col-span-7 space-y-6 text-left">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C8A45D]/20 text-[#C8A45D] text-xs font-bold uppercase tracking-wider">
+                  <span>🇰🇷</span>
+                  <span>{lang === "ko" ? "한국인 맞춤 특화 서비스" : "Korean-Friendly Sri Lanka Travel"}</span>
+                </div>
+
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium text-white leading-tight">
+                  {lang === "ko" ? (
+                    <>
+                      한국인 여행객을 위한 <br />
+                      <span className="text-[#C8A45D]">스리랑카 맞춤 여행</span>
+                    </>
+                  ) : (
+                    <>
+                      Korean-Friendly <br />
+                      <span className="text-[#C8A45D]">Sri Lanka Travel</span>
+                    </>
+                  )}
+                </h2>
+
+                <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-xl">
+                  {lang === "ko"
+                    ? "한국어 직접 소통 지원, 안락한 전용 차량, 깊이 있는 문화 체험, 골프 휴양과 한국 여행자의 취향에 최적화된 프라이빗 맞춤 일정을 제공합니다."
+                    : "Korean-speaking support, private transportation, cultural experiences, golf holidays and tailor-made journeys designed for Korean travellers."}
+                </p>
+
+                {/* 4 Feature Badges */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A45D] shrink-0" />
+                    <span>{lang === "ko" ? "한국어 직접 소통 및 현지 지원" : "Korean-speaking direct support"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A45D] shrink-0" />
+                    <span>{lang === "ko" ? "일정별 안락한 전용 차량 배정" : "Private comfortable transportation"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A45D] shrink-0" />
+                    <span>{lang === "ko" ? "고고학 전문 문화 & 유산 해설" : "Archaeology & cultural guidance"}</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#C8A45D] shrink-0" />
+                    <span>{lang === "ko" ? "스리랑카 명문 골프 코스 조율" : "Tailored golf holidays & reservations"}</span>
+                  </div>
+                </div>
+
+                {/* Contact Buttons as requested in item 26 */}
+                <div className="pt-4 flex flex-wrap items-center gap-4">
+                  <a
+                    href={`https://pf.kakao.com/${(contact?.kakao || "@lankaluxe").replace("@", "_")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#FEE500] text-[#381E1F] font-bold text-xs sm:text-sm hover:bg-[#ebd400] transition-colors shadow-lg cursor-pointer"
+                  >
+                    <KakaoIcon className="w-4 h-4" />
+                    <span>{lang === "ko" ? "문의하기 · KakaoTalk" : "KakaoTalk · 문의하기"}</span>
+                  </a>
+
+                  <a
+                    href={`https://wa.me/${contact?.whatsapp || "94771234567"}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#25D366] text-white font-bold text-xs sm:text-sm hover:bg-[#20ba59] transition-colors shadow-lg cursor-pointer"
+                  >
+                    <MessageSquare className="w-4 h-4 text-white" />
+                    <span>Contact Us · WhatsApp</span>
+                  </a>
+
+                  <LuxuryButton
+                    variant="outline-light"
+                    size="md"
+                    onClick={() => openInquiry({ interest: "custom" })}
+                  >
+                    {lang === "ko" ? "맞춤 일정 상담" : "Plan Bespoke Journey"}
+                  </LuxuryButton>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 relative">
+                <div className="rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl aspect-[4/3]">
+                  <img
+                    src={img.culture}
+                    alt="Cultural & Golf Travel Sri Lanka for Korean Travelers"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
 
       {/* 7. SIGNATURE LUXURY EXPERIENCES */}
@@ -882,18 +1067,18 @@ export default function HomePage() {
             title={
               lang === "ko" ? (
                 <>
-                  특별한 <span className="text-[#C8A45D]">시그니처 체험</span>
+                  스리랑카 전역에서 <span className="text-[#C8A45D]">엄선된 특별한 경험</span>
                 </>
               ) : (
                 <>
-                  Signature <span className="text-[#C8A45D]">Experiences</span>
+                  Thoughtfully Selected <span className="text-[#C8A45D]">Experiences Across Sri Lanka</span>
                 </>
               )
             }
             subtitle={
               lang === "ko"
-                ? "일반 관광객이 닿지 못하는 프라이빗한 순간들을 준비해 드립니다."
-                : "Quiet, unhurried moments arranged with private access across the island."
+                ? "스리랑카 전역에서 정성스럽게 엄선한 특별한 로컬 경험을 편안하게 즐기실 수 있도록 준비해 드립니다."
+                : "Quiet, unhurried moments thoughtfully selected across the island."
             }
           />
 
@@ -937,13 +1122,13 @@ export default function HomePage() {
           }
           subtitle={
             lang === "ko"
-              ? "여행 중 스리랑카 현지에서 세심한 지원을 제공하며, 영어와 한국어로 원활하고 편안하게 소통합니다."
-              : "Personal service and local support in Sri Lanka during your journey. I personally communicate in English and Korean to ensure a smooth and comfortable experience."
+              ? "스리랑카 관광청 공인 가이드의 전문성과 10년 이상의 경험으로 신뢰할 수 있는 여정을 선사합니다."
+              : "Personal service and local guidance in Sri Lanka during your journey, communicating personally in English and Korean."
           }
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {whyUs.map((pillar) => (
+          {activeWhyUs.map((pillar) => (
             <Reveal key={pillar.no} variant="fade-up">
               <div className="p-8 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
                 <div>
@@ -963,36 +1148,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 9. TESTIMONIALS & GUEST STORIES */}
-      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeader
-            eyebrow={t("reviews.eyebrow")}
-            title={
-              lang === "ko" ? (
-                <>
-                  여행자들의 <span className="text-[#C8A45D]">생생한 후기</span>
-                </>
-              ) : (
-                <>
-                  Guest <span className="text-[#C8A45D]">Stories</span>
-                </>
-              )
-            }
-            subtitle={
-              lang === "ko"
-                ? "세계 각국에서 저희와 함께 특별한 스리랑카 여행을 마친 고객들의 실제 이야기입니다."
-                : "Honest words from golfers, honeymooners, and luxury travellers across the globe."
-            }
-          />
+      {/* 9. TESTIMONIALS & GUEST STORIES (Only shown when genuine verified customer reviews are available) */}
+      {testimonials.length > 0 && (
+        <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-100">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeader
+              eyebrow={t("reviews.eyebrow")}
+              title={
+                lang === "ko" ? (
+                  <>
+                    여행자들의 <span className="text-[#C8A45D]">후기</span>
+                  </>
+                ) : (
+                  <>
+                    Guest <span className="text-[#C8A45D]">Stories</span>
+                  </>
+                )
+              }
+              subtitle={
+                lang === "ko"
+                  ? "Lanka Luxe Journeys와 함께한 여행자분들의 이야기입니다."
+                  : "Words from travellers who explored Sri Lanka with Lanka Luxe Journeys."
+              }
+            />
 
-          {testimonials.length === 0 ? (
-            <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-100 max-w-md mx-auto">
-              <p className="text-base text-slate-500 font-medium">
-                {lang === "ko" ? "등록된 고객 후기가 아직 없습니다." : "No guest stories available yet."}
-              </p>
-            </div>
-          ) : (
             <div className="flex overflow-x-auto snap-x snap-mandatory pb-8 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
               {testimonials.map((test, idx) => (
                 <Reveal key={idx} variant="fade-up" delay={idx * 0.1} className="w-[85vw] sm:w-[60vw] md:w-auto shrink-0 snap-center">
@@ -1000,29 +1179,29 @@ export default function HomePage() {
                 </Reveal>
               ))}
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* 10. THE JOURNAL / LATEST STORIES */}
       <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <SectionHeader
-          eyebrow={lang === "ko" ? "칼럼 & 인사이트" : "Editorial"}
+          eyebrow={lang === "ko" ? "스리랑카 여행 저널" : "Sri Lanka Travel Journal"}
           title={
             lang === "ko" ? (
               <>
-                스리랑카 <span className="text-[#C8A45D]">저널</span>
+                스리랑카 <span className="text-[#C8A45D]">여행 저널</span>
               </>
             ) : (
               <>
-                The <span className="text-[#C8A45D]">Journal</span>
+                Sri Lanka <span className="text-[#C8A45D]">Travel Journal</span>
               </>
             )
           }
           subtitle={
             lang === "ko"
-              ? "스리랑카 골프 팁, 숙소 가이드, 문화 이야기 등 현지 전문가가 전하는 칼럼입니다."
-              : "Letters, insider insights and travel guides quietly written by our Colombo team."
+              ? "스리랑카를 발견하는 데 도움이 되는 여행 가이드, 문화적 통찰과 실용적인 정보입니다."
+              : "Travel guides, cultural insights and practical information to help you discover Sri Lanka."
           }
           action={
             <Link
@@ -1060,16 +1239,43 @@ export default function HomePage() {
             title={
               lang === "ko" ? (
                 <>
-                  스리랑카 여행 <span className="text-[#C8A45D]">맞춤 상담</span>
+                  스리랑카 맞춤 여행을 <span className="text-[#C8A45D]">함께 계획해 보세요</span>
                 </>
               ) : (
                 <>
-                  Let's Plan Your <span className="text-[#C8A45D]">Journey</span>
+                  Let’s Plan Your <span className="text-[#C8A45D]">Sri Lankan Journey</span>
                 </>
               )
             }
-            subtitle={t("contact.reassure")}
+            subtitle={
+              lang === "ko"
+                ? "여행 일정, 관심사, 선호하시는 여행 스타일을 알려주시면 직접 검토한 후 고객님만을 위한 맞춤 제안을 준비해 드리겠습니다. 문의 내용은 신속하고 정성껏 답변 드리겠습니다."
+                : "Tell me about your travel dates, interests and preferred style of travel. I will personally review your request and prepare a tailored recommendation for your journey. Your enquiry will be personally reviewed and we will respond as soon as possible."
+            }
           />
+
+          {/* Direct WhatsApp & KakaoTalk Consultation Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+            <a
+              href={`https://pf.kakao.com/${(contact?.kakao || "@lankaluxe").replace("@", "_")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#FEE500] text-[#381E1F] font-bold text-xs sm:text-sm hover:bg-[#ebd400] transition-colors shadow-sm cursor-pointer"
+            >
+              <KakaoIcon className="w-4 h-4" />
+              <span>{lang === "ko" ? "문의하기 · KakaoTalk" : "KakaoTalk · 문의하기"}</span>
+            </a>
+
+            <a
+              href={`https://wa.me/${contact?.whatsapp || "94771234567"}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#25D366] text-white font-bold text-xs sm:text-sm hover:bg-[#20ba59] transition-colors shadow-sm cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 text-white" />
+              <span>Contact Us · WhatsApp</span>
+            </a>
+          </div>
 
           <Reveal variant="scale">
             <InquiryForm variant="light" />

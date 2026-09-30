@@ -474,8 +474,8 @@ export function InquiryForm({
           }`}
         >
           {lang === "ko"
-            ? "🔒 24시간 이내 개인 맞춤 제안서 회신"
-            : "🔒 24-hour response with bespoke itinerary draft"}
+            ? "🔒 문의 내용을 직접 검토한 후 가능한 한 신속하게 답변 드리겠습니다."
+            : "🔒 Your enquiry will be personally reviewed and we will respond as soon as possible."}
         </span>
 
         <LuxuryButton

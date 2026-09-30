@@ -2,7 +2,7 @@
 
 import { type GolfCourse } from "@/data/site";
 import { useI18n } from "@/lib/i18n";
-import { Flag, Hotel, MapPin, Moon, Star, ArrowRight } from "lucide-react";
+import { Flag, Hotel, MapPin, Moon, ArrowRight } from "lucide-react";
 import { useInquiry } from "@/lib/inquiry-context";
 
 interface GolfCourseCardProps {
@@ -36,12 +36,6 @@ export function GolfCourseCard({ course, className }: GolfCourseCardProps) {
           </span>
         </div>
 
-        <div className="absolute top-4 right-4">
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF9F1C] text-white text-xs font-bold shadow-sm">
-            <Star className="w-3 h-3 fill-white" />
-            <span>4.9</span>
-          </div>
-        </div>
       </div>
 
       {/* Body */}

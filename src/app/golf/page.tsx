@@ -51,20 +51,27 @@ export default function GolfPage() {
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
             {lang === "ko" ? (
               <>
-                아시아에서 가장 아름다운 <span className="text-[#C8A45D]">골프 페어웨이를 누비다.</span>
+                스리랑카 골프 여행 · <span className="text-[#C8A45D]">Golf Travel in Sri Lanka</span>
               </>
             ) : (
               <>
-                Play Asia's Most Scenic <span className="text-[#C8A45D]">Golf Fairways.</span>
+                Golf Travel in <span className="text-[#C8A45D]">Sri Lanka.</span>
               </>
             )}
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-500 font-normal max-w-3xl leading-relaxed mb-8">
-            {lang === "ko"
-              ? "스리랑카는 골프 애호가를 위한 숨겨진 보석입니다. 숨 막히는 자연경관 속 세계적인 수준의 골프 코스에서 플레이하고, 따뜻한 환대와 함께 우리 섬의 아름다움을 발견하세요. 티타임 예약부터 안락한 숙소, 최고급 전용 차량까지 한국인 및 글로벌 고객을 위한 프리미엄 골프 휴양을 전문으로 합니다."
-              : "Sri Lanka is a hidden gem for golf lovers. Play on world-class golf courses surrounded by breathtaking landscapes, enjoy warm hospitality and discover the beauty of our island. We specialize in golf holidays for Korean and international guests, including tee time reservations, comfortable stays and luxury transport."}
-          </p>
+          <div className="text-base sm:text-lg text-slate-600 font-normal max-w-3xl leading-relaxed mb-8 space-y-3">
+            <p>
+              {lang === "ko"
+                ? "골프, 빼어난 자연경관, 문화유산과 따뜻한 환대의 특별한 조합을 통해 스리랑카를 발견해 보세요."
+                : "Discover Sri Lanka through a unique combination of golf, scenery, culture and hospitality."}
+            </p>
+            <p className="text-sm sm:text-base text-slate-500">
+              {lang === "ko"
+                ? "골프장 예약, 숙소, 교통 및 고객의 선호에 맞춘 관광을 포함하여 한국인 및 글로벌 여행객을 위한 프라이빗 골프 여정을 정성껏 어레인지합니다."
+                : "We arrange private golf journeys for Korean and international travellers, including golf-course reservations, accommodation, transportation and sightseeing according to your preferences."}
+            </p>
+          </div>
 
           <div className="flex flex-wrap gap-4">
             <LuxuryButton
@@ -87,7 +94,7 @@ export default function GolfPage() {
         </Reveal>
       </section>
 
-      {/* 4 Pillars of Golf Concierge */}
+      {/* 4 Pillars of Golf Support */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="p-7 rounded-[1.75rem] bg-white border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.06)] flex flex-col justify-between">
@@ -96,12 +103,12 @@ export default function GolfPage() {
                 <Flag className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
-                {lang === "ko" ? "확정 티타임 & 캐디" : "Confirmed Tee Times"}
+                {lang === "ko" ? "골프장 예약 지원" : "Course Reservations"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? "출발 전 모든 코스의 티타임과 전담 캐디, 전동 카트가 사전 확정됩니다."
-                  : "Guaranteed prime tee times, top-tier caddies and carts pre-booked before you fly."}
+                  ? "일정과 선호도에 맞춰 골프장 예약 및 캐디, 카트 배정을 맞춤형으로 준비해 드립니다."
+                  : "Golf-course reservations, transportation and travel support arranged according to your itinerary and preferences."}
               </p>
             </div>
           </div>
@@ -112,12 +119,12 @@ export default function GolfPage() {
                 <Briefcase className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
-                {lang === "ko" ? "골프백 & 차량 전담 의전" : "Golf Bag Logistics"}
+                {lang === "ko" ? "편안한 전용 차량" : "Private Transportation"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? "골프백 수납이 완벽한 벤츠·토요타 밴과 전용 기사가 호텔-골프장 간 이동을 책임집니다."
-                  : "Mercedes V-Class & luxury coaches with dedicated luggage space for all sets."}
+                  ? "골프백 수납과 동행 인원수에 맞춘 쾌적한 전용 차량과 기사를 일정에 맞춰 배차합니다."
+                  : "Comfortable private transportation arranged according to your itinerary, group size and golf luggage requirements."}
               </p>
             </div>
           </div>
@@ -128,12 +135,12 @@ export default function GolfPage() {
                 <Award className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
-                {lang === "ko" ? "프리미엄 클럽 렌탈" : "Premium Rental Sets"}
+                {lang === "ko" ? "클럽 렌탈 & 장비 지원" : "Club Rental Assistance"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? "무거운 백 없이도 테일러메이드, 캘러웨이 최신 클럽 세트를 현지에서 대여 가능합니다."
-                  : "Latest TaylorMade and Callaway sets available for hire on arrival."}
+                  ? "무거운 골프백 운반 없이도 현지 클럽하우스 렌탈 및 장비 지원을 사전에 조율해 드립니다."
+                  : "Quality club rentals and course equipment support coordinated on request for a lighter journey."}
               </p>
             </div>
           </div>
@@ -144,12 +151,12 @@ export default function GolfPage() {
                 <Users className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-1">
-                {lang === "ko" ? "한국어 골프 가이드" : "Korean-Speaking Host"}
+                {lang === "ko" ? "한국어 & 영어 소통" : "English & Korean Support"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {lang === "ko"
-                  ? "체크인, 그늘집, 스코어카드, 저녁 만찬까지 한국어 전담 코디네이터가 케어합니다."
-                  : "Dedicated Korean-speaking tour host for groups and club hospitality."}
+                  ? "영어와 한국어로 직접 소통하며 한국인 및 글로벌 고객이 스리랑카에서 편안한 골프 여정을 즐기시도록 돕습니다."
+                  : "I communicate personally in English and Korean, helping guests enjoy a smoother and more comfortable golf holiday."}
               </p>
             </div>
           </div>
@@ -267,13 +274,13 @@ export default function GolfPage() {
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] mb-4">
             {lang === "ko"
-              ? "골프 동호회 & 단체 여행 맞춤 견적"
-              : "Private Golf Groups & Custom Tournaments"}
+              ? "골프 여행 맞춤 견적 & 문의"
+              : "Private Golf Groups & Custom Travel"}
           </h2>
           <p className="text-sm sm:text-base text-slate-500 font-normal mb-8 max-w-lg mx-auto leading-relaxed">
             {lang === "ko"
-              ? "4인~20인 이상 단체 골프 투어, VIP 시상 만찬, 싱글 룸 배정까지 전문 컨시어지가 맞춤 견적을 제공합니다."
-              : "From 4-ball buddies' escapes to 24-player club tournaments with gala dinners and luxury villas."}
+              ? "원하시는 골프 코스와 일정, 동행 인원수를 알려주세요. 문의 내용을 직접 검토한 후 가능한 한 신속하게 맞춤 제안을 드립니다."
+              : "Tell me about your travel dates, courses and group size. Your enquiry will be personally reviewed and we will respond as soon as possible."}
           </p>
           <LuxuryButton
             variant="pill"

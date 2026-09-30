@@ -44,11 +44,11 @@ export default function AboutPage() {
           <h1 className="text-4xl sm:text-6xl font-display font-medium text-[#081A33] leading-tight mb-6">
             {lang === "ko" ? (
               <>
-                스리랑카 최고의 <span className="text-[#C8A45D]">프라이빗 여행 아틀리에</span>
+                스리랑카 현지 전문가와 함께하는 <span className="text-[#C8A45D]">프라이빗 맞춤 여행</span>
               </>
             ) : (
               <>
-                The Private Travel Atelier of <span className="text-[#C8A45D]">Sri Lanka.</span>
+                Discover Sri Lanka With <span className="text-[#C8A45D]">A Local Expert.</span>
               </>
             )}
           </h1>
@@ -56,18 +56,18 @@ export default function AboutPage() {
           <div className="max-w-4xl space-y-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
             <p>
               {lang === "ko"
-                ? "Lanka Luxe Journeys는 10년 이상의 관광 업계 경력을 가진 전문 관광 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 현지 럭셔리 맞춤 여행사입니다."
-                : "Lanka Luxe Journeys is a Sri Lanka based luxury travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in the tourism industry."}
+                ? "Lanka Luxe Journeys는 10년 이상의 스리랑카 관광 업계 경력을 가진 전문 관광 가이드 이로샨 자야위크라마(Iroshan Jayawickrame)가 설립한 스리랑카 현지 프라이빗 여행사입니다."
+                : "Lanka Luxe Journeys is a Sri Lanka-based private travel company founded by Iroshan Jayawickrame, a professional tourist guide with more than 10 years of experience in Sri Lankan tourism."}
             </p>
             <p className="text-sm sm:text-base text-slate-500">
               {lang === "ko"
-                ? "편안함과 진정한 로컬 경험, 세심한 1:1 개인 맞춤 서비스를 중시하는 여행자를 위한 프라이빗 여정을 전문으로 합니다. 문화 탐방부터 야생 사파리, 고산 차밭, 에메랄드빛 해변, 챔피언십 골프와 웰니스 힐링까지, 모든 여정은 고객님의 관심사와 여행 스타일에 맞춰 정성껏 설계됩니다."
-                : "We specialize in private, tailor-made journeys for travelers who value comfort, authentic experiences and personal service. From cultural exploration to wildlife, tea country, beaches, golf and wellness, every journey is carefully planned to match your interests and travel style."}
+                ? "켈라니야 대학교 고고학 대학원(PGIAR)의 고고학 및 문화 관광 디플로마(Diploma in Archaeology & Culture Tourism)와 글로벌 여행객을 안내해 온 풍부한 전문 경험을 바탕으로, 이로샨은 깊이 있는 현지 지식과 문화적 이해, 정성 어린 1:1 맞춤 서비스를 결합하여 스리랑카 전역에서 뜻깊은 여정을 선사합니다."
+                : "With a Diploma in Archaeology & Culture Tourism and professional experience guiding international travellers, Iroshan brings together local knowledge, cultural understanding and personal service to create meaningful journeys across Sri Lanka."}
             </p>
             <p className="text-sm sm:text-base text-slate-500 font-medium text-[#C8A45D]">
               {lang === "ko"
-                ? "풍부한 현지 지식과 디테일에 대한 세심한 관심, 스리랑카에 대한 깊은 열정으로 모든 고객에게 평생 기억될 특별한 경험을 선사합니다."
-                : "With local knowledge, attention to detail and a passion for Sri Lanka, our goal is to create meaningful and unforgettable experiences for every guest."}
+                ? "유네스코 문화유산과 야생 사파리부터 고산 차밭, 에메랄드빛 해변, 골프 휴양과 아유르베다 웰니스까지, 모든 여정은 고객님의 관심사와 여행 속도, 취향에 맞춰 정성껏 설계됩니다."
+                : "From heritage and wildlife to tea country, beaches, golf and wellness, each journey is thoughtfully designed around your interests, pace and travel style."}
             </p>
           </div>
         </Reveal>
@@ -88,16 +88,16 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#081A33]/90 via-[#081A33]/30 to-transparent opacity-95" />
                 <div className="absolute bottom-6 left-6 right-6 text-white p-5 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
                   <p className="text-xs font-semibold text-[#C8A45D] uppercase tracking-widest mb-1">
-                    {lang === "ko" ? "창립자 & 공인 전문 가이드" : "Founder & Licensed Tourist Guide"}
+                    {lang === "ko" ? "창립자 & 공인 가이드" : "Founder & Licensed Guide"}
                   </p>
                   <h4 className="text-xl font-bold font-display text-white">
                     Iroshan Jayawickrame
                   </h4>
-                  <p className="text-xs text-slate-300 mt-1">
-                    SLTDA Licence: C-1734 · Diploma in Archaeology (Univ. of Kelaniya)
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    10+ Years in Sri Lankan Tourism · SLTDA Registered Guide C-1734 · Diploma in Archaeology & Culture Tourism
                   </p>
                   <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-300">
-                    <span>10+ Years Experience</span>
+                    <span>Personal Management</span>
                     <span className="text-[#C8A45D]">English & Korean</span>
                   </div>
                 </div>
@@ -207,12 +207,12 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-5">
                 <GraduationCap className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#081A33] mb-2">Diploma in Archaeology</h3>
+              <h3 className="text-lg font-bold text-[#081A33] mb-2">Diploma in Archaeology & Culture Tourism</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                <strong>University of Kelaniya</strong><br />
+                <strong>Postgraduate Institute of Archaeology, University of Kelaniya</strong><br />
                 {lang === "ko"
-                  ? "켈라니야 대학교 고고학 대학원 디플로마 과정을 통해 역사적 깊이가 있는 해설을 제공합니다."
-                  : "Postgraduate Institute of Archaeology, University of Kelaniya, bringing rich historic insights to your journeys."}
+                  ? "켈라니야 대학교 고고학 대학원(PGIAR)의 고고학 및 문화 관광 디플로마 과정을 수료하여 학술적 깊이가 있는 풍부한 문화유산 해설을 제공합니다."
+                  : "Postgraduate Institute of Archaeology, University of Kelaniya, bringing authentic academic insights and cultural depth to your journeys."}
               </p>
             </div>
           </Reveal>
@@ -222,11 +222,11 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-5">
                 <Globe2 className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#081A33] mb-2">English & Korean Communication</h3>
+              <h3 className="text-lg font-bold text-[#081A33] mb-2">English & Korean Support</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {lang === "ko"
-                  ? "영어 및 한국어로 직접 원활하게 소통하며 편안하고 신뢰할 수 있는 안내를 제공합니다."
-                  : "I personally communicate in English and Korean to ensure a smooth, comfortable, and seamless experience."}
+                  ? "영어와 한국어로 직접 소통하며 한국인 및 글로벌 고객이 스리랑카에서 더욱 편안하고 매끄러운 여행을 즐기실 수 있도록 돕습니다."
+                  : "I communicate personally in English and Korean, helping Korean and international guests enjoy a smoother and more comfortable journey in Sri Lanka."}
               </p>
             </div>
           </Reveal>
@@ -236,11 +236,11 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-5">
                 <Sparkles className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#081A33] mb-2">Luxury & Culture Specialization</h3>
+              <h3 className="text-lg font-bold text-[#081A33] mb-2">Culture & Wildlife Expertise</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {lang === "ko"
-                  ? "럭셔리 맞춤 여행, 유네스코 문화유산 탐방, 야생 사파리 및 힐링 웰니스 관광에 특화되어 있습니다."
-                  : "Specialized in luxury travel design, ancient culture, wildlife safaris, tea planter estates and wellness."}
+                  ? "유네스코 고대 유적지, 국립공원 야생 사파리, 고산 홍차 힐스 및 웰니스 힐링 여행 설계에 정통합니다."
+                  : "Specialized in ancient archaeological heritage, wildlife safaris, tea plantation highlands and rejuvenating wellness."}
               </p>
             </div>
           </Reveal>
@@ -250,11 +250,11 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-2xl bg-[#C8A45D]/10 text-[#C8A45D] flex items-center justify-center mb-5">
                 <Flag className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#081A33] mb-2">Golf Tourism Specialist</h3>
+              <h3 className="text-lg font-bold text-[#081A33] mb-2">Golf Travel in Sri Lanka</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {lang === "ko"
-                  ? "스리랑카 5대 챔피언십 골프장 티타임 확정, 프리미엄 클럽 렌탈 및 단체 의전 서비스를 제공합니다."
-                  : "Specialized in golf holidays for Korean and international guests across all 5 championship venues."}
+                  ? "한국인 및 글로벌 여행객을 위한 프라이빗 골프 여정으로, 골프장 예약, 숙소, 차량 및 관광을 고객의 선호에 맞춰 정성껏 준비합니다."
+                  : "Private golf journeys for Korean and international travellers, including golf-course reservations, accommodation, transportation and sightseeing according to your preferences."}
               </p>
             </div>
           </Reveal>
@@ -300,12 +300,12 @@ export default function AboutPage() {
                 <Award className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-2">
-                {lang === "ko" ? "2. 엄선된 숙소와 프리미엄 서비스" : "2. Handpicked Experiences & Quality Service"}
+                {lang === "ko" ? "2. 엄선된 경험과 신뢰할 수 있는 서비스" : "2. Carefully Selected Experiences & Services"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {lang === "ko"
-                  ? "제가 직접 투숙하고 검증한 숙소, 체험, 서비스만을 신뢰를 담아 추천합니다."
-                  : "I personally inspect and carefully select the experiences, hotels and services I recommend."}
+                  ? "엄선된 호텔, 운송 파트너 및 로컬 체험 제공업체와 협력하여 편안하고 기억에 남는 여정을 완성합니다."
+                  : "We work with carefully selected hotels, transportation providers and local experiences to create comfortable and memorable journeys."}
               </p>
             </div>
           </Reveal>
@@ -316,12 +316,12 @@ export default function AboutPage() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#081A33] mb-2">
-                {lang === "ko" ? "3. 안락함, 안전 및 신뢰" : "3. Comfort, Safety & Trust"}
+                {lang === "ko" ? "3. 공인 관광 전문가 및 전용 차량 배차" : "3. Registered Sri Lankan Tourism Professional"}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {lang === "ko"
-                  ? "SLTDA 공인 자격과 최신형 럭셔리 차량 의전으로 여행의 전 과정을 안전하게 보호합니다."
-                  : "Your safety, comfort and satisfaction are always my top priority, supported by registered licensing and private fleets."}
+                  ? "SLTDA 공식 등록 가이드(C-1734) 자격을 갖추고 있으며, 일정과 인원수, 편의 요구에 맞춰 쾌적한 전용 차량을 어레인지합니다."
+                  : "SLTDA Registered Guide – C-1734. Private transportation can be arranged according to your itinerary, group size and comfort requirements."}
               </p>
             </div>
           </Reveal>
@@ -365,12 +365,12 @@ export default function AboutPage() {
                   <Globe2 className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {lang === "ko" ? "1:1 한국어 & 영어 현지 케어" : "Dedicated Bilingual Care"}
+                  {lang === "ko" ? "6. 한국어 & 영어 1:1 케어" : "6. English & Korean Support"}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   {lang === "ko"
-                    ? "여행 중 스리랑카 현지에서 세심한 1:1 케어를 제공하며, 영어와 한국어로 원활하고 편안하게 소통합니다."
-                    : "Personal service and local support in Sri Lanka during your journey. I personally communicate in English and Korean to ensure a smooth and comfortable experience."}
+                    ? "영어와 한국어로 직접 소통하며 한국인 및 글로벌 고객이 스리랑카에서 더욱 편안하고 매끄러운 여행을 즐기실 수 있도록 돕습니다."
+                    : "I communicate personally in English and Korean, helping Korean and international guests enjoy a smoother and more comfortable journey in Sri Lanka."}
                 </p>
               </div>
             </div>
@@ -384,38 +384,43 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7 space-y-5 text-left">
               <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C8A45D]">
-                {lang === "ko" ? "골프 관광 특화" : "GOLF TOURISM"}
+                {lang === "ko" ? "스리랑카 골프 여행" : "GOLF TRAVEL IN SRI LANKA"}
               </span>
               <h2 className="text-2xl sm:text-4xl font-display font-medium text-[#081A33] leading-tight">
                 {lang === "ko"
-                  ? "한국인 및 글로벌 여행객을 위한 프리미엄 골프 휴양"
-                  : "Golf Tourism (For Korean & International Guests)"}
+                  ? "스리랑카 골프 여행 (Golf Travel in Sri Lanka)"
+                  : "Golf Travel in Sri Lanka"}
               </h2>
               <div className="text-sm sm:text-base text-slate-600 leading-relaxed space-y-3">
                 <p>
                   {lang === "ko"
-                    ? "스리랑카는 골프 애호가를 위한 숨겨진 보석입니다. 숨 막히는 자연경관 속 세계적인 수준의 골프 코스에서 플레이하고, 따뜻한 환대와 함께 우리 섬의 아름다움을 발견하세요."
-                    : "Sri Lanka is a hidden gem for golf lovers. Play on world-class golf courses surrounded by breathtaking landscapes, enjoy warm hospitality and discover the beauty of our island."}
+                    ? "골프, 빼어난 자연경관, 문화유산과 따뜻한 환대의 특별한 조합을 통해 스리랑카를 발견해 보세요."
+                    : "Discover Sri Lanka through a unique combination of golf, scenery, culture and hospitality."}
                 </p>
                 <p>
                   {lang === "ko"
-                    ? "티타임 예약, 편안한 최고급 숙소, 럭셔리 전용 차량을 포함하여 한국인 및 글로벌 고객을 위한 골프 휴양을 전문으로 합니다."
-                    : "We specialize in golf holidays for Korean and international guests, including tee time reservations, comfortable stays and luxury transport."}
+                    ? "골프장 예약, 숙소, 차량 및 고객의 선호에 맞춘 관광을 포함하여 한국인 및 글로벌 여행객을 위한 프라이빗 골프 여정을 정성껏 어레인지합니다."
+                    : "We arrange private golf journeys for Korean and international travellers, including golf-course reservations, accommodation, transportation and sightseeing according to your preferences."}
+                </p>
+                <p className="text-xs sm:text-sm text-slate-500">
+                  {lang === "ko"
+                    ? "일정과 선호도에 따라 골프장 예약, 전용 차량 및 여행 지원이 맞춤 제공되며, 한국어 및 영어 소통이 가능합니다."
+                    : "Golf-course reservations, transportation and travel support can be arranged according to your itinerary and preferences. Korean and English communication available."}
                 </p>
               </div>
 
               <div className="pt-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#081A33] mb-3">
-                  {lang === "ko" ? "인기 5대 골프 코스:" : "Popular Golf Courses:"}
+                  {lang === "ko" ? "스리랑카 주요 골프 코스:" : "Sri Lanka Golf Courses:"}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#C8A45D]" />
-                    <span>Colombo Golf Club</span>
+                    <span>Royal Colombo Golf Club</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#C8A45D]" />
-                    <span>Victoria Golf Club</span>
+                    <span>Victoria Golf Resort (Kandy)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#C8A45D]" />
@@ -423,11 +428,11 @@ export default function AboutPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#C8A45D]" />
-                    <span>Shangri-La Golf Club Hambantota</span>
+                    <span>Shangri-La Golf Resort Hambantota</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#C8A45D]" />
-                    <span>Koggala Golf Club</span>
+                    <span>Eagles' Golf Links</span>
                   </div>
                 </div>
               </div>
@@ -462,12 +467,12 @@ export default function AboutPage() {
           <h2 className="text-3xl sm:text-4xl font-bold text-[#081A33] mb-4">
             {lang === "ko"
               ? "스리랑카 현지 전문가와 상담을 시작해 보세요."
-              : "Speak With Founder Iroshan Jayawickrame Today."}
+              : "Let's Plan Your Sri Lankan Journey"}
           </h2>
           <p className="text-sm sm:text-base text-slate-500 font-normal mb-8 max-w-lg mx-auto leading-relaxed">
             {lang === "ko"
-              ? "원하시는 여행 일정과 선호 사항을 알려주시면 24시간 이내에 세심한 맞춤 제안서를 준비해 드립니다."
-              : "No obligations. Tell us how you dream of experiencing Sri Lanka and I will personally prepare a bespoke itinerary draft within 24 hours."}
+              ? "원하시는 여행 일정과 관심사, 선호하는 여행 스타일을 알려주세요. 문의 내용을 직접 검토한 후 가능한 한 신속하게 맞춤 제안을 준비해 드리겠습니다."
+              : "Tell me about your travel dates, interests and preferred style of travel. Your enquiry will be personally reviewed and we will respond as soon as possible."}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <LuxuryButton variant="pill" size="lg" onClick={() => openInquiry()} withArrow>

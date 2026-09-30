@@ -162,15 +162,15 @@ export function TourDetailClient() {
               <div className="space-y-2 text-xs text-slate-600 font-medium">
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>{lang === "ko" ? "전담 의전 기사 & 최고급 전용 차량" : "Private Chauffeur & Luxury Fleet"}</span>
+                  <span>{lang === "ko" ? "쾌적한 전용 차량 & 현지 전문 안내" : "Private Transportation & Local Guidance"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>{lang === "ko" ? "5성급 부티크 & 헤리티지 숙소" : "5-Star Boutique & Heritage Stays"}</span>
+                  <span>{lang === "ko" ? "엄선된 부티크 & 헤리티지 숙소" : "Carefully Selected Stays"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-[#C8A45D]" />
-                  <span>{lang === "ko" ? "24시간 1:1 컨시어지 케어 (한국어 / 영어)" : "24/7 Bilingual Concierge (EN / KO)"}</span>
+                  <span>{lang === "ko" ? "1:1 맞춤 여행 케어 (한국어 / 영어)" : "Personal Travel Support (English & Korean)"}</span>
                 </div>
               </div>
 
@@ -194,7 +194,7 @@ export function TourDetailClient() {
 
                 <p className="text-[0.6875rem] text-center text-slate-400">
                   {lang === "ko"
-                    ? "🔒 100% 맞춤 변경 가능 · 24시간 내 회신"
+                    ? "🔒 100% 맞춤 변경 가능 · 직접 검토 후 신속 회신"
                     : "🔒 100% Customizable Itinerary · No Booking Fees"}
                 </p>
               </div>

@@ -51,8 +51,8 @@ export function FloatingActions() {
           className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#FEE500] text-[#381E1F] shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#FEE500]/30"
         >
           <KakaoIcon className="w-6 h-6" />
-          <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
-            {lang === "ko" ? "카카오톡 실시간 상담" : "Chat on KakaoTalk"}
+          <span className="absolute right-14 whitespace-nowrap bg-[#0B1F3A]/95 text-white text-xs px-3 py-1.5 rounded border border-[#C8A45D]/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+            {lang === "ko" ? "문의하기 · KakaoTalk" : "KakaoTalk · 문의하기"}
           </span>
         </a>
       )}
@@ -67,8 +67,8 @@ export function FloatingActions() {
           className="group relative flex items-center justify-center w-12 h-12 rounded-full bg-[#25D366] text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 hover:shadow-[#25D366]/30"
         >
           <MessageSquare className="w-5 h-5 fill-white text-white" />
-          <span className="absolute right-14 whitespace-nowrap bg-navy-2/95 text-white text-xs px-3 py-1.5 rounded border border-gold/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
-            {lang === "ko" ? "WhatsApp 실시간 상담" : "Chat on WhatsApp"}
+          <span className="absolute right-14 whitespace-nowrap bg-[#0B1F3A]/95 text-white text-xs px-3 py-1.5 rounded border border-[#C8A45D]/30 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+            {lang === "ko" ? "문의하기 · WhatsApp" : "Contact Us · WhatsApp"}
           </span>
         </a>
       )}

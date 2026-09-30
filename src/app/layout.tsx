@@ -7,14 +7,14 @@ import { SiteChrome } from "@/components/SiteChrome";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Lanka Luxe Journeys | Luxury Sri Lanka Travel & Golf Holidays",
+  title: "Lanka Luxe Journeys | Private Sri Lanka Travel & Golf Holidays",
   description:
-    "Private travel atelier in Colombo crafting bespoke luxury itineraries, championship golf escapes, private wildlife safaris, and wellness retreats across Sri Lanka.",
+    "Private Sri Lankan Journeys, Personally Crafted. Founded by Iroshan Jayawickrame · SLTDA Registered Guide C-1734 · 10+ Years in Sri Lankan Tourism. Personal travel support, private transportation, and local expertise.",
   authors: [{ name: "Lanka Luxe Journeys" }],
   openGraph: {
-    title: "Lanka Luxe Journeys | Luxury Sri Lanka Travel",
+    title: "Lanka Luxe Journeys | Discover Sri Lanka With A Local Expert",
     description:
-      "Discover Sri Lanka in extraordinary style. Private villas, bespoke golf itineraries, wildlife naturalists and 24/7 concierge.",
+      "Private journeys, authentic experiences and thoughtfully crafted travel, personally designed around you by SLTDA Registered Guide Iroshan Jayawickrame.",
     type: "website",
   },
   twitter: {
